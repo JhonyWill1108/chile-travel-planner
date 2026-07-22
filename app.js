@@ -26,6 +26,18 @@ const defaultDays = [
                 ticketCost: 0, ticketInstallments: 1, ticketCardInterest: false,
                 linkMaps: "", linkInstagram: "", link: "", contact: "", paymentStatus: "pending",
                 notes: "Voo de ida rumo a Santiago, Chile."
+            },
+            {
+                id: "act-hotel-checkin",
+                title: "Check-in Hotel",
+                city: "Santiago",
+                address: "Santiago, Chile",
+                startTime: "15:00",
+                endTime: "",
+                agencyCost: 0, agencyInstallments: 1, agencyCardInterest: false, hasGuide: false,
+                ticketCost: 0, ticketInstallments: 1, ticketCardInterest: false,
+                linkMaps: "https://maps.app.goo.gl/pf9QeSmvkZavWqNr7", linkInstagram: "", link: "", contact: "", paymentStatus: "pending",
+                notes: "Entrada liberada no hotel."
             }
         ] 
     },
@@ -38,6 +50,18 @@ const defaultDays = [
         id: "day-7", 
         dateLabel: "DIA 7 — 22/08/2026 (Sábado)", 
         activities: [
+            {
+                id: "act-hotel-checkout",
+                title: "Check-out Hotel",
+                city: "Santiago",
+                address: "Santiago, Chile",
+                startTime: "12:00",
+                endTime: "",
+                agencyCost: 0, agencyInstallments: 1, agencyCardInterest: false, hasGuide: false,
+                ticketCost: 0, ticketInstallments: 1, ticketCardInterest: false,
+                linkMaps: "https://maps.app.goo.gl/pf9QeSmvkZavWqNr7", linkInstagram: "", link: "", contact: "", paymentStatus: "pending",
+                notes: "Saída do hotel e deslocamento para o aeroporto."
+            },
             {
                 id: "act-flight-return",
                 title: "Embarque Chile",
@@ -392,7 +416,7 @@ function saveState() {
 
 function loadState() {
     const DB_VERSION_KEY = 'chile_planner_db_version';
-    const CURRENT_VERSION = 'v13_auto_exchange'; // Força migração de BD para incluir novos restaurantes e tipo de comida
+    const CURRENT_VERSION = 'v14_hotel'; // Força migração de BD para incluir novos restaurantes e tipo de comida
 
     if (localStorage.getItem(DB_VERSION_KEY) !== CURRENT_VERSION) {
         localStorage.clear();

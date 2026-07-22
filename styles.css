@@ -1211,7 +1211,8 @@ h1, h2, h3, h4, h5, h6 {
     }
 
     .form-row-3 {
-        grid-template-columns: 1.5fr 1fr 1fr;
+        grid-template-columns: 1fr;
+        gap: 12px;
     }
 
     .day-summary-row {
@@ -1224,6 +1225,48 @@ h1, h2, h3, h4, h5, h6 {
     .day-summary-breakdown {
         flex-direction: column;
         gap: 6px;
+    }
+
+    .trip-dates {
+        display: none !important;
+    }
+
+    .nav-title-area h2 {
+        font-size: 1.1rem !important;
+    }
+
+    .day-actions {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 8px !important;
+        width: 100% !important;
+        justify-content: stretch !important;
+        margin-top: 4px;
+    }
+
+    .day-actions .btn {
+        flex: 1 1 auto !important;
+        font-size: 0.78rem !important;
+        padding: 8px 12px !important;
+        min-width: 80px;
+    }
+
+    /* Modal responsiveness */
+    .modal-footer {
+        flex-direction: column-reverse;
+        align-items: stretch;
+        gap: 10px;
+    }
+
+    .modal-footer .btn {
+        width: 100%;
+    }
+
+    .modal-card {
+        padding: 16px !important;
+        margin: 10px !important;
+        max-height: calc(100vh - 20px) !important;
+        overflow-y: auto;
     }
 }
 

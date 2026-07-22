@@ -196,8 +196,8 @@ const defaultRestaurants = [
     {
         id: "rest-1",
         name: "Papachecos",
-        address: "",
-        linkMaps: "",
+        address: "José Victorino Lastarria 160, 8320156 Santiago, Región Metropolitana, Chile",
+        linkMaps: "https://maps.app.goo.gl/2qmEKjrQd2SuqtH58",
         linkInstagram: "",
         openTime: "",
         closeTime: "",
@@ -220,8 +220,8 @@ const defaultRestaurants = [
     {
         id: "rest-3",
         name: "Utopia",
-        address: "",
-        linkMaps: "",
+        address: "Av. Andrés Bello 2425, Mall Costanera Center, 750000 Providencia, Región Metropolitana, Chile",
+        linkMaps: "https://maps.app.goo.gl/CCgZTsytvjJ2wsD69",
         linkInstagram: "",
         openTime: "",
         closeTime: "",
@@ -232,8 +232,8 @@ const defaultRestaurants = [
     {
         id: "rest-4",
         name: "La Cabrera",
-        address: "",
-        linkMaps: "",
+        address: "Isidora Goyenechea 3275, 7550129 Las Condes, Región Metropolitana, Chile",
+        linkMaps: "https://maps.app.goo.gl/qta9wdKqhKixuD9u5",
         linkInstagram: "",
         openTime: "",
         closeTime: "",
@@ -244,8 +244,8 @@ const defaultRestaurants = [
     {
         id: "rest-5",
         name: "Emporio la Rosa",
-        address: "",
-        linkMaps: "",
+        address: "José Victorino Lastarria 71, 8320165 Santiago, Región Metropolitana, Chile",
+        linkMaps: "https://maps.app.goo.gl/PF6HZMoZ5eog4SNp6",
         linkInstagram: "",
         openTime: "",
         closeTime: "",
@@ -256,8 +256,8 @@ const defaultRestaurants = [
     {
         id: "rest-6",
         name: "Tonny Pizzeria",
-        address: "Av. Apoquindo 2730, Las Condes - Santiago, Chile",
-        linkMaps: "https://maps.google.com/?q=Av.+Apoquindo+2730,+Las+Condes+-+Santiago,+Chile",
+        address: "Av. Apoquindo 2730, 7550179 Santiago, Las Condes, Región Metropolitana, Chile",
+        linkMaps: "https://maps.app.goo.gl/jXgMhd8JkF1twCNh6",
         linkInstagram: "",
         openTime: "",
         closeTime: "",
@@ -268,8 +268,8 @@ const defaultRestaurants = [
     {
         id: "rest-7",
         name: "Toke Casero",
-        address: "",
-        linkMaps: "",
+        address: "Holanda 067, Providencia, Región Metropolitana, Chile",
+        linkMaps: "https://maps.app.goo.gl/R8LwgJ61RysfNcW8",
         linkInstagram: "",
         openTime: "",
         closeTime: "",
@@ -347,7 +347,7 @@ function saveState() {
 
 function loadState() {
     const DB_VERSION_KEY = 'chile_planner_db_version';
-    const CURRENT_VERSION = 'v11_flights'; // Força migração de BD para incluir novos restaurantes e tipo de comida
+    const CURRENT_VERSION = 'v12_mobile_rest'; // Força migração de BD para incluir novos restaurantes e tipo de comida
 
     if (localStorage.getItem(DB_VERSION_KEY) !== CURRENT_VERSION) {
         localStorage.clear();

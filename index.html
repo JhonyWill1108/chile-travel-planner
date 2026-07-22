@@ -68,6 +68,38 @@
                 </div>
             </div>
 
+            <!-- Supabase Cloud Sync Card -->
+            <div class="exchange-card" id="supabase-sync-card">
+                <h3><i class="fa-solid fa-cloud"></i> Sincronizar Nuvem</h3>
+                <div class="exchange-inputs" style="gap: 8px;">
+                    <!-- Status Indicator -->
+                    <div id="db-sync-status" style="font-size: 0.8rem; color: var(--text-muted); display: flex; align-items: center; gap: 8px; margin-bottom: 2px;">
+                        <i class="fa-solid fa-cloud-slash" style="color: var(--danger);"></i> <span>Status: Desconectado</span>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="db-supabase-url" style="font-size: 0.72rem;">Supabase URL:</label>
+                        <input type="text" id="db-supabase-url" placeholder="https://xxxx.supabase.co" style="width: 100%; background: var(--bg-input); border: 1px solid var(--border-color); border-radius: var(--border-radius-sm); padding: 6px 10px; color: var(--text-main); font-size: 0.8rem; outline: none;">
+                    </div>
+                    <div class="input-group">
+                        <label for="db-supabase-key" style="font-size: 0.72rem;">Anon Key (API Key):</label>
+                        <input type="password" id="db-supabase-key" placeholder="Public API key" style="width: 100%; background: var(--bg-input); border: 1px solid var(--border-color); border-radius: var(--border-radius-sm); padding: 6px 10px; color: var(--text-main); font-size: 0.8rem; outline: none;">
+                    </div>
+                    <div class="input-group">
+                        <label for="db-supabase-trip-id" style="font-size: 0.72rem;">ID da Viagem:</label>
+                        <input type="text" id="db-supabase-trip-id" value="chile-viagem-2026" placeholder="ex: jhony-viagem" style="width: 100%; background: var(--bg-input); border: 1px solid var(--border-color); border-radius: var(--border-radius-sm); padding: 6px 10px; color: var(--text-main); font-size: 0.8rem; outline: none;">
+                    </div>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 6px; margin-top: 6px;">
+                    <button class="btn btn-primary btn-sm btn-block" id="btn-supabase-connect" title="Conectar ao banco de dados Supabase e sincronizar">
+                        <i class="fa-solid fa-link"></i> Conectar & Sincronizar
+                    </button>
+                    <button class="btn btn-outline-danger btn-sm btn-block" id="btn-supabase-disconnect" style="display: none;" title="Desconectar da nuvem">
+                        <i class="fa-solid fa-link-slash"></i> Desconectar Nuvem
+                    </button>
+                </div>
+            </div>
+
             <!-- Financial Summary -->
             <div class="summary-card">
                 <h3><i class="fa-solid fa-chart-pie"></i> Resumo da Viagem</h3>
@@ -550,9 +582,47 @@
         </div>
     </div>
 
+    <!-- Supabase Sync Conflict Modal -->
+    <div class="modal" id="sync-conflict-modal">
+        <div class="modal-backdrop" id="sync-conflict-backdrop"></div>
+        <div class="modal-card" style="max-width: 480px; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--border-radius-md); padding: 24px; box-shadow: var(--card-shadow);">
+            <div class="modal-header" style="border-bottom: 1px solid var(--border-color); padding-bottom: 14px; margin-bottom: 16px;">
+                <h2 style="font-family: 'Outfit', sans-serif; font-size: 1.3rem; display: flex; align-items: center; gap: 8px; color: var(--primary);">
+                    <i class="fa-solid fa-circle-nodes"></i> Conflito de Dados
+                </h2>
+            </div>
+            <div class="modal-body" style="font-size: 0.9rem; line-height: 1.5; color: var(--text-main); display: flex; flex-direction: column; gap: 10px;">
+                <p>Encontramos dados salvos na nuvem do Supabase para esta viagem.</p>
+                <p style="color: var(--text-muted);">Como deseja sincronizar as informações entre seu celular e computador?</p>
+                
+                <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 16px;">
+                    <button class="btn btn-primary" id="btn-sync-download" style="justify-content: flex-start; text-align: left; padding: 12px 16px; font-weight: 500;">
+                        <i class="fa-solid fa-cloud-arrow-down" style="font-size: 1.2rem; margin-right: 8px; color: #fff;"></i>
+                        <div>
+                            <strong style="display: block; font-size: 0.9rem;">Baixar da Nuvem (Recomendado)</strong>
+                            <span style="font-size: 0.72rem; opacity: 0.8; font-weight: 400; display: block; margin-top: 2px;">Substitui os dados deste aparelho pelo roteiro que está salvo na nuvem.</span>
+                        </div>
+                    </button>
+                    <button class="btn btn-secondary" id="btn-sync-upload" style="justify-content: flex-start; text-align: left; padding: 12px 16px; font-weight: 500; border: 1px solid var(--primary-glow);">
+                        <i class="fa-solid fa-cloud-arrow-up" style="font-size: 1.2rem; margin-right: 8px; color: var(--primary);"></i>
+                        <div>
+                            <strong style="display: block; font-size: 0.9rem; color: var(--primary);">Enviar para a Nuvem</strong>
+                            <span style="font-size: 0.72rem; opacity: 0.8; font-weight: 400; display: block; margin-top: 2px; color: var(--text-muted);">Substitui o roteiro da nuvem pelas informações locais deste aparelho.</span>
+                        </div>
+                    </button>
+                </div>
+            </div>
+            <div class="modal-footer" style="border-top: 1px solid var(--border-color); padding-top: 14px; margin-top: 18px; display: flex; justify-content: flex-end;">
+                <button type="button" class="btn btn-outline" id="btn-cancel-sync-modal">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
     <div class="sidebar-overlay"></div>
 
+    <!-- Supabase JS Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <!-- Custom JS -->
-    <script src="app.js?v=14"></script>
+    <script src="app.js?v=15"></script>
 </body>
 </html>

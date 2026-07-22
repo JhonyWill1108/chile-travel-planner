@@ -79,6 +79,14 @@
                         <span class="item-val warning" id="total-pending">R$ 0,00</span>
                     </div>
                 </div>
+                <div class="summary-decide" style="border-top: 1px solid var(--border-color); padding-top: 10px; margin-top: 8px;">
+                    <div class="summary-item" style="flex-direction: row; justify-content: space-between; align-items: center;">
+                        <span class="item-label" style="font-size: 0.8rem; color: var(--text-muted); display: flex; align-items: center; gap: 6px;">
+                            <i class="fa-solid fa-circle-question" style="color: var(--text-muted);"></i> Total A Decidir:
+                        </span>
+                        <span class="item-val" id="total-decide" style="color: var(--text-muted); font-size: 1.05rem; font-weight: 700;">R$ 0,00</span>
+                    </div>
+                </div>
             </div>
 
             <!-- Backup & Tools -->
@@ -212,29 +220,57 @@
                 <!-- Custos da Agência -->
                 <div class="cost-section-box">
                     <h4 class="box-title"><i class="fa-solid fa-suitcase-rolling"></i> Custos de Agência</h4>
+                    
+                    <!-- Conversor Inteligente -->
                     <div class="form-row-3">
                         <div class="form-group">
-                            <label for="form-agency-cost">Valor Unitário</label>
-                            <input type="number" id="form-agency-cost" placeholder="0" min="0" step="any">
+                            <label for="form-agency-cost-unit">Valor Unitário</label>
+                            <input type="number" id="form-agency-cost-unit" placeholder="Ex: 45000 ou 250" min="0" step="any">
                         </div>
                         <div class="form-group">
                             <label for="form-agency-currency">Moeda</label>
                             <select id="form-agency-currency">
-                                <option value="CLP">CLP ($)</option>
                                 <option value="BRL">BRL (R$)</option>
+                                <option value="CLP">CLP ($)</option>
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="form-agency-people">Nº de Pessoas</label>
+                            <label for="form-agency-people">Nº Pessoas</label>
                             <input type="number" id="form-agency-people" value="2" min="1">
                         </div>
                     </div>
-                    <div class="checkbox-row">
-                        <label class="checkbox-container">
-                            <input type="checkbox" id="form-agency-interest" checked>
-                            <span class="checkmark"></span>
-                            Pagar com Cartão (Aplica juros de cartão no cálculo)
-                        </label>
+
+                    <!-- Campos Oficiais do Cadastro -->
+                    <div class="form-row-3" style="grid-template-columns: 1fr 80px 100px;">
+                        <div class="form-group">
+                            <label for="form-agency-cost" class="required-field">Valor Agência (R$) [Base]</label>
+                            <input type="number" id="form-agency-cost" placeholder="0.00" min="0" step="any" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="form-agency-installments">Nº Parcelas</label>
+                            <input type="number" id="form-agency-installments" value="1" min="1" max="24">
+                        </div>
+                        <div class="form-group" style="display: flex; align-items: center; justify-content: center; margin-top: 18px;">
+                            <label class="checkbox-container" style="padding-left: 22px; font-size: 0.75rem;">
+                                <input type="checkbox" id="form-agency-interest">
+                                <span class="checkmark"></span>
+                                Tem Juros?
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Campos Calculados -->
+                    <div class="form-row-2">
+                        <div class="form-group">
+                            <label for="form-agency-parcel-val">Valor Parcela Agência (R$)</label>
+                            <input type="text" id="form-agency-parcel-val" readonly value="R$ 0,00" class="input-readonly">
+                        </div>
+                        <div class="form-group">
+                            <label for="form-agency-total-val">Total Agência COM Juros (R$)</label>
+                            <input type="text" id="form-agency-total-val" readonly value="R$ 0,00" class="input-readonly">
+                        </div>
+                    </div>
+                    <div class="checkbox-row" style="margin-top: 4px;">
                         <label class="checkbox-container">
                             <input type="checkbox" id="form-agency-guide">
                             <span class="checkmark"></span>
@@ -245,38 +281,80 @@
 
                 <!-- Custos do Ingresso -->
                 <div class="cost-section-box">
-                    <h4 class="box-title"><i class="fa-solid fa-ticket"></i> Custos de Ingressos / Entradas</h4>
+                    <h4 class="box-title"><i class="fa-solid fa-ticket"></i> Custos de Ingressos</h4>
+                    
+                    <!-- Conversor Inteligente -->
                     <div class="form-row-3">
                         <div class="form-group">
-                            <label for="form-ticket-cost">Valor Unitário</label>
-                            <input type="number" id="form-ticket-cost" placeholder="0" min="0" step="any">
+                            <label for="form-ticket-cost-unit">Valor Unitário</label>
+                            <input type="number" id="form-ticket-cost-unit" placeholder="Ex: 10000 ou 60" min="0" step="any">
                         </div>
                         <div class="form-group">
                             <label for="form-ticket-currency">Moeda</label>
                             <select id="form-ticket-currency">
-                                <option value="CLP">CLP ($)</option>
                                 <option value="BRL">BRL (R$)</option>
+                                <option value="CLP">CLP ($)</option>
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="form-ticket-people">Nº de Pessoas</label>
+                            <label for="form-ticket-people">Nº Pessoas</label>
                             <input type="number" id="form-ticket-people" value="2" min="1">
                         </div>
                     </div>
-                    <div class="checkbox-row">
-                        <label class="checkbox-container">
-                            <input type="checkbox" id="form-ticket-interest">
-                            <span class="checkmark"></span>
-                            Pagar com Cartão (Aplica juros de cartão no cálculo)
-                        </label>
+
+                    <!-- Campos Oficiais do Cadastro -->
+                    <div class="form-row-3" style="grid-template-columns: 1fr 80px 100px;">
+                        <div class="form-group">
+                            <label for="form-ticket-cost" class="required-field">Valor Ingresso (R$) [Base]</label>
+                            <input type="number" id="form-ticket-cost" placeholder="0.00" min="0" step="any" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="form-ticket-installments">Nº Parcelas</label>
+                            <input type="number" id="form-ticket-installments" value="1" min="1" max="24">
+                        </div>
+                        <div class="form-group" style="display: flex; align-items: center; justify-content: center; margin-top: 18px;">
+                            <label class="checkbox-container" style="padding-left: 22px; font-size: 0.75rem;">
+                                <input type="checkbox" id="form-ticket-interest">
+                                <span class="checkmark"></span>
+                                Tem Juros?
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Campos Calculados -->
+                    <div class="form-row-2">
+                        <div class="form-group">
+                            <label for="form-ticket-parcel-val">Valor Parcela Ingresso (R$)</label>
+                            <input type="text" id="form-ticket-parcel-val" readonly value="R$ 0,00" class="input-readonly">
+                        </div>
+                        <div class="form-group">
+                            <label for="form-ticket-total-val">Total Ingresso COM Juros (R$)</label>
+                            <input type="text" id="form-ticket-total-val" readonly value="R$ 0,00" class="input-readonly">
+                        </div>
                     </div>
                 </div>
 
-                <!-- Link Útil e Status de Pagamento -->
-                <div class="form-row-2">
+                <!-- Resumo Geral Calculado -->
+                <div class="form-totals-preview" style="background: rgba(249, 115, 22, 0.04); border: 1px solid rgba(249, 115, 22, 0.15); border-radius: var(--border-radius-sm); padding: 14px 18px; display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                    <div>
+                        <span style="font-size: 0.75rem; color: var(--text-muted); display: block;">Valor Total COM Juros:</span>
+                        <strong id="form-preview-total-with-interest" style="font-size: 1.25rem; color: var(--primary); font-family: 'Outfit';">R$ 0,00</strong>
+                    </div>
+                    <div>
+                        <span style="font-size: 0.75rem; color: var(--text-muted); display: block;">Valor Total SEM Juros:</span>
+                        <strong id="form-preview-total-without-interest" style="font-size: 1.25rem; color: var(--text-main); font-family: 'Outfit'; font-weight: 600;">R$ 0,00</strong>
+                    </div>
+                </div>
+
+                <!-- Link Útil, Contato e Status de Pagamento -->
+                <div class="form-row-3" style="grid-template-columns: 1.2fr 1fr 1fr; gap: 12px;">
                     <div class="form-group">
                         <label for="form-link">Link Útil (Maps, Site, Instagram)</label>
-                        <input type="url" id="form-link" placeholder="https://instagram.com/...">
+                        <input type="url" id="form-link" placeholder="https://...">
+                    </div>
+                    <div class="form-group">
+                        <label for="form-contact">Contato (Telefone/WhatsApp)</label>
+                        <input type="text" id="form-contact" placeholder="Ex: +56 9 1234 5678">
                     </div>
                     <div class="form-group">
                         <label for="form-payment-status">Status do Pagamento</label>
@@ -290,7 +368,7 @@
                 <!-- Observações -->
                 <div class="form-group">
                     <label for="form-notes">Observações / Dicas / Checklist</label>
-                    <textarea id="form-notes" rows="3" placeholder="Ex: Levar roupas térmicas, óculos escuros e água. Telefone do guia: +56 9..."></textarea>
+                    <textarea id="form-notes" rows="3" placeholder="Ex: Levar luvas, agasalho, protetor solar..."></textarea>
                 </div>
 
                 <div class="modal-footer">

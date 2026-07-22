@@ -199,6 +199,9 @@ let restaurants = [];
 let activeDayId = "";
 let lastActiveNormalDayId = "day-1";
 
+// Referências de elementos do DOM (inicializados no DOMContentLoaded)
+let activityModal, dayModal, restaurantModal, sidebarPanel, menuToggleBtn, closeSidebarBtn, overlay;
+
 /* ==========================================================================
    FINANCIAL CALCULATIONS
    ========================================================================== */
@@ -259,7 +262,7 @@ function saveState() {
 
 function loadState() {
     const DB_VERSION_KEY = 'chile_planner_db_version';
-    const CURRENT_VERSION = 'v7_restaurants'; // Força migração de BD para incluir restaurantes e passeios a decidir padrão
+    const CURRENT_VERSION = 'v8_safe_bind'; // Força migração de BD para garantir bindings seguros e passeios atualizados
 
     if (localStorage.getItem(DB_VERSION_KEY) !== CURRENT_VERSION) {
         localStorage.clear();
@@ -280,24 +283,28 @@ function loadState() {
     const storedLastActiveNormal = localStorage.getItem('chile_planner_last_active_normal_day_id');
 
     if (storedConfig) {
-        config = JSON.parse(storedConfig);
+        try { config = JSON.parse(storedConfig); } catch(e) { console.error(e); }
     }
     
     if (storedDays) {
-        days = JSON.parse(storedDays);
-        if (!days.some(d => d.id === 'day-to-decide')) {
-            days.push({
-                id: "day-to-decide",
-                dateLabel: "A Decidir",
-                activities: []
-            });
+        try {
+            days = JSON.parse(storedDays);
+            if (!days.some(d => d.id === 'day-to-decide')) {
+                days.push({
+                    id: "day-to-decide",
+                    dateLabel: "A Decidir",
+                    activities: []
+                });
+            }
+        } catch(e) {
+            days = JSON.parse(JSON.stringify(defaultDays));
         }
     } else {
         days = JSON.parse(JSON.stringify(defaultDays));
     }
 
     if (storedRestaurants) {
-        restaurants = JSON.parse(storedRestaurants);
+        try { restaurants = JSON.parse(storedRestaurants); } catch(e) { console.error(e); }
     } else {
         restaurants = JSON.parse(JSON.stringify(defaultRestaurants));
     }
@@ -354,20 +361,31 @@ function updateSidebarSummary() {
         });
     });
 
-    document.getElementById('total-general').innerText = formatBRL(grandTotalBrl);
-    document.getElementById('total-general-clp').innerText = `${formatCLP(grandTotalClp)} CLP`;
-    document.getElementById('total-agency').innerText = formatBRL(totalAgencyBrl);
-    document.getElementById('total-tickets').innerText = formatBRL(totalTicketsBrl);
-    document.getElementById('total-paid').innerText = formatBRL(totalPaidBrl);
-    document.getElementById('total-pending').innerText = formatBRL(totalPendingBrl);
-    document.getElementById('total-decide').innerText = formatBRL(decideTotalBrl);
+    const elTotalGen = document.getElementById('total-general');
+    const elTotalGenClp = document.getElementById('total-general-clp');
+    const elTotalAge = document.getElementById('total-agency');
+    const elTotalTic = document.getElementById('total-tickets');
+    const elTotalPai = document.getElementById('total-paid');
+    const elTotalPen = document.getElementById('total-pending');
+    const elTotalDec = document.getElementById('total-decide');
 
-    document.getElementById('rate-input').value = config.clpRate;
-    document.getElementById('tax-input').value = config.cardTax;
+    if (elTotalGen) elTotalGen.innerText = formatBRL(grandTotalBrl);
+    if (elTotalGenClp) elTotalGenClp.innerText = `${formatCLP(grandTotalClp)} CLP`;
+    if (elTotalAge) elTotalAge.innerText = formatBRL(totalAgencyBrl);
+    if (elTotalTic) elTotalTic.innerText = formatBRL(totalTicketsBrl);
+    if (elTotalPai) elTotalPai.innerText = formatBRL(totalPaidBrl);
+    if (elTotalPen) elTotalPen.innerText = formatBRL(totalPendingBrl);
+    if (elTotalDec) elTotalDec.innerText = formatBRL(decideTotalBrl);
+
+    const elRateInput = document.getElementById('rate-input');
+    const elTaxInput = document.getElementById('tax-input');
+    if (elRateInput) elRateInput.value = config.clpRate;
+    if (elTaxInput) elTaxInput.value = config.cardTax;
 }
 
 function renderDaysTabs() {
     const container = document.getElementById('days-tabs-container');
+    if (!container) return;
     container.innerHTML = "";
 
     const normalDays = days.filter(d => d.id !== 'day-to-decide');
@@ -409,28 +427,27 @@ function renderDaysTabs() {
     container.appendChild(addTabEl);
 }
 
-/**
- * Atualiza os botões superiores ("A Decidir" e "Restaurantes") conforme a seleção
- */
 function updateTopNavigationButtonsState() {
     const btnDecide = document.getElementById('btn-view-decide');
     const btnRest = document.getElementById('btn-view-restaurants');
 
-    if (activeDayId === 'day-to-decide') {
-        btnDecide.classList.add('btn-primary');
-        btnDecide.classList.remove('btn-secondary');
-        btnRest.classList.remove('btn-primary');
-        btnRest.classList.add('btn-secondary');
-    } else if (activeDayId === 'restaurants') {
-        btnRest.classList.add('btn-primary');
-        btnRest.classList.remove('btn-secondary');
-        btnDecide.classList.remove('btn-primary');
-        btnDecide.classList.add('btn-secondary');
-    } else {
-        btnDecide.classList.remove('btn-primary');
-        btnDecide.classList.add('btn-secondary');
-        btnRest.classList.remove('btn-primary');
-        btnRest.classList.add('btn-secondary');
+    if (btnDecide && btnRest) {
+        if (activeDayId === 'day-to-decide') {
+            btnDecide.classList.add('btn-primary');
+            btnDecide.classList.remove('btn-secondary');
+            btnRest.classList.remove('btn-primary');
+            btnRest.classList.add('btn-secondary');
+        } else if (activeDayId === 'restaurants') {
+            btnRest.classList.add('btn-primary');
+            btnRest.classList.remove('btn-secondary');
+            btnDecide.classList.remove('btn-primary');
+            btnDecide.classList.add('btn-secondary');
+        } else {
+            btnDecide.classList.remove('btn-primary');
+            btnDecide.classList.add('btn-secondary');
+            btnRest.classList.remove('btn-primary');
+            btnRest.classList.add('btn-secondary');
+        }
     }
 }
 
@@ -438,8 +455,9 @@ function renderActiveDay() {
     const daySection = document.querySelector('.day-details-section:not(#restaurants-section)');
     const restSection = document.getElementById('restaurants-section');
 
+    if (!daySection || !restSection) return;
+
     if (activeDayId === 'restaurants') {
-        // Modo Guia de Restaurantes
         daySection.style.display = "none";
         restSection.style.display = "flex";
         renderRestaurants();
@@ -447,7 +465,6 @@ function renderActiveDay() {
         return;
     }
 
-    // Modo Roteiro / A Decidir
     daySection.style.display = "flex";
     restSection.style.display = "none";
     updateTopNavigationButtonsState();
@@ -463,37 +480,39 @@ function renderActiveDay() {
     const btnBack = document.getElementById('btn-back-to-itinerary');
 
     if (!activeDay) {
-        activeDayTitle.innerText = "Selecione ou Crie um Dia";
-        activeDaySubtitle.innerText = "Crie dias de viagem usando o botão '+ Adicionar Dia'";
-        daySummaryBar.style.display = "none";
-        container.innerHTML = `
-            <div class="empty-state">
-                <i class="fa-solid fa-mountain-sun"></i>
-                <p>Nenhum dia de viagem configurado. Adicione seu primeiro dia para começar!</p>
-                <button class="btn btn-primary" onclick="openAddDayModal()">
-                    <i class="fa-solid fa-calendar-plus"></i> Criar Dia
-                </button>
-            </div>
-        `;
+        if (activeDayTitle) activeDayTitle.innerText = "Selecione ou Crie um Dia";
+        if (activeDaySubtitle) activeDaySubtitle.innerText = "Crie dias de viagem usando o botão '+ Adicionar Dia'";
+        if (daySummaryBar) daySummaryBar.style.display = "none";
+        if (container) {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <i class="fa-solid fa-mountain-sun"></i>
+                    <p>Nenhum dia de viagem configurado. Adicione seu primeiro dia para começar!</p>
+                    <button class="btn btn-primary" onclick="openAddDayModal()">
+                        <i class="fa-solid fa-calendar-plus"></i> Criar Dia
+                    </button>
+                </div>
+            `;
+        }
         return;
     }
 
     const isToDecide = activeDay.id === 'day-to-decide';
     if (isToDecide) {
-        btnDeleteDay.style.display = "none";
-        btnEditDay.style.display = "none";
-        btnBack.style.display = "inline-flex";
-        activeDayTitle.innerText = "💡 Passeios a Decidir";
-        activeDaySubtitle.innerText = "Ideias de atividades ou opções de backup ainda não confirmadas";
+        if (btnDeleteDay) btnDeleteDay.style.display = "none";
+        if (btnEditDay) btnEditDay.style.display = "none";
+        if (btnBack) btnBack.style.display = "inline-flex";
+        if (activeDayTitle) activeDayTitle.innerText = "💡 Passeios a Decidir";
+        if (activeDaySubtitle) activeDaySubtitle.innerText = "Ideias de atividades ou opções de backup ainda não confirmadas";
     } else {
-        btnDeleteDay.style.display = "inline-flex";
-        btnEditDay.style.display = "inline-flex";
-        btnBack.style.display = "none";
-        activeDayTitle.innerText = activeDay.dateLabel;
-        activeDaySubtitle.innerText = `${activeDay.activities.length} atividade(s) planejada(s)`;
+        if (btnDeleteDay) btnDeleteDay.style.display = "inline-flex";
+        if (btnEditDay) btnEditDay.style.display = "inline-flex";
+        if (btnBack) btnBack.style.display = "none";
+        if (activeDayTitle) activeDayTitle.innerText = activeDay.dateLabel;
+        if (activeDaySubtitle) activeDaySubtitle.innerText = `${activeDay.activities.length} atividade(s) planejada(s)`;
     }
 
-    daySummaryBar.style.display = "flex";
+    if (daySummaryBar) daySummaryBar.style.display = "flex";
 
     const sortedActivities = [...activeDay.activities].sort((a, b) => {
         if (!a.startTime) return 1;
@@ -514,22 +533,31 @@ function renderActiveDay() {
         dayTicketBrl += fin.ticketTotalWithInterest;
     });
 
-    document.getElementById('day-total-brl').innerText = formatBRL(dayTotalBrl);
-    document.getElementById('day-total-clp').innerText = `${formatCLP(dayTotalClp)} CLP`;
-    document.getElementById('day-agency-total').innerText = formatBRL(dayAgencyBrl);
-    document.getElementById('day-ticket-total').innerText = formatBRL(dayTicketBrl);
+    const elDayTotBrl = document.getElementById('day-total-brl');
+    const elDayTotClp = document.getElementById('day-total-clp');
+    const elDayAgeTot = document.getElementById('day-agency-total');
+    const elDayTicTot = document.getElementById('day-ticket-total');
 
-    if (isToDecide) {
-        daySummaryBar.querySelector('.day-metric-label').innerText = "Orçamento em Aberto:";
-        daySummaryBar.style.background = "rgba(148, 163, 184, 0.05)";
-        daySummaryBar.style.borderColor = "rgba(148, 163, 184, 0.2)";
-        daySummaryBar.querySelector('.day-metric-value').style.color = "var(--text-muted)";
-    } else {
-        daySummaryBar.querySelector('.day-metric-label').innerText = "Subtotal do Dia:";
-        daySummaryBar.style.background = "rgba(249, 115, 22, 0.03)";
-        daySummaryBar.style.borderColor = "rgba(249, 115, 22, 0.2)";
-        daySummaryBar.querySelector('.day-metric-value').style.color = "var(--primary)";
+    if (elDayTotBrl) elDayTotBrl.innerText = formatBRL(dayTotalBrl);
+    if (elDayTotClp) elDayTotClp.innerText = `${formatCLP(dayTotalClp)} CLP`;
+    if (elDayAgeTot) elDayAgeTot.innerText = formatBRL(dayAgencyBrl);
+    if (elDayTicTot) elDayTicTot.innerText = formatBRL(dayTicketBrl);
+
+    if (daySummaryBar) {
+        if (isToDecide) {
+            daySummaryBar.querySelector('.day-metric-label').innerText = "Orçamento em Aberto:";
+            daySummaryBar.style.background = "rgba(148, 163, 184, 0.05)";
+            daySummaryBar.style.borderColor = "rgba(148, 163, 184, 0.2)";
+            daySummaryBar.querySelector('.day-metric-value').style.color = "var(--text-muted)";
+        } else {
+            daySummaryBar.querySelector('.day-metric-label').innerText = "Subtotal do Dia:";
+            daySummaryBar.style.background = "rgba(249, 115, 22, 0.03)";
+            daySummaryBar.style.borderColor = "rgba(249, 115, 22, 0.2)";
+            daySummaryBar.querySelector('.day-metric-value').style.color = "var(--primary)";
+        }
     }
+
+    if (!container) return;
 
     if (sortedActivities.length === 0) {
         container.innerHTML = `
@@ -673,10 +701,9 @@ function renderActiveDay() {
    RESTAURANT CONTROLS & RENDERING
    ========================================================================== */
 
-const restaurantModal = document.getElementById('restaurant-modal');
-
 function renderRestaurants() {
     const container = document.getElementById('restaurants-grid-container');
+    if (!container) return;
     
     if (restaurants.length === 0) {
         container.innerHTML = `
@@ -753,11 +780,14 @@ function openAddRestaurantModal() {
     document.getElementById('modal-restaurant-title').innerText = "Adicionar Restaurante";
     document.getElementById('form-rest-id').value = "";
     document.getElementById('form-rest-photo-base64').value = "";
-    document.getElementById('restaurant-form').reset();
+    const form = document.getElementById('restaurant-form');
+    if (form) form.reset();
     
     const previewImg = document.getElementById('form-rest-photo-preview');
-    previewImg.src = "";
-    previewImg.style.display = "none";
+    if (previewImg) {
+        previewImg.src = "";
+        previewImg.style.display = "none";
+    }
 
     openDynamicModal(restaurantModal);
 }
@@ -779,12 +809,14 @@ function openEditRestaurantModal(id) {
     document.getElementById('form-rest-photo-base64').value = rest.photo || "";
 
     const previewImg = document.getElementById('form-rest-photo-preview');
-    if (rest.photo) {
-        previewImg.src = rest.photo;
-        previewImg.style.display = "block";
-    } else {
-        previewImg.src = "";
-        previewImg.style.display = "none";
+    if (previewImg) {
+        if (rest.photo) {
+            previewImg.src = rest.photo;
+            previewImg.style.display = "block";
+        } else {
+            previewImg.src = "";
+            previewImg.style.display = "none";
+        }
     }
 
     openDynamicModal(restaurantModal);
@@ -799,109 +831,17 @@ function deleteRestaurant(id) {
     }
 }
 
-// Handler de Upload de Imagem e Compressão via Canvas
-document.getElementById('form-rest-photo-file').addEventListener('change', (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
+/* ==========================================================================
+   MODAL AUXILIARY CONTROLS
+   ========================================================================== */
 
-    // Limpa o link de imagem colado para priorizar o arquivo
-    document.getElementById('form-rest-photo-url').value = "";
+function openDynamicModal(modalEl) {
+    if (modalEl) modalEl.classList.add('open');
+}
 
-    const reader = new FileReader();
-    reader.onload = function(event) {
-        const img = new Image();
-        img.onload = function() {
-            // Compressão em canvas
-            const canvas = document.createElement('canvas');
-            const MAX_WIDTH = 320;
-            const MAX_HEIGHT = 200;
-            let width = img.width;
-            let height = img.height;
-
-            if (width > height) {
-                if (width > MAX_WIDTH) {
-                    height *= MAX_WIDTH / width;
-                    width = MAX_WIDTH;
-                }
-            } else {
-                if (height > MAX_HEIGHT) {
-                    width *= MAX_HEIGHT / height;
-                    height = MAX_HEIGHT;
-                }
-            }
-
-            canvas.width = width;
-            canvas.height = height;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0, width, height);
-
-            // Transforma em jpeg comprimido base64
-            const compressedBase64 = canvas.toDataURL('image/jpeg', 0.65);
-            
-            document.getElementById('form-rest-photo-base64').value = compressedBase64;
-            const preview = document.getElementById('form-rest-photo-preview');
-            preview.src = compressedBase64;
-            preview.style.display = "block";
-        };
-        img.src = event.target.result;
-    };
-    reader.readAsDataURL(file);
-});
-
-// Handler de alteração no campo de URL da imagem
-document.getElementById('form-rest-photo-url').addEventListener('input', (e) => {
-    const url = e.target.value.trim();
-    const preview = document.getElementById('form-rest-photo-preview');
-    const base64Input = document.getElementById('form-rest-photo-base64');
-    
-    if (url) {
-        base64Input.value = url;
-        preview.src = url;
-        preview.style.display = "block";
-        // Limpa o upload de arquivo para priorizar a URL
-        document.getElementById('form-rest-photo-file').value = "";
-    } else {
-        base64Input.value = "";
-        preview.src = "";
-        preview.style.display = "none";
-    }
-});
-
-// Submissão do Formulário de Restaurantes
-document.getElementById('restaurant-form').addEventListener('submit', (e) => {
-    e.preventDefault();
-
-    const id = document.getElementById('form-rest-id').value;
-    const restData = {
-        id: id || `rest-${Date.now()}`,
-        name: document.getElementById('form-rest-name').value,
-        address: document.getElementById('form-rest-address').value,
-        linkMaps: document.getElementById('form-rest-link-maps').value,
-        linkInstagram: document.getElementById('form-rest-link-instagram').value,
-        openTime: document.getElementById('form-rest-open-time').value,
-        closeTime: document.getElementById('form-rest-close-time').value,
-        photo: document.getElementById('form-rest-photo-base64').value,
-        notes: document.getElementById('form-rest-notes').value
-    };
-
-    if (id) {
-        const index = restaurants.findIndex(r => r.id === id);
-        if (index !== -1) {
-            restaurants[index] = restData;
-        }
-    } else {
-        restaurants.push(restData);
-    }
-
-    saveState();
-    closeDynamicModal(restaurantModal);
-    renderRestaurants();
-    updateSidebarSummary();
-});
-
-// Fechar modal de restaurantes
-document.getElementById('close-restaurant-modal-btn').addEventListener('click', () => closeDynamicModal(restaurantModal));
-document.getElementById('btn-cancel-restaurant').addEventListener('click', () => closeDynamicModal(restaurantModal));
+function closeDynamicModal(modalEl) {
+    if (modalEl) modalEl.classList.remove('open');
+}
 
 /* --- FORM CALCULATIONS TRIGGER (REAL-TIME PREVIEW) --- */
 
@@ -911,72 +851,78 @@ function updateFormCalculations() {
     const cardMultiplier = 1 + (cardTax / 100);
 
     // 1. Agência
-    const agencyCostUnit = parseFloat(document.getElementById('form-agency-cost-unit').value) || 0;
-    const agencyCurrency = document.getElementById('form-agency-currency').value;
-    const agencyPeople = parseInt(document.getElementById('form-agency-people').value) || 1;
+    const agencyCostUnitInput = document.getElementById('form-agency-cost-unit');
+    const agencyCurrencyInput = document.getElementById('form-agency-currency');
+    const agencyPeopleInput = document.getElementById('form-agency-people');
     const agencyCostInput = document.getElementById('form-agency-cost');
 
-    if (agencyCostUnit > 0) {
-        let calculatedBase = agencyCostUnit * agencyPeople;
-        if (agencyCurrency === 'CLP') {
-            calculatedBase = calculatedBase / clpRate;
+    if (agencyCostUnitInput && agencyCurrencyInput && agencyPeopleInput && agencyCostInput) {
+        const agencyCostUnit = parseFloat(agencyCostUnitInput.value) || 0;
+        const agencyCurrency = agencyCurrencyInput.value;
+        const agencyPeople = parseInt(agencyPeopleInput.value) || 1;
+
+        if (agencyCostUnit > 0) {
+            let calculatedBase = agencyCostUnit * agencyPeople;
+            if (agencyCurrency === 'CLP') {
+                calculatedBase = calculatedBase / clpRate;
+            }
+            agencyCostInput.value = calculatedBase.toFixed(2);
         }
-        agencyCostInput.value = calculatedBase.toFixed(2);
     }
 
-    const agencyCostBase = parseFloat(agencyCostInput.value) || 0;
-    const agencyInstallments = Math.max(1, parseInt(document.getElementById('form-agency-installments').value) || 1);
-    const agencyHasInterest = document.getElementById('form-agency-interest').checked;
+    const agencyCostBase = parseFloat(document.getElementById('form-agency-cost')?.value) || 0;
+    const agencyInstallments = Math.max(1, parseInt(document.getElementById('form-agency-installments')?.value) || 1);
+    const agencyHasInterest = document.getElementById('form-agency-interest')?.checked;
 
     const agencyTotalWithInterest = agencyHasInterest ? (agencyCostBase * cardMultiplier) : agencyCostBase;
     const agencyParcelValue = agencyTotalWithInterest / agencyInstallments;
 
-    document.getElementById('form-agency-parcel-val').value = formatBRL(agencyParcelValue);
-    document.getElementById('form-agency-total-val').value = formatBRL(agencyTotalWithInterest);
+    const elAgeParVal = document.getElementById('form-agency-parcel-val');
+    const elAgeTotVal = document.getElementById('form-agency-total-val');
+    if (elAgeParVal) elAgeParVal.value = formatBRL(agencyParcelValue);
+    if (elAgeTotVal) elAgeTotVal.value = formatBRL(agencyTotalWithInterest);
 
     // 2. Ingresso
-    const ticketCostUnit = parseFloat(document.getElementById('form-ticket-cost-unit').value) || 0;
-    const ticketCurrency = document.getElementById('form-ticket-currency').value;
-    const ticketPeople = parseInt(document.getElementById('form-ticket-people').value) || 1;
+    const ticketCostUnitInput = document.getElementById('form-ticket-cost-unit');
+    const ticketCurrencyInput = document.getElementById('form-ticket-currency');
+    const ticketPeopleInput = document.getElementById('form-ticket-people');
     const ticketCostInput = document.getElementById('form-ticket-cost');
 
-    if (ticketCostUnit > 0) {
-        let calculatedBase = ticketCostUnit * ticketPeople;
-        if (ticketCurrency === 'CLP') {
-            calculatedBase = calculatedBase / clpRate;
+    if (ticketCostUnitInput && ticketCurrencyInput && ticketPeopleInput && ticketCostInput) {
+        const ticketCostUnit = parseFloat(ticketCostUnitInput.value) || 0;
+        const ticketCurrency = ticketCurrencyInput.value;
+        const ticketPeople = parseInt(ticketPeopleInput.value) || 1;
+
+        if (ticketCostUnit > 0) {
+            let calculatedBase = ticketCostUnit * ticketPeople;
+            if (ticketCurrency === 'CLP') {
+                calculatedBase = calculatedBase / clpRate;
+            }
+            ticketCostInput.value = calculatedBase.toFixed(2);
         }
-        ticketCostInput.value = calculatedBase.toFixed(2);
     }
 
-    const ticketCostBase = parseFloat(ticketCostInput.value) || 0;
-    const ticketInstallments = Math.max(1, parseInt(document.getElementById('form-ticket-installments').value) || 1);
-    const ticketHasInterest = document.getElementById('form-ticket-interest').checked;
+    const ticketCostBase = parseFloat(document.getElementById('form-ticket-cost')?.value) || 0;
+    const ticketInstallments = Math.max(1, parseInt(document.getElementById('form-ticket-installments')?.value) || 1);
+    const ticketHasInterest = document.getElementById('form-ticket-interest')?.checked;
 
     const ticketTotalWithInterest = ticketHasInterest ? (ticketCostBase * cardMultiplier) : ticketCostBase;
     const ticketParcelValue = ticketTotalWithInterest / ticketInstallments;
 
-    document.getElementById('form-ticket-parcel-val').value = formatBRL(ticketParcelValue);
-    document.getElementById('form-ticket-total-val').value = formatBRL(ticketTotalWithInterest);
+    const elTicParVal = document.getElementById('form-ticket-parcel-val');
+    const elTicTotVal = document.getElementById('form-ticket-total-val');
+    if (elTicParVal) elTicParVal.value = formatBRL(ticketParcelValue);
+    if (elTicTotVal) elTicTotVal.value = formatBRL(ticketTotalWithInterest);
 
     // 3. Totais do Rodapé
     const grandTotalWithInterest = agencyTotalWithInterest + ticketTotalWithInterest;
     const grandTotalWithoutInterest = agencyCostBase + ticketCostBase;
 
-    document.getElementById('form-preview-total-with-interest').innerText = formatBRL(grandTotalWithInterest);
-    document.getElementById('form-preview-total-without-interest').innerText = formatBRL(grandTotalWithoutInterest);
+    const elPrevTotInt = document.getElementById('form-preview-total-with-interest');
+    const elPrevTotNoInt = document.getElementById('form-preview-total-without-interest');
+    if (elPrevTotInt) elPrevTotInt.innerText = formatBRL(grandTotalWithInterest);
+    if (elPrevTotNoInt) elPrevTotNoInt.innerText = formatBRL(grandTotalWithoutInterest);
 }
-
-const formInputs = [
-    'form-agency-cost-unit', 'form-agency-currency', 'form-agency-people', 'form-agency-cost',
-    'form-agency-installments', 'form-agency-interest',
-    'form-ticket-cost-unit', 'form-ticket-currency', 'form-ticket-people', 'form-ticket-cost',
-    'form-ticket-installments', 'form-ticket-interest'
-];
-
-formInputs.forEach(id => {
-    document.getElementById(id).addEventListener('input', updateFormCalculations);
-    document.getElementById(id).addEventListener('change', updateFormCalculations);
-});
 
 /* --- ACTIVITY FORM ACTIONS --- */
 
@@ -986,7 +932,9 @@ function openAddActivityModal() {
 
     document.getElementById('modal-activity-title').innerText = "Adicionar Passeio";
     document.getElementById('form-activity-id').value = "";
-    document.getElementById('activity-form').reset();
+    
+    const form = document.getElementById('activity-form');
+    if (form) form.reset();
     
     document.getElementById('form-agency-people').value = 2;
     document.getElementById('form-ticket-people').value = 2;
@@ -1046,60 +994,18 @@ function openEditActivityModal(activityId) {
     openDynamicModal(activityModal);
 }
 
-document.getElementById('activity-form').addEventListener('submit', (e) => {
-    e.preventDefault();
-    
+function togglePaymentStatus(activityId) {
     const activeDay = days.find(d => d.id === activeDayId);
     if (!activeDay) return;
 
-    const activityId = document.getElementById('form-activity-id').value;
-    
-    const activityData = {
-        id: activityId || `act-${Date.now()}`,
-        title: document.getElementById('form-title').value,
-        city: document.getElementById('form-city').value,
-        address: document.getElementById('form-address').value,
-        startTime: document.getElementById('form-start-time').value,
-        endTime: document.getElementById('form-end-time').value,
-        
-        agencyCostUnit: parseFloat(document.getElementById('form-agency-cost-unit').value) || 0,
-        agencyCostCurrency: document.getElementById('form-agency-currency').value,
-        agencyPeople: parseInt(document.getElementById('form-agency-people').value) || 2,
-        agencyCost: parseFloat(document.getElementById('form-agency-cost').value) || 0,
-        agencyInstallments: parseInt(document.getElementById('form-agency-installments').value) || 1,
-        agencyCardInterest: document.getElementById('form-agency-interest').checked,
-        hasGuide: document.getElementById('form-agency-guide').checked,
+    const act = activeDay.activities.find(a => a.id === activityId);
+    if (!act) return;
 
-        ticketCostUnit: parseFloat(document.getElementById('form-ticket-cost-unit').value) || 0,
-        ticketCostCurrency: document.getElementById('form-ticket-currency').value,
-        ticketPeople: parseInt(document.getElementById('form-ticket-people').value) || 2,
-        ticketCost: parseFloat(document.getElementById('form-ticket-cost').value) || 0,
-        ticketInstallments: parseInt(document.getElementById('form-ticket-installments').value) || 1,
-        ticketCardInterest: document.getElementById('form-ticket-interest').checked,
-
-        linkMaps: document.getElementById('form-link-maps').value,
-        linkInstagram: document.getElementById('form-link-instagram').value,
-        link: document.getElementById('form-link').value,
-        contact: document.getElementById('form-contact').value,
-        paymentStatus: document.getElementById('form-payment-status').value,
-        notes: document.getElementById('form-notes').value
-    };
-
-    if (activityId) {
-        const index = activeDay.activities.findIndex(a => a.id === activityId);
-        if (index !== -1) {
-            activeDay.activities[index] = activityData;
-        }
-    } else {
-        activeDay.activities.push(activityData);
-    }
-
+    act.paymentStatus = act.paymentStatus === 'paid' ? 'pending' : 'paid';
     saveState();
-    closeDynamicModal(activityModal);
     renderActiveDay();
-    renderDaysTabs();
     updateSidebarSummary();
-});
+}
 
 function deleteActivity(activityId) {
     const activeDay = days.find(d => d.id === activeDayId);
@@ -1112,19 +1018,6 @@ function deleteActivity(activityId) {
         renderDaysTabs();
         updateSidebarSummary();
     }
-}
-
-function togglePaymentStatus(activityId) {
-    const activeDay = days.find(d => d.id === activeDayId);
-    if (!activeDay) return;
-
-    const act = activeDay.activities.find(a => a.id === activityId);
-    if (!act) return;
-
-    act.paymentStatus = act.paymentStatus === 'paid' ? 'pending' : 'paid';
-    saveState();
-    renderActiveDay();
-    updateSidebarSummary();
 }
 
 /* --- DAY FORM ACTIONS --- */
@@ -1151,235 +1044,393 @@ function openEditDayModal() {
     openDynamicModal(dayModal);
 }
 
-document.getElementById('day-form').addEventListener('submit', (e) => {
-    e.preventDefault();
-
-    const dayId = document.getElementById('form-day-id').value;
-    const label = document.getElementById('form-day-label').value;
-
-    if (dayId) {
-        const day = days.find(d => d.id === dayId);
-        if (day) {
-            day.dateLabel = label;
-        }
-    } else {
-        const newId = `day-${Date.now()}`;
-        const decideIndex = days.findIndex(d => d.id === 'day-to-decide');
-        const newDay = {
-            id: newId,
-            dateLabel: label,
-            activities: []
-        };
-        
-        if (decideIndex !== -1) {
-            days.splice(decideIndex, 0, newDay);
-        } else {
-            days.push(newDay);
-        }
-        
-        activeDayId = newId;
-        lastActiveNormalDayId = newId;
-    }
-
-    saveState();
-    closeDynamicModal(dayModal);
-    renderDaysTabs();
-    renderActiveDay();
-});
-
-document.getElementById('btn-delete-day').addEventListener('click', () => {
-    if (!activeDayId || activeDayId === 'day-to-decide') return;
-
-    if (confirm("ATENÇÃO: Isso excluirá permanentemente este dia de viagem e TODOS os passeios cadastrados nele. Deseja prosseguir?")) {
-        days = days.filter(d => d.id !== activeDayId);
-        const normalDays = days.filter(d => d.id !== 'day-to-decide');
-        activeDayId = normalDays.length > 0 ? normalDays[0].id : "day-to-decide";
-        if (activeDayId !== "day-to-decide") {
-            lastActiveNormalDayId = activeDayId;
-        }
-        saveState();
-        renderDaysTabs();
-        renderActiveDay();
-        updateSidebarSummary();
-        updateTopNavigationButtonsState();
-    }
-});
-
 /* ==========================================================================
-   GLOBAL CONFIGURATION ACTIONS
-   ========================================================================== */
-
-document.getElementById('save-config-btn').addEventListener('click', () => {
-    const rate = parseFloat(document.getElementById('rate-input').value);
-    const tax = parseFloat(document.getElementById('tax-input').value);
-
-    if (isNaN(rate) || rate <= 0) {
-        alert("Cotação inválida! Insira um número maior que zero.");
-        return;
-    }
-
-    if (isNaN(tax) || tax < 0) {
-        alert("Taxa inválida! Insira zero ou um número positivo.");
-        return;
-    }
-
-    config.clpRate = rate;
-    config.cardTax = tax;
-
-    saveState();
-    updateSidebarSummary();
-    renderActiveDay();
-    alert("Taxas e Cotação de Câmbio atualizadas com sucesso!");
-});
-
-/* ==========================================================================
-   BACKUP & RESET UTILITIES
-   ========================================================================== */
-
-document.getElementById('btn-export-backup').addEventListener('click', () => {
-    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify({ config, days, restaurants }));
-    const downloadAnchor = document.createElement('a');
-    downloadAnchor.setAttribute("href", dataStr);
-    downloadAnchor.setAttribute("download", `chile_itinerary_backup_${new Date().toISOString().split('T')[0]}.json`);
-    document.body.appendChild(downloadAnchor);
-    downloadAnchor.click();
-    downloadAnchor.remove();
-});
-
-document.getElementById('btn-import-trigger').addEventListener('click', () => {
-    document.getElementById('import-file').click();
-});
-
-document.getElementById('import-file').addEventListener('change', (e) => {
-    const fileReader = new FileReader();
-    if (!e.target.files.length) return;
-    
-    fileReader.onload = function(event) {
-        try {
-            const importedData = JSON.parse(event.target.result);
-            if (importedData.config && importedData.days) {
-                config = importedData.config;
-                days = importedData.days;
-                restaurants = importedData.restaurants || [];
-                
-                if (!days.some(d => d.id === 'day-to-decide')) {
-                    days.push({
-                        id: "day-to-decide",
-                        dateLabel: "A Decidir",
-                        activities: []
-                    });
-                }
-
-                activeDayId = days.length > 0 ? days[0].id : "day-to-decide";
-                if (activeDayId !== "day-to-decide") {
-                    lastActiveNormalDayId = activeDayId;
-                }
-                
-                saveState();
-                renderDaysTabs();
-                renderActiveDay();
-                updateSidebarSummary();
-                updateTopNavigationButtonsState();
-                alert("Roteiro importado com sucesso!");
-            } else {
-                alert("Arquivo inválido. Formato de backup incorreto.");
-            }
-        } catch(err) {
-            alert("Erro ao ler o arquivo de backup.");
-        }
-    };
-    fileReader.readAsText(e.target.files[0]);
-    e.target.value = "";
-});
-
-document.getElementById('btn-reset-data').addEventListener('click', () => {
-    if (confirm("ATENÇÃO: Esta ação apagará TODOS os dados cadastrados e redefinirá o roteiro para o exemplo inicial. Tem certeza?")) {
-        localStorage.clear();
-        loadState();
-        renderDaysTabs();
-        renderActiveDay();
-        updateSidebarSummary();
-        updateTopNavigationButtonsState();
-        alert("Dados limpos e redefinidos com sucesso!");
-    }
-});
-
-/* ==========================================================================
-   OTHER GLOBAL ACTIONS
-   ========================================================================== */
-
-document.getElementById('btn-print').addEventListener('click', () => {
-    window.print();
-});
-
-const sidebarPanel = document.getElementById('sidebar-panel');
-const menuToggleBtn = document.getElementById('menu-toggle-btn');
-const closeSidebarBtn = document.getElementById('close-sidebar-btn');
-
-let overlay = document.querySelector('.sidebar-overlay');
-if (!overlay) {
-    overlay = document.createElement('div');
-    overlay.className = 'sidebar-overlay';
-    document.body.appendChild(overlay);
-}
-
-function openSidebar() {
-    sidebarPanel.classList.add('active');
-    overlay.classList.add('active');
-}
-
-function closeSidebar() {
-    sidebarPanel.classList.remove('active');
-    overlay.classList.remove('active');
-}
-
-menuToggleBtn.addEventListener('click', openSidebar);
-closeSidebarBtn.addEventListener('click', closeSidebar);
-overlay.addEventListener('click', closeSidebar);
-
-/* ==========================================================================
-   INITIALIZATION
+   INITIALIZATION & DOM EVENT BINDING
    ========================================================================== */
 
 window.addEventListener('DOMContentLoaded', () => {
+    // 1. Inicializa Estado de Dados
     loadState();
+
+    // 2. Mapeamento de Elementos do DOM
+    activityModal = document.getElementById('activity-modal');
+    dayModal = document.getElementById('day-modal');
+    restaurantModal = document.getElementById('restaurant-modal');
+    sidebarPanel = document.getElementById('sidebar-panel');
+    menuToggleBtn = document.getElementById('menu-toggle-btn');
+    closeSidebarBtn = document.getElementById('close-sidebar-btn');
+    overlay = document.querySelector('.sidebar-overlay');
+
+    // 3. Renderiza UI Inicial
     renderDaysTabs();
     renderActiveDay();
     updateSidebarSummary();
     updateTopNavigationButtonsState();
 
-    document.getElementById('btn-add-activity').addEventListener('click', openAddActivityModal);
-    document.getElementById('btn-add-day').addEventListener('click', openAddDayModal);
-    document.getElementById('btn-edit-day').addEventListener('click', openEditDayModal);
+    // 4. Ouvintes de Eventos da Linha do Tempo e Dias
+    document.getElementById('btn-add-activity')?.addEventListener('click', openAddActivityModal);
+    document.getElementById('btn-add-day')?.addEventListener('click', openAddDayModal);
+    document.getElementById('btn-edit-day')?.addEventListener('click', openEditDayModal);
 
-    // Ouvinte para adicionar e voltar de restaurantes
-    document.getElementById('btn-add-restaurant').addEventListener('click', openAddRestaurantModal);
-    document.getElementById('btn-back-from-restaurants').addEventListener('click', () => {
+    // 5. Modais de Fechamento (Dias e Passeios)
+    document.getElementById('close-activity-modal-btn')?.addEventListener('click', () => closeDynamicModal(activityModal));
+    document.getElementById('btn-cancel-activity')?.addEventListener('click', () => closeDynamicModal(activityModal));
+    document.getElementById('close-day-modal-btn')?.addEventListener('click', () => closeDynamicModal(dayModal));
+    document.getElementById('btn-cancel-day')?.addEventListener('click', () => closeDynamicModal(dayModal));
+
+    // Ouvinte do formulário de passeios
+    document.getElementById('activity-form')?.addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        const activeDay = days.find(d => d.id === activeDayId);
+        if (!activeDay) return;
+
+        const activityId = document.getElementById('form-activity-id').value;
+        
+        const activityData = {
+            id: activityId || `act-${Date.now()}`,
+            title: document.getElementById('form-title').value,
+            city: document.getElementById('form-city').value,
+            address: document.getElementById('form-address').value,
+            startTime: document.getElementById('form-start-time').value,
+            endTime: document.getElementById('form-end-time').value,
+            
+            agencyCostUnit: parseFloat(document.getElementById('form-agency-cost-unit').value) || 0,
+            agencyCostCurrency: document.getElementById('form-agency-currency').value,
+            agencyPeople: parseInt(document.getElementById('form-agency-people').value) || 2,
+            agencyCost: parseFloat(document.getElementById('form-agency-cost').value) || 0,
+            agencyInstallments: parseInt(document.getElementById('form-agency-installments').value) || 1,
+            agencyCardInterest: document.getElementById('form-agency-interest').checked,
+            hasGuide: document.getElementById('form-agency-guide').checked,
+
+            ticketCostUnit: parseFloat(document.getElementById('form-ticket-cost-unit').value) || 0,
+            ticketCostCurrency: document.getElementById('form-ticket-currency').value,
+            ticketPeople: parseInt(document.getElementById('form-ticket-people').value) || 2,
+            ticketCost: parseFloat(document.getElementById('form-ticket-cost').value) || 0,
+            ticketInstallments: parseInt(document.getElementById('form-ticket-installments').value) || 1,
+            ticketCardInterest: document.getElementById('form-ticket-interest').checked,
+
+            linkMaps: document.getElementById('form-link-maps').value,
+            linkInstagram: document.getElementById('form-link-instagram').value,
+            link: document.getElementById('form-link').value,
+            contact: document.getElementById('form-contact').value,
+            paymentStatus: document.getElementById('form-payment-status').value,
+            notes: document.getElementById('form-notes').value
+        };
+
+        if (activityId) {
+            const index = activeDay.activities.findIndex(a => a.id === activityId);
+            if (index !== -1) {
+                activeDay.activities[index] = activityData;
+            }
+        } else {
+            activeDay.activities.push(activityData);
+        }
+
+        saveState();
+        closeDynamicModal(activityModal);
+        renderActiveDay();
+        renderDaysTabs();
+        updateSidebarSummary();
+    });
+
+    // Vincular ouvintes para atualizações de cálculos em tempo real do formulário
+    const inputsArray = [
+        'form-agency-cost-unit', 'form-agency-currency', 'form-agency-people', 'form-agency-cost',
+        'form-agency-installments', 'form-agency-interest',
+        'form-ticket-cost-unit', 'form-ticket-currency', 'form-ticket-people', 'form-ticket-cost',
+        'form-ticket-installments', 'form-ticket-interest'
+    ];
+
+    inputsArray.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            el.addEventListener('input', updateFormCalculations);
+            el.addEventListener('change', updateFormCalculations);
+        }
+    });
+
+    // 6. Ouvintes de Eventos de Restaurantes (Botoes e Modais)
+    document.getElementById('btn-add-restaurant')?.addEventListener('click', openAddRestaurantModal);
+    
+    document.getElementById('btn-back-from-restaurants')?.addEventListener('click', () => {
         activeDayId = lastActiveNormalDayId;
         saveState();
         renderActiveDay();
         renderDaysTabs();
     });
 
-    // Botões de navegação superiores
-    document.getElementById('btn-view-decide').addEventListener('click', () => {
+    document.getElementById('close-restaurant-modal-btn')?.addEventListener('click', () => closeDynamicModal(restaurantModal));
+    document.getElementById('btn-cancel-restaurant')?.addEventListener('click', () => closeDynamicModal(restaurantModal));
+
+    // Upload e link da foto do restaurante
+    document.getElementById('form-rest-photo-file')?.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        document.getElementById('form-rest-photo-url').value = "";
+
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            const img = new Image();
+            img.onload = function() {
+                const canvas = document.createElement('canvas');
+                const MAX_WIDTH = 320;
+                const MAX_HEIGHT = 200;
+                let width = img.width;
+                let height = img.height;
+
+                if (width > height) {
+                    if (width > MAX_WIDTH) {
+                        height *= MAX_WIDTH / width;
+                        width = MAX_WIDTH;
+                    }
+                } else {
+                    if (height > MAX_HEIGHT) {
+                        width *= MAX_HEIGHT / height;
+                        height = MAX_HEIGHT;
+                    }
+                }
+
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+
+                const compressedBase64 = canvas.toDataURL('image/jpeg', 0.65);
+                
+                document.getElementById('form-rest-photo-base64').value = compressedBase64;
+                const preview = document.getElementById('form-rest-photo-preview');
+                if (preview) {
+                    preview.src = compressedBase64;
+                    preview.style.display = "block";
+                }
+            };
+            img.src = event.target.result;
+        };
+        reader.readAsDataURL(file);
+    });
+
+    document.getElementById('form-rest-photo-url')?.addEventListener('input', (e) => {
+        const url = e.target.value.trim();
+        const preview = document.getElementById('form-rest-photo-preview');
+        const base64Input = document.getElementById('form-rest-photo-base64');
+        
+        if (preview && base64Input) {
+            if (url) {
+                base64Input.value = url;
+                preview.src = url;
+                preview.style.display = "block";
+                document.getElementById('form-rest-photo-file').value = "";
+            } else {
+                base64Input.value = "";
+                preview.src = "";
+                preview.style.display = "none";
+            }
+        }
+    });
+
+    // Submissão do formulário de restaurante
+    document.getElementById('restaurant-form')?.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        const id = document.getElementById('form-rest-id').value;
+        const restData = {
+            id: id || `rest-${Date.now()}`,
+            name: document.getElementById('form-rest-name').value,
+            address: document.getElementById('form-rest-address').value,
+            linkMaps: document.getElementById('form-rest-link-maps').value,
+            linkInstagram: document.getElementById('form-rest-link-instagram').value,
+            openTime: document.getElementById('form-rest-open-time').value,
+            closeTime: document.getElementById('form-rest-close-time').value,
+            photo: document.getElementById('form-rest-photo-base64').value,
+            notes: document.getElementById('form-rest-notes').value
+        };
+
+        if (id) {
+            const index = restaurants.findIndex(r => r.id === id);
+            if (index !== -1) {
+                restaurants[index] = restData;
+            }
+        } else {
+            restaurants.push(restData);
+        }
+
+        saveState();
+        closeDynamicModal(restaurantModal);
+        renderRestaurants();
+        updateSidebarSummary();
+    });
+
+    // Ouvinte do formulário de dias
+    document.getElementById('day-form')?.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        const dayId = document.getElementById('form-day-id').value;
+        const label = document.getElementById('form-day-label').value;
+
+        if (dayId) {
+            const day = days.find(d => d.id === dayId);
+            if (day) {
+                day.dateLabel = label;
+            }
+        } else {
+            const newId = `day-${Date.now()}`;
+            const decideIndex = days.findIndex(d => d.id === 'day-to-decide');
+            const newDay = {
+                id: newId,
+                dateLabel: label,
+                activities: []
+            };
+            
+            if (decideIndex !== -1) {
+                days.splice(decideIndex, 0, newDay);
+            } else {
+                days.push(newDay);
+            }
+            
+            activeDayId = newId;
+            lastActiveNormalDayId = newId;
+        }
+
+        saveState();
+        closeDynamicModal(dayModal);
+        renderDaysTabs();
+        renderActiveDay();
+    });
+
+    // 7. Botões de Ações Globais e Painel de Configurações
+    document.getElementById('save-config-btn')?.addEventListener('click', () => {
+        const rate = parseFloat(document.getElementById('rate-input').value);
+        const tax = parseFloat(document.getElementById('tax-input').value);
+
+        if (isNaN(rate) || rate <= 0) {
+            alert("Cotação inválida! Insira um número maior que zero.");
+            return;
+        }
+
+        if (isNaN(tax) || tax < 0) {
+            alert("Taxa inválida! Insira zero ou um número positivo.");
+            return;
+        }
+
+        config.clpRate = rate;
+        config.cardTax = tax;
+
+        saveState();
+        updateSidebarSummary();
+        renderActiveDay();
+        alert("Taxas e Cotação de Câmbio atualizadas com sucesso!");
+    });
+
+    document.getElementById('btn-export-backup')?.addEventListener('click', () => {
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify({ config, days, restaurants }));
+        const downloadAnchor = document.createElement('a');
+        downloadAnchor.setAttribute("href", dataStr);
+        downloadAnchor.setAttribute("download", `chile_itinerary_backup_${new Date().toISOString().split('T')[0]}.json`);
+        document.body.appendChild(downloadAnchor);
+        downloadAnchor.click();
+        downloadAnchor.remove();
+    });
+
+    document.getElementById('btn-import-trigger')?.addEventListener('click', () => {
+        document.getElementById('import-file').click();
+    });
+
+    document.getElementById('import-file')?.addEventListener('change', (e) => {
+        const fileReader = new FileReader();
+        if (!e.target.files.length) return;
+        
+        fileReader.onload = function(event) {
+            try {
+                const importedData = JSON.parse(event.target.result);
+                if (importedData.config && importedData.days) {
+                    config = importedData.config;
+                    days = importedData.days;
+                    restaurants = importedData.restaurants || [];
+                    
+                    if (!days.some(d => d.id === 'day-to-decide')) {
+                        days.push({
+                            id: "day-to-decide",
+                            dateLabel: "A Decidir",
+                            activities: []
+                        });
+                    }
+
+                    activeDayId = days.length > 0 ? days[0].id : "day-to-decide";
+                    if (activeDayId !== "day-to-decide") {
+                        lastActiveNormalDayId = activeDayId;
+                    }
+                    
+                    saveState();
+                    renderDaysTabs();
+                    renderActiveDay();
+                    updateSidebarSummary();
+                    updateTopNavigationButtonsState();
+                    alert("Roteiro importado com sucesso!");
+                } else {
+                    alert("Arquivo inválido. Formato de backup incorreto.");
+                }
+            } catch(err) {
+                alert("Erro ao ler o arquivo de backup.");
+            }
+        };
+        fileReader.readAsText(e.target.files[0]);
+        e.target.value = "";
+    });
+
+    document.getElementById('btn-reset-data')?.addEventListener('click', () => {
+        if (confirm("ATENÇÃO: Esta ação apagará TODOS os dados cadastrados e redefinirá o roteiro para o exemplo inicial. Tem certeza?")) {
+            localStorage.clear();
+            loadState();
+            renderDaysTabs();
+            renderActiveDay();
+            updateSidebarSummary();
+            updateTopNavigationButtonsState();
+            alert("Dados limpos e redefinidos com sucesso!");
+        }
+    });
+
+    document.getElementById('btn-print')?.addEventListener('click', () => {
+        window.print();
+    });
+
+    // 8. Botões de Navegação entre Seções do Menu Superior
+    document.getElementById('btn-view-decide')?.addEventListener('click', () => {
         activeDayId = "day-to-decide";
         saveState();
         renderActiveDay();
         renderDaysTabs();
     });
 
-    document.getElementById('btn-view-restaurants').addEventListener('click', () => {
+    document.getElementById('btn-view-restaurants')?.addEventListener('click', () => {
         activeDayId = "restaurants";
         saveState();
         renderActiveDay();
         renderDaysTabs();
     });
 
-    document.getElementById('btn-back-to-itinerary').addEventListener('click', () => {
+    document.getElementById('btn-back-to-itinerary')?.addEventListener('click', () => {
         activeDayId = lastActiveNormalDayId;
         saveState();
         renderActiveDay();
         renderDaysTabs();
     });
+
+    // 9. Gaveta de Menu Lateral (Mobile Sidebar)
+    if (menuToggleBtn && closeSidebarBtn && overlay) {
+        const openSidebar = () => {
+            sidebarPanel.classList.add('active');
+            overlay.classList.add('active');
+        };
+
+        const closeSidebar = () => {
+            sidebarPanel.classList.remove('active');
+            overlay.classList.remove('active');
+        };
+
+        menuToggleBtn.addEventListener('click', openSidebar);
+        closeSidebarBtn.addEventListener('click', closeSidebar);
+        overlay.addEventListener('click', closeSidebar);
+    }
 });

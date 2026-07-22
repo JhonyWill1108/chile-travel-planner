@@ -157,40 +157,91 @@ const defaultDays = [
     }
 ];
 
-// Restaurantes sugeridos padrão
+// Restaurantes sugeridos padrão (atualizados com a lista da foto do usuário)
 const defaultRestaurants = [
     {
         id: "rest-1",
-        name: "Giratorio Restaurant",
-        address: "Av. Nueva Providencia 2250, Providencia",
-        linkMaps: "https://maps.google.com/?q=Giratorio+Restaurant",
-        linkInstagram: "https://instagram.com/giratoriorestaurant",
-        openTime: "12:30",
-        closeTime: "23:00",
+        name: "Papachecos",
+        address: "",
+        linkMaps: "",
+        linkInstagram: "",
+        openTime: "",
+        closeTime: "",
         photo: "",
-        notes: "Vista 360º incrível de Santiago. Recomendado fazer reserva com boa antecedência para o pôr do sol."
+        cuisine: "Batata",
+        notes: ""
     },
     {
         id: "rest-2",
-        name: "Mestizo",
-        address: "Av. Bicentenario 3800, Vitacura",
-        linkMaps: "https://maps.google.com/?q=Mestizo+Vitacura",
-        linkInstagram: "https://instagram.com/mestizochile",
-        openTime: "13:00",
-        closeTime: "00:00",
+        name: "Underpizza",
+        address: "",
+        linkMaps: "",
+        linkInstagram: "",
+        openTime: "",
+        closeTime: "",
         photo: "",
-        notes: "Fica dentro do Parque Bicentenário. Arquitetura linda de pilares de pedra negra. Excelente pisco sour."
+        cuisine: "Pizza",
+        notes: ""
     },
     {
         id: "rest-3",
-        name: "Bar Liguria",
-        address: "Av. Providencia 1353, Providencia",
-        linkMaps: "https://maps.google.com/?q=Bar+Liguria+Providencia",
-        linkInstagram: "https://instagram.com/bar_liguria",
-        openTime: "12:00",
-        closeTime: "23:30",
+        name: "Utopia",
+        address: "",
+        linkMaps: "",
+        linkInstagram: "",
+        openTime: "",
+        closeTime: "",
         photo: "",
-        notes: "Decoração vintage fantástica. Ótimo para experimentar sanduíches chilenos (Lomito) e pratos típicos."
+        cuisine: "Bar",
+        notes: ""
+    },
+    {
+        id: "rest-4",
+        name: "La Cabrera",
+        address: "",
+        linkMaps: "",
+        linkInstagram: "",
+        openTime: "",
+        closeTime: "",
+        photo: "",
+        cuisine: "Carne",
+        notes: ""
+    },
+    {
+        id: "rest-5",
+        name: "Emporio la Rosa",
+        address: "",
+        linkMaps: "",
+        linkInstagram: "",
+        openTime: "",
+        closeTime: "",
+        photo: "",
+        cuisine: "Sorveteria",
+        notes: ""
+    },
+    {
+        id: "rest-6",
+        name: "Tonny Pizzeria",
+        address: "Av. Apoquindo 2730, Las Condes - Santiago, Chile",
+        linkMaps: "https://maps.google.com/?q=Av.+Apoquindo+2730,+Las+Condes+-+Santiago,+Chile",
+        linkInstagram: "",
+        openTime: "",
+        closeTime: "",
+        photo: "",
+        cuisine: "Pizza",
+        notes: "Ponto de referência: Dentro do MUT (Mercado Urbano Tobalaba)."
+    },
+    {
+        id: "rest-7",
+        name: "Toke Casero",
+        address: "",
+        linkMaps: "",
+        linkInstagram: "",
+        openTime: "",
+        closeTime: "",
+        photo: "",
+        cuisine: "Almoço completo",
+        notes: "Ponto de referência: Ao lado do Costanera - Santiago."
     }
 ];
 
@@ -262,7 +313,7 @@ function saveState() {
 
 function loadState() {
     const DB_VERSION_KEY = 'chile_planner_db_version';
-    const CURRENT_VERSION = 'v8_safe_bind'; // Força migração de BD para garantir bindings seguros e passeios atualizados
+    const CURRENT_VERSION = 'v9_rest_list_photo'; // Força migração de BD para incluir novos restaurantes e tipo de comida
 
     if (localStorage.getItem(DB_VERSION_KEY) !== CURRENT_VERSION) {
         localStorage.clear();
@@ -750,6 +801,12 @@ function renderRestaurants() {
             <div class="restaurant-notes-box">${rest.notes}</div>
         ` : '';
 
+        const cuisineHTML = rest.cuisine ? `
+            <span class="badge badge-cuisine" style="background: rgba(16, 185, 129, 0.1); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.2); font-size: 0.72rem; padding: 2px 8px; border-radius: 12px; display: inline-flex; align-items: center; gap: 4px; width: fit-content; margin-top: 4px;">
+                <i class="fa-solid fa-utensils"></i> ${rest.cuisine}
+            </span>
+        ` : '';
+
         const cardEl = document.createElement('div');
         cardEl.className = "restaurant-card";
         cardEl.innerHTML = `
@@ -763,6 +820,9 @@ function renderRestaurants() {
                         ${mapsLinkHTML}
                         ${instagramLinkHTML}
                     </div>
+                </div>
+                <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 6px;">
+                    ${cuisineHTML}
                 </div>
                 ${addressHTML}
                 ${notesHTML}
@@ -780,6 +840,9 @@ function openAddRestaurantModal() {
     document.getElementById('modal-restaurant-title').innerText = "Adicionar Restaurante";
     document.getElementById('form-rest-id').value = "";
     document.getElementById('form-rest-photo-base64').value = "";
+    const elCuisine = document.getElementById('form-rest-cuisine');
+    if (elCuisine) elCuisine.value = "";
+
     const form = document.getElementById('restaurant-form');
     if (form) form.reset();
     
@@ -805,6 +868,10 @@ function openEditRestaurantModal(id) {
     document.getElementById('form-rest-open-time').value = rest.openTime || "";
     document.getElementById('form-rest-close-time').value = rest.closeTime || "";
     document.getElementById('form-rest-notes').value = rest.notes || "";
+    
+    const elCuisine = document.getElementById('form-rest-cuisine');
+    if (elCuisine) elCuisine.value = rest.cuisine || "";
+
     document.getElementById('form-rest-photo-url').value = (rest.photo && !rest.photo.startsWith('data:')) ? rest.photo : "";
     document.getElementById('form-rest-photo-base64').value = rest.photo || "";
 
@@ -1244,6 +1311,7 @@ window.addEventListener('DOMContentLoaded', () => {
             openTime: document.getElementById('form-rest-open-time').value,
             closeTime: document.getElementById('form-rest-close-time').value,
             photo: document.getElementById('form-rest-photo-base64').value,
+            cuisine: document.getElementById('form-rest-cuisine')?.value || "",
             notes: document.getElementById('form-rest-notes').value
         };
 

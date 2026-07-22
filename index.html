@@ -14,6 +14,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Custom CSS -->
     <link rel="stylesheet" href="styles.css">
+    <!-- Favicon (Bandeira do Chile Emoji SVG) -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2280%22>🇨🇱</text></svg>">
 </head>
 <body>
     <div class="app-container">
@@ -346,14 +348,24 @@
                     </div>
                 </div>
 
-                <!-- Link Útil, Contato e Status de Pagamento -->
-                <div class="form-row-3" style="grid-template-columns: 1.2fr 1fr 1fr; gap: 12px;">
+                <!-- Links, Contato e Status de Pagamento -->
+                <div class="form-row-3" style="grid-template-columns: 1fr 1fr 1fr; gap: 12px;">
                     <div class="form-group">
-                        <label for="form-link">Link Útil (Maps, Site, Instagram)</label>
-                        <input type="url" id="form-link" placeholder="https://...">
+                        <label for="form-link-maps">Link do Google Maps</label>
+                        <input type="url" id="form-link-maps" placeholder="https://maps.google.com/...">
                     </div>
                     <div class="form-group">
-                        <label for="form-contact">Contato (Telefone/WhatsApp)</label>
+                        <label for="form-link-instagram">Link do Instagram</label>
+                        <input type="url" id="form-link-instagram" placeholder="https://instagram.com/...">
+                    </div>
+                    <div class="form-group">
+                        <label for="form-link">Site / Outro Link</label>
+                        <input type="url" id="form-link" placeholder="https://...">
+                    </div>
+                </div>
+                <div class="form-row-2">
+                    <div class="form-group">
+                        <label for="form-contact">Contato (Telefone/WhatsApp/Guia)</label>
                         <input type="text" id="form-contact" placeholder="Ex: +56 9 1234 5678">
                     </div>
                     <div class="form-group">

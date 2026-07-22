@@ -1401,3 +1401,47 @@ h1, h2, h3, h4, h5, h6 {
     border: 1px solid rgba(148, 163, 184, 0.2) !important;
 }
 
+/* Links de atalhos rápidos nos Cards de Atividades (Header) */
+.activity-header-links {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: 8px;
+}
+
+.activity-link-icon {
+    font-size: 1rem;
+    color: var(--text-muted);
+    transition: var(--transition-fast);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--border-color);
+    text-decoration: none !important;
+}
+
+.activity-link-icon:hover {
+    transform: translateY(-2px);
+    color: #fff !important;
+}
+
+.activity-link-icon.instagram-link:hover {
+    background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285aeb 90%) !important;
+    border-color: transparent !important;
+}
+
+.activity-link-icon.maps-link:hover {
+    background: #4285f4 !important;
+    border-color: transparent !important;
+}
+
+.activity-link-icon.site-link:hover {
+    background: var(--primary) !important;
+    border-color: transparent !important;
+}
+
+

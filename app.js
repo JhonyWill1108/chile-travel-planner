@@ -1,5 +1,5 @@
 /* ==========================================================================
-   STATE & PRE-POPULATED DATA (CHILE 2026)
+   STATE & PRE-POPULATED DATA (CHILE 2026 - CLEAN 7 DAYS TEMPLATE)
    ========================================================================== */
 
 // Configuração padrão
@@ -8,244 +8,16 @@ let config = {
     cardTax: 6.38 // IOF + Taxas operacionais
 };
 
-// Roteiro padrão pré-populado com a estrutura de parcelas, juros e contato
+// Roteiro padrão limpo com exatamente os 7 dias solicitados
 const defaultDays = [
-    {
-        id: "day-1",
-        dateLabel: "Dia 1 - 18/08 (Domingo)",
-        activities: [
-            {
-                id: "act-1-1",
-                title: "Embalse el Yeso + Piquenique",
-                city: "Cajón del Maipo",
-                address: "Buscar no Hotel (Santiago)",
-                startTime: "06:00",
-                endTime: "14:30",
-                agencyCostUnit: 45000,
-                agencyCostCurrency: "CLP",
-                agencyPeople: 2,
-                agencyCost: 514.28, // (45000 * 2) / 175 = R$ 514.28
-                agencyInstallments: 3,
-                agencyCardInterest: true,
-                hasGuide: true,
-                ticketCostUnit: 0,
-                ticketCostCurrency: "CLP",
-                ticketPeople: 2,
-                ticketCost: 0,
-                ticketInstallments: 1,
-                ticketCardInterest: false,
-                paymentStatus: "paid",
-                contact: "Agência Andes Tour (+56 9 8273 1192)",
-                notes: "Passeio clássico de montanha. Levar corta-vento forte, óculos escuros, luvas e protetor solar. O passeio já inclui um piquenique com vinhos, queijos e frios à beira do lago.",
-                link: "https://maps.google.com/?q=Embalse+el+Yeso"
-            },
-            {
-                id: "act-1-2",
-                title: "Jantar no Como Agua para Chocolate",
-                city: "Santiago",
-                address: "Constitución 88, Providencia",
-                startTime: "20:30",
-                endTime: "22:30",
-                agencyCostUnit: 0,
-                agencyCostCurrency: "BRL",
-                agencyPeople: 2,
-                agencyCost: 0,
-                agencyInstallments: 1,
-                agencyCardInterest: false,
-                hasGuide: false,
-                ticketCostUnit: 35000,
-                ticketCostCurrency: "CLP",
-                ticketPeople: 2,
-                ticketCost: 400.00, // (35000 * 2) / 175 = R$ 400.00
-                ticketInstallments: 1,
-                ticketCardInterest: true,
-                paymentStatus: "pending",
-                contact: "Restaurante - Reserva Online",
-                notes: "Restaurante muito charmoso e romântico no bairro Bellavista. Especializado em frutos do mar. Prato recomendado: Congrio Celeste.",
-                link: "https://maps.google.com/?q=Como+Agua+para+Chocolate"
-            }
-        ]
-    },
-    {
-        id: "day-2",
-        dateLabel: "Dia 2 - 19/08 (Segunda-feira)",
-        activities: [
-            {
-                id: "act-2-1",
-                title: "City Tour Histórico & Cerro Santa Lucía",
-                city: "Santiago",
-                address: "Plaza de Armas",
-                startTime: "09:30",
-                endTime: "13:00",
-                agencyCostUnit: 15000,
-                agencyCostCurrency: "CLP",
-                agencyPeople: 2,
-                agencyCost: 171.43, // (15000 * 2) / 175 = R$ 171.43
-                agencyInstallments: 1,
-                agencyCardInterest: false,
-                hasGuide: true,
-                ticketCostUnit: 0,
-                ticketCostCurrency: "CLP",
-                ticketPeople: 2,
-                ticketCost: 0,
-                ticketInstallments: 1,
-                ticketCardInterest: false,
-                paymentStatus: "paid",
-                contact: "Guia Local Carlos (+56 9 9918 2234)",
-                notes: "Visitar a Plaza de Armas, a Catedral Metropolitana e subir o Cerro Santa Lucía.",
-                link: "https://maps.google.com/?q=Cerro+Santa+Lucia"
-            },
-            {
-                id: "act-2-2",
-                title: "Aluguel de Roupas de Neve",
-                city: "Santiago",
-                address: "Loja Rent-a-Ski, Santiago Centro",
-                startTime: "17:00",
-                endTime: "18:00",
-                agencyCostUnit: 0,
-                agencyCostCurrency: "BRL",
-                agencyPeople: 2,
-                agencyCost: 0,
-                agencyInstallments: 1,
-                agencyCardInterest: false,
-                hasGuide: false,
-                ticketCostUnit: 15000,
-                ticketCostCurrency: "CLP",
-                ticketPeople: 2,
-                ticketCost: 171.43, // (15000 * 2) / 175 = R$ 171.43
-                ticketInstallments: 1,
-                ticketCardInterest: true,
-                paymentStatus: "pending",
-                contact: "Loja Rent-a-Ski Centro",
-                notes: "Alugar casaco impermeável, calça, botas e luvas para os passeios de montanha.",
-                link: ""
-            }
-        ]
-    },
-    {
-        id: "day-3",
-        dateLabel: "Dia 3 - 20/08 (Terça-feira)",
-        activities: [
-            {
-                id: "act-3-1",
-                title: "Portillo & Laguna del Inca",
-                city: "Andes / Fronteira",
-                address: "Estrada Los Libertadores",
-                startTime: "06:30",
-                endTime: "17:30",
-                agencyCostUnit: 52000,
-                agencyCostCurrency: "CLP",
-                agencyPeople: 2,
-                agencyCost: 594.28, // (52000 * 2) / 175 = R$ 594.28
-                agencyInstallments: 3,
-                agencyCardInterest: true,
-                hasGuide: true,
-                ticketCostUnit: 0,
-                ticketCostCurrency: "CLP",
-                ticketPeople: 2,
-                ticketCost: 0,
-                ticketInstallments: 1,
-                ticketCardInterest: false,
-                paymentStatus: "pending",
-                contact: "Agência Andes Tour (+56 9 8273 1192)",
-                notes: "Viagem em direção à fronteira com a Argentina. Parada na famosa estrada dos Caracóis e Laguna del Inca.",
-                link: "https://maps.google.com/?q=Laguna+del+Inca"
-            }
-        ]
-    },
-    {
-        id: "day-4",
-        dateLabel: "Dia 4 - 21/08 (Quarta-feira)",
-        activities: [
-            {
-                id: "act-4-1",
-                title: "Valle Nevado",
-                city: "Cordilheira dos Andes",
-                address: "Valle Nevado Ski Resort",
-                startTime: "07:00",
-                endTime: "16:30",
-                agencyCostUnit: 40000,
-                agencyCostCurrency: "CLP",
-                agencyPeople: 2,
-                agencyCost: 457.14, // (40000 * 2) / 175 = R$ 457.14
-                agencyInstallments: 2,
-                agencyCardInterest: true,
-                hasGuide: true,
-                ticketCostUnit: 0,
-                ticketCostCurrency: "CLP",
-                ticketPeople: 2,
-                ticketCost: 0,
-                ticketInstallments: 1,
-                ticketCardInterest: false,
-                paymentStatus: "pending",
-                contact: "Agência Andes Tour (+56 9 8273 1192)",
-                notes: "Subida da montanha até o resort Valle Nevado. Roupas de neve completas são obrigatórias.",
-                link: "https://maps.google.com/?q=Valle+Nevado"
-            }
-        ]
-    },
-    {
-        id: "day-5",
-        dateLabel: "Dia 5 - 22/08 (Quinta-feira)",
-        activities: [
-            {
-                id: "act-5-1",
-                title: "Parque Farellones",
-                city: "Farellones",
-                address: "Parque de Neve Farellones",
-                startTime: "07:30",
-                endTime: "17:00",
-                agencyCostUnit: 35000,
-                agencyCostCurrency: "CLP",
-                agencyPeople: 2,
-                agencyCost: 400.00, // (35000 * 2) / 175 = R$ 400.00
-                agencyInstallments: 3,
-                agencyCardInterest: true,
-                hasGuide: false,
-                ticketCostUnit: 36000,
-                ticketCostCurrency: "CLP",
-                ticketPeople: 2,
-                ticketCost: 411.43, // (36000 * 2) / 175 = R$ 411.43
-                ticketInstallments: 1,
-                ticketCardInterest: true,
-                paymentStatus: "pending",
-                contact: "Agência Andes Tour (+56 9 8273 1192)",
-                notes: "Parque de atividades na neve (tubing, tirolesa, teleférico, trenó).",
-                link: "https://maps.google.com/?q=Parque+Farellones"
-            }
-        ]
-    },
-    {
-        id: "day-to-decide",
-        dateLabel: "A Decidir",
-        activities: [
-            {
-                id: "act-decide-1",
-                title: "Vinícola Undurraga (Opção Alternativa)",
-                city: "Talagante / Vale do Maipo",
-                address: "Camino a Melipilla 34, Talagante",
-                startTime: "10:00",
-                endTime: "13:00",
-                agencyCostUnit: 25000,
-                agencyCostCurrency: "CLP",
-                agencyPeople: 2,
-                agencyCost: 285.71, // (25000 * 2) / 175 = R$ 285.71
-                agencyInstallments: 1,
-                agencyCardInterest: false,
-                hasGuide: true,
-                ticketCostUnit: 0,
-                ticketCostCurrency: "CLP",
-                ticketPeople: 2,
-                ticketCost: 0,
-                ticketInstallments: 1,
-                ticketCardInterest: false,
-                paymentStatus: "pending",
-                contact: "Vinícola (+56 2 2372 2900)",
-                notes: "Fazer o Tour Sibaris clássico. Caso decidamos não ir ao Valle Nevado ou Farellones em algum dia.",
-                link: "https://maps.google.com/?q=Vina+Undurraga"
-            }
-        ]
-    }
+    { id: "day-1", dateLabel: "DIA 1 — 16/08/2026 (Domingo)", activities: [] },
+    { id: "day-2", dateLabel: "DIA 2 — 17/08/2026 (Segunda-feira)", activities: [] },
+    { id: "day-3", dateLabel: "DIA 3 — 18/08/2026 (Terça-feira)", activities: [] },
+    { id: "day-4", dateLabel: "DIA 4 — 19/08/2026 (Quarta-feira)", activities: [] },
+    { id: "day-5", dateLabel: "DIA 5 — 20/08/2026 (Quinta-feira)", activities: [] },
+    { id: "day-6", dateLabel: "DIA 6 — 21/08/2026 (Sexta-feira)", activities: [] },
+    { id: "day-7", dateLabel: "DIA 7 — 22/08/2026 (Sábado)", activities: [] },
+    { id: "day-to-decide", dateLabel: "A Decidir", activities: [] }
 ];
 
 let days = [];
@@ -256,7 +28,7 @@ let activeDayId = "";
    ========================================================================== */
 
 /**
- * Calcula os custos consolidados de uma atividade baseando-se no modelo solicitado
+ * Calcula os custos consolidados de uma atividade
  */
 function getActivityFinancials(activity) {
     const cardMultiplier = 1 + (config.cardTax / 100);
@@ -264,35 +36,27 @@ function getActivityFinancials(activity) {
     // 1. Custos de Agência
     const agencyCost = Number(activity.agencyCost) || 0;
     const agencyInstallments = Math.max(1, Number(activity.agencyInstallments) || 1);
-    
-    // Total Agência COM Juros
     const agencyTotalWithInterest = activity.agencyCardInterest ? (agencyCost * cardMultiplier) : agencyCost;
-    // Valor Parcela Agência
     const agencyParcelValue = agencyTotalWithInterest / agencyInstallments;
 
     // 2. Custos de Ingresso
     const ticketCost = Number(activity.ticketCost) || 0;
     const ticketInstallments = Math.max(1, Number(activity.ticketInstallments) || 1);
-
-    // Total Ingresso COM Juros
     const ticketTotalWithInterest = activity.ticketCardInterest ? (ticketCost * cardMultiplier) : ticketCost;
-    // Valor Parcela Ingresso
     const ticketParcelValue = ticketTotalWithInterest / ticketInstallments;
 
     // 3. Totais Acumulados da Atividade em R$
     const totalWithInterest = agencyTotalWithInterest + ticketTotalWithInterest;
     const totalWithoutInterest = agencyCost + ticketCost;
-
-    // Equivalente aproximado em CLP para visualização rápida (baseado na cotação)
     const totalWithInterestClp = totalWithInterest * config.clpRate;
 
     return {
-        agencyCost, // SEM juros
+        agencyCost,
         agencyInstallments,
         agencyTotalWithInterest,
         agencyParcelValue,
         
-        ticketCost, // SEM juros
+        ticketCost,
         ticketInstallments,
         ticketTotalWithInterest,
         ticketParcelValue,
@@ -303,9 +67,6 @@ function getActivityFinancials(activity) {
     };
 }
 
-/**
- * Formatadores de Moeda
- */
 function formatBRL(value) {
     return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
 }
@@ -315,7 +76,7 @@ function formatCLP(value) {
 }
 
 /* ==========================================================================
-   STORAGE FUNCTIONS
+   STORAGE & MIGRATION FUNCTIONS
    ========================================================================== */
 
 function saveState() {
@@ -325,6 +86,20 @@ function saveState() {
 }
 
 function loadState() {
+    // Força atualização da base de dados para o novo template limpo de 7 dias
+    const DB_VERSION_KEY = 'chile_planner_db_version';
+    const CURRENT_VERSION = 'v5_clean'; // Incrementado para forçar migração imediata
+
+    if (localStorage.getItem(DB_VERSION_KEY) !== CURRENT_VERSION) {
+        localStorage.clear();
+        localStorage.setItem(DB_VERSION_KEY, CURRENT_VERSION);
+        days = JSON.parse(JSON.stringify(defaultDays));
+        config = { clpRate: 175, cardTax: 6.38 };
+        activeDayId = "day-1";
+        saveState();
+        return;
+    }
+
     const storedConfig = localStorage.getItem('chile_planner_config');
     const storedDays = localStorage.getItem('chile_planner_days');
     const storedActiveDay = localStorage.getItem('chile_planner_active_day_id');
@@ -335,7 +110,6 @@ function loadState() {
     
     if (storedDays) {
         days = JSON.parse(storedDays);
-        // Garante que a aba "A Decidir" exista no array se vier de um backup antigo
         if (!days.some(d => d.id === 'day-to-decide')) {
             days.push({
                 id: "day-to-decide",
@@ -344,7 +118,6 @@ function loadState() {
             });
         }
     } else {
-        // Carrega dados padrão
         days = JSON.parse(JSON.stringify(defaultDays));
     }
 
@@ -361,9 +134,6 @@ function loadState() {
    UI RENDERING FUNCTIONS
    ========================================================================== */
 
-/**
- * Atualiza o Resumo Geral no Painel Lateral (excluindo "A Decidir")
- */
 function updateSidebarSummary() {
     let grandTotalBrl = 0;
     let grandTotalClp = 0;
@@ -371,7 +141,6 @@ function updateSidebarSummary() {
     let totalTicketsBrl = 0;
     let totalPaidBrl = 0;
     let totalPendingBrl = 0;
-
     let decideTotalBrl = 0;
 
     days.forEach(day => {
@@ -381,10 +150,8 @@ function updateSidebarSummary() {
             const fin = getActivityFinancials(act);
             
             if (isToDecide) {
-                // Soma separada para os passeios a decidir
                 decideTotalBrl += fin.totalWithInterest;
             } else {
-                // Soma do roteiro oficial
                 grandTotalBrl += fin.totalWithInterest;
                 grandTotalClp += fin.totalWithInterestClp;
                 totalAgencyBrl += fin.agencyTotalWithInterest;
@@ -407,25 +174,19 @@ function updateSidebarSummary() {
     document.getElementById('total-pending').innerText = formatBRL(totalPendingBrl);
     document.getElementById('total-decide').innerText = formatBRL(decideTotalBrl);
 
-    // Atualiza cotação atual nos inputs
     document.getElementById('rate-input').value = config.clpRate;
     document.getElementById('tax-input').value = config.cardTax;
 }
 
-/**
- * Renderiza as abas dos dias, deixando a aba "A Decidir" fixa com estilo especial
- */
 function renderDaysTabs() {
     const container = document.getElementById('days-tabs-container');
     container.innerHTML = "";
 
-    // Filtra dias normais e o dia especial "A Decidir"
     const normalDays = days.filter(d => d.id !== 'day-to-decide');
     const decideDay = days.find(d => d.id === 'day-to-decide');
 
     const renderTab = (day, isSpecial = false) => {
         const actCount = day.activities.length;
-        
         const tabEl = document.createElement('div');
         tabEl.className = `day-tab ${day.id === activeDayId ? 'active' : ''} ${isSpecial ? 'decide-tab' : ''}`;
         tabEl.setAttribute('data-id', day.id);
@@ -446,15 +207,12 @@ function renderDaysTabs() {
         container.appendChild(tabEl);
     };
 
-    // 1. Renderiza dias normais
     normalDays.forEach(day => renderTab(day, false));
 
-    // 2. Renderiza aba especial "A Decidir" no final antes de Adicionar Dia
     if (decideDay) {
         renderTab(decideDay, true);
     }
 
-    // 3. Botão Adicionar Dia
     const addTabEl = document.createElement('div');
     addTabEl.className = "day-tab add-day-tab";
     addTabEl.id = "tab-add-day-trigger";
@@ -466,9 +224,6 @@ function renderDaysTabs() {
     container.appendChild(addTabEl);
 }
 
-/**
- * Renderiza a linha do tempo do dia ativo
- */
 function renderActiveDay() {
     const activeDay = days.find(d => d.id === activeDayId);
     const container = document.getElementById('timeline-container');
@@ -495,7 +250,6 @@ function renderActiveDay() {
         return;
     }
 
-    // Controle de botões de exclusão/edição para aba especial "A Decidir"
     const isToDecide = activeDay.id === 'day-to-decide';
     if (isToDecide) {
         btnDeleteDay.style.display = "none";
@@ -511,14 +265,12 @@ function renderActiveDay() {
 
     daySummaryBar.style.display = "flex";
 
-    // Ordenar atividades por horário de início
     const sortedActivities = [...activeDay.activities].sort((a, b) => {
         if (!a.startTime) return 1;
         if (!b.startTime) return -1;
         return a.startTime.localeCompare(b.startTime);
     });
 
-    // Calcular Subtotal do Dia
     let dayTotalBrl = 0;
     let dayTotalClp = 0;
     let dayAgencyBrl = 0;
@@ -537,7 +289,6 @@ function renderActiveDay() {
     document.getElementById('day-agency-total').innerText = formatBRL(dayAgencyBrl);
     document.getElementById('day-ticket-total').innerText = formatBRL(dayTicketBrl);
 
-    // Ajusta legenda do subtotal caso seja a aba a decidir
     if (isToDecide) {
         daySummaryBar.querySelector('.day-metric-label').innerText = "Orçamento em Aberto:";
         daySummaryBar.style.background = "rgba(148, 163, 184, 0.05)";
@@ -568,7 +319,6 @@ function renderActiveDay() {
 
     sortedActivities.forEach(act => {
         const fin = getActivityFinancials(act);
-        
         const itemEl = document.createElement('div');
         itemEl.className = "timeline-item";
         
@@ -600,11 +350,28 @@ function renderActiveDay() {
             `;
         }
 
-        // Criar link do Google Maps para o Endereço se estiver preenchido
-        const mapsLinkQuery = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(act.address + ' ' + (act.city || 'Chile'))}`;
+        // --- LINKS DE ATALHOS RÁPIDOS NO HEADER DO CARD ---
+        let mapsLinkHTML = "";
+        if (act.linkMaps) {
+            mapsLinkHTML = `<a href="${act.linkMaps}" target="_blank" class="activity-link-icon maps-link" title="Ver no Google Maps"><i class="fa-solid fa-map-location-dot"></i></a>`;
+        } else if (act.address) {
+            const mapsLinkQuery = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(act.address + ' ' + (act.city || 'Chile'))}`;
+            mapsLinkHTML = `<a href="${mapsLinkQuery}" target="_blank" class="activity-link-icon maps-link" title="Buscar no Google Maps"><i class="fa-solid fa-map-location-dot"></i></a>`;
+        }
+
+        let instagramLinkHTML = "";
+        if (act.linkInstagram) {
+            instagramLinkHTML = `<a href="${act.linkInstagram}" target="_blank" class="activity-link-icon instagram-link" title="Acessar Instagram"><i class="fa-brands fa-instagram"></i></a>`;
+        }
+
+        let siteLinkHTML = "";
+        if (act.link) {
+            siteLinkHTML = `<a href="${act.link}" target="_blank" class="activity-link-icon site-link" title="Acessar Site/Link Útil"><i class="fa-solid fa-globe"></i></a>`;
+        }
+
         const addressHTML = act.address ? `
-            <div class="meta-item address-link" onclick="window.open('${mapsLinkQuery}', '_blank')" title="Buscar endereço no Google Maps">
-                <i class="fa-solid fa-map-pin"></i> ${act.address} <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 0.65rem; margin-left: 2px;"></i>
+            <div class="meta-item">
+                <i class="fa-solid fa-map-pin"></i> ${act.address}
             </div>
         ` : '';
 
@@ -621,6 +388,11 @@ function renderActiveDay() {
                 <div class="activity-info-col">
                     <div class="activity-title-row">
                         <h3>${act.title}</h3>
+                        <div class="activity-header-links">
+                            ${mapsLinkHTML}
+                            ${instagramLinkHTML}
+                            ${siteLinkHTML}
+                        </div>
                         ${act.city ? `<span class="badge badge-location"><i class="fa-solid fa-location-dot"></i> ${act.city}</span>` : ''}
                         ${act.hasGuide ? `<span class="badge badge-guide"><i class="fa-solid fa-user-tie"></i> Guia Incluso</span>` : ''}
                         ${act.contact ? `<span class="badge badge-contact"><i class="fa-solid fa-address-book"></i> ${act.contact}</span>` : ''}
@@ -633,11 +405,6 @@ function renderActiveDay() {
                     <!-- Metadata List -->
                     <div class="activity-meta-list">
                         ${addressHTML}
-                        ${act.link ? `
-                            <div class="meta-item address-link" onclick="window.open('${act.link}', '_blank')">
-                                <i class="fa-solid fa-link"></i> Link Útil
-                            </div>
-                        ` : ''}
                     </div>
 
                     <!-- Notes Section -->
@@ -680,7 +447,6 @@ function renderActiveDay() {
 const activityModal = document.getElementById('activity-modal');
 const dayModal = document.getElementById('day-modal');
 
-// Close triggers
 document.getElementById('close-activity-modal-btn').addEventListener('click', () => closeDynamicModal(activityModal));
 document.getElementById('btn-cancel-activity').addEventListener('click', () => closeDynamicModal(activityModal));
 document.getElementById('close-day-modal-btn').addEventListener('click', () => closeDynamicModal(dayModal));
@@ -696,21 +462,17 @@ function closeDynamicModal(modalEl) {
 
 /* --- FORM CALCULATIONS TRIGGER (REAL-TIME PREVIEW) --- */
 
-/**
- * Atualiza os valores calculados de parcelas, juros e totais na interface do formulário
- */
 function updateFormCalculations() {
     const clpRate = config.clpRate;
     const cardTax = config.cardTax;
     const cardMultiplier = 1 + (cardTax / 100);
 
-    // 1. Lógica do Custo de Agência
+    // 1. Agência
     const agencyCostUnit = parseFloat(document.getElementById('form-agency-cost-unit').value) || 0;
     const agencyCurrency = document.getElementById('form-agency-currency').value;
     const agencyPeople = parseInt(document.getElementById('form-agency-people').value) || 1;
     const agencyCostInput = document.getElementById('form-agency-cost');
 
-    // Se o usuário mexer no conversor unitário, calcula o Valor Agência base
     if (agencyCostUnit > 0) {
         let calculatedBase = agencyCostUnit * agencyPeople;
         if (agencyCurrency === 'CLP') {
@@ -729,7 +491,7 @@ function updateFormCalculations() {
     document.getElementById('form-agency-parcel-val').value = formatBRL(agencyParcelValue);
     document.getElementById('form-agency-total-val').value = formatBRL(agencyTotalWithInterest);
 
-    // 2. Lógica do Custo de Ingresso
+    // 2. Ingresso
     const ticketCostUnit = parseFloat(document.getElementById('form-ticket-cost-unit').value) || 0;
     const ticketCurrency = document.getElementById('form-ticket-currency').value;
     const ticketPeople = parseInt(document.getElementById('form-ticket-people').value) || 1;
@@ -753,7 +515,7 @@ function updateFormCalculations() {
     document.getElementById('form-ticket-parcel-val').value = formatBRL(ticketParcelValue);
     document.getElementById('form-ticket-total-val').value = formatBRL(ticketTotalWithInterest);
 
-    // 3. Totais do Rodapé do Formulário
+    // 3. Totais do Rodapé
     const grandTotalWithInterest = agencyTotalWithInterest + ticketTotalWithInterest;
     const grandTotalWithoutInterest = agencyCostBase + ticketCostBase;
 
@@ -761,7 +523,6 @@ function updateFormCalculations() {
     document.getElementById('form-preview-total-without-interest').innerText = formatBRL(grandTotalWithoutInterest);
 }
 
-// Vincula ouvintes em todos os inputs relevantes no formulário de atividade
 const formInputs = [
     'form-agency-cost-unit', 'form-agency-currency', 'form-agency-people', 'form-agency-cost',
     'form-agency-installments', 'form-agency-interest',
@@ -784,7 +545,6 @@ function openAddActivityModal() {
     document.getElementById('form-activity-id').value = "";
     document.getElementById('activity-form').reset();
     
-    // Valores padrão
     document.getElementById('form-agency-people').value = 2;
     document.getElementById('form-ticket-people').value = 2;
     document.getElementById('form-agency-currency').value = "CLP";
@@ -815,27 +575,25 @@ function openEditActivityModal(activityId) {
     document.getElementById('form-start-time').value = act.startTime || "";
     document.getElementById('form-end-time').value = act.endTime || "";
     
-    // Configura conversor unitário com valores vazios ou base
     document.getElementById('form-agency-cost-unit').value = act.agencyCostUnit || "";
     document.getElementById('form-agency-currency').value = act.agencyCostCurrency || "BRL";
     document.getElementById('form-agency-people').value = act.agencyPeople || 2;
 
-    // Campo oficial e parcelamento
     document.getElementById('form-agency-cost').value = act.agencyCost || 0;
     document.getElementById('form-agency-installments').value = act.agencyInstallments || 1;
     document.getElementById('form-agency-interest').checked = !!act.agencyCardInterest;
     document.getElementById('form-agency-guide').checked = !!act.hasGuide;
 
-    // Configura conversor unitário ingressos com valores vazios ou base
     document.getElementById('form-ticket-cost-unit').value = act.ticketCostUnit || "";
     document.getElementById('form-ticket-currency').value = act.ticketCostCurrency || "BRL";
     document.getElementById('form-ticket-people').value = act.ticketPeople || 2;
 
-    // Campo oficial e parcelamento ingressos
     document.getElementById('form-ticket-cost').value = act.ticketCost || 0;
     document.getElementById('form-ticket-installments').value = act.ticketInstallments || 1;
     document.getElementById('form-ticket-interest').checked = !!act.ticketCardInterest;
 
+    document.getElementById('form-link-maps').value = act.linkMaps || "";
+    document.getElementById('form-link-instagram').value = act.linkInstagram || "";
     document.getElementById('form-link').value = act.link || "";
     document.getElementById('form-contact').value = act.contact || "";
     document.getElementById('form-payment-status').value = act.paymentStatus || "pending";
@@ -845,7 +603,6 @@ function openEditActivityModal(activityId) {
     openDynamicModal(activityModal);
 }
 
-// Submissão do Formulário de Passeios
 document.getElementById('activity-form').addEventListener('submit', (e) => {
     e.preventDefault();
     
@@ -862,27 +619,23 @@ document.getElementById('activity-form').addEventListener('submit', (e) => {
         startTime: document.getElementById('form-start-time').value,
         endTime: document.getElementById('form-end-time').value,
         
-        // Conversor temporário de referência
         agencyCostUnit: parseFloat(document.getElementById('form-agency-cost-unit').value) || 0,
         agencyCostCurrency: document.getElementById('form-agency-currency').value,
         agencyPeople: parseInt(document.getElementById('form-agency-people').value) || 2,
-
-        // Campos reais salvos em R$
         agencyCost: parseFloat(document.getElementById('form-agency-cost').value) || 0,
         agencyInstallments: parseInt(document.getElementById('form-agency-installments').value) || 1,
         agencyCardInterest: document.getElementById('form-agency-interest').checked,
         hasGuide: document.getElementById('form-agency-guide').checked,
 
-        // Conversor temporário de referência ingressos
         ticketCostUnit: parseFloat(document.getElementById('form-ticket-cost-unit').value) || 0,
         ticketCostCurrency: document.getElementById('form-ticket-currency').value,
         ticketPeople: parseInt(document.getElementById('form-ticket-people').value) || 2,
-
-        // Campos reais salvos em R$ ingressos
         ticketCost: parseFloat(document.getElementById('form-ticket-cost').value) || 0,
         ticketInstallments: parseInt(document.getElementById('form-ticket-installments').value) || 1,
         ticketCardInterest: document.getElementById('form-ticket-interest').checked,
 
+        linkMaps: document.getElementById('form-link-maps').value,
+        linkInstagram: document.getElementById('form-link-instagram').value,
         link: document.getElementById('form-link').value,
         contact: document.getElementById('form-contact').value,
         paymentStatus: document.getElementById('form-payment-status').value,
@@ -890,13 +643,11 @@ document.getElementById('activity-form').addEventListener('submit', (e) => {
     };
 
     if (activityId) {
-        // Modo edição
         const index = activeDay.activities.findIndex(a => a.id === activityId);
         if (index !== -1) {
             activeDay.activities[index] = activityData;
         }
     } else {
-        // Novo cadastro
         activeDay.activities.push(activityData);
     }
 
@@ -939,7 +690,6 @@ function openAddDayModal() {
     document.getElementById('modal-day-title').innerText = "Adicionar Novo Dia";
     document.getElementById('form-day-id').value = "";
     
-    // Calcula o próximo dia considerando que a aba "A Decidir" especial não conta
     const normalDaysCount = days.filter(d => d.id !== 'day-to-decide').length;
     const nextDayNum = normalDaysCount + 1;
     document.getElementById('form-day-label').value = `Dia ${nextDayNum} - DD/MM (Dia da Semana)`;
@@ -958,7 +708,6 @@ function openEditDayModal() {
     openDynamicModal(dayModal);
 }
 
-// Submissão do Formulário de Dias
 document.getElementById('day-form').addEventListener('submit', (e) => {
     e.preventDefault();
 
@@ -966,15 +715,12 @@ document.getElementById('day-form').addEventListener('submit', (e) => {
     const label = document.getElementById('form-day-label').value;
 
     if (dayId) {
-        // Editando dia
         const day = days.find(d => d.id === dayId);
         if (day) {
             day.dateLabel = label;
         }
     } else {
-        // Criando novo dia
         const newId = `day-${Date.now()}`;
-        // Insere o novo dia antes do dia especial "A Decidir" para manter a aba a decidir sempre por último
         const decideIndex = days.findIndex(d => d.id === 'day-to-decide');
         const newDay = {
             id: newId,
@@ -997,13 +743,11 @@ document.getElementById('day-form').addEventListener('submit', (e) => {
     renderActiveDay();
 });
 
-// Excluir dia
 document.getElementById('btn-delete-day').addEventListener('click', () => {
     if (!activeDayId || activeDayId === 'day-to-decide') return;
 
     if (confirm("ATENÇÃO: Isso excluirá permanentemente este dia de viagem e TODOS os passeios cadastrados nele. Deseja prosseguir?")) {
         days = days.filter(d => d.id !== activeDayId);
-        // Seleciona o primeiro dia disponível, que pode ser o "A Decidir" se todos os outros forem apagados
         activeDayId = days.length > 0 ? days[0].id : "";
         saveState();
         renderDaysTabs();
@@ -1043,7 +787,6 @@ document.getElementById('save-config-btn').addEventListener('click', () => {
    BACKUP & RESET UTILITIES
    ========================================================================== */
 
-// Exportar Backup
 document.getElementById('btn-export-backup').addEventListener('click', () => {
     const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify({ config, days }));
     const downloadAnchor = document.createElement('a');
@@ -1054,7 +797,6 @@ document.getElementById('btn-export-backup').addEventListener('click', () => {
     downloadAnchor.remove();
 });
 
-// Importar Backup
 document.getElementById('btn-import-trigger').addEventListener('click', () => {
     document.getElementById('import-file').click();
 });
@@ -1070,7 +812,6 @@ document.getElementById('import-file').addEventListener('change', (e) => {
                 config = importedData.config;
                 days = importedData.days;
                 
-                // Valida aba a decidir
                 if (!days.some(d => d.id === 'day-to-decide')) {
                     days.push({
                         id: "day-to-decide",
@@ -1097,7 +838,6 @@ document.getElementById('import-file').addEventListener('change', (e) => {
     e.target.value = "";
 });
 
-// Limpar todos os dados
 document.getElementById('btn-reset-data').addEventListener('click', () => {
     if (confirm("ATENÇÃO: Esta ação apagará TODOS os dados cadastrados e redefinirá o roteiro para o exemplo inicial. Tem certeza?")) {
         localStorage.clear();
@@ -1113,12 +853,10 @@ document.getElementById('btn-reset-data').addEventListener('click', () => {
    OTHER GLOBAL ACTIONS
    ========================================================================== */
 
-// Impressão / PDF
 document.getElementById('btn-print').addEventListener('click', () => {
     window.print();
 });
 
-// Controle de menu (Sidebar Drawer) no mobile
 const sidebarPanel = document.getElementById('sidebar-panel');
 const menuToggleBtn = document.getElementById('menu-toggle-btn');
 const closeSidebarBtn = document.getElementById('close-sidebar-btn');
@@ -1154,7 +892,6 @@ window.addEventListener('DOMContentLoaded', () => {
     renderActiveDay();
     updateSidebarSummary();
 
-    // Vincula botões principais do header da página
     document.getElementById('btn-add-activity').addEventListener('click', openAddActivityModal);
     document.getElementById('btn-add-day').addEventListener('click', openAddDayModal);
     document.getElementById('btn-edit-day').addEventListener('click', openEditDayModal);

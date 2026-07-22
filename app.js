@@ -5,7 +5,8 @@
 // Configuração padrão
 let config = {
     clpRate: 175, // 1 BRL = 175 CLP
-    cardTax: 6.38 // IOF + Taxas operacionais
+    cardTax: 6.38, // IOF + Taxas operacionais
+    autoUpdateRate: true // Atualizar cotação ao iniciar o app
 };
 
 // Roteiro padrão limpo com exatamente os 7 dias solicitados
@@ -333,6 +334,50 @@ function formatCLP(value) {
     return new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP', maximumFractionDigits: 0 }).format(value).replace("CLP", "$");
 }
 
+async function fetchExchangeRate(showFeedback = false) {
+    const btnApi = document.getElementById('btn-fetch-rate-api');
+    let originalHTML = "";
+    if (btnApi) {
+        originalHTML = btnApi.innerHTML;
+        btnApi.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Buscando...';
+        btnApi.disabled = true;
+    }
+
+    try {
+        const response = await fetch('https://economia.awesomeapi.com.br/json/last/BRL-CLP');
+        if (!response.ok) throw new Error('Erro na resposta do servidor');
+        const data = await response.json();
+        
+        if (data && data.BRLCLP && data.BRLCLP.bid) {
+            const rate = parseFloat(parseFloat(data.BRLCLP.bid).toFixed(2));
+            if (!isNaN(rate) && rate > 0) {
+                config.clpRate = rate;
+                
+                const rateInput = document.getElementById('rate-input');
+                if (rateInput) rateInput.value = rate;
+
+                saveState();
+                updateSidebarSummary();
+                renderActiveDay();
+                
+                if (showFeedback) {
+                    alert(`Cotação comercial atualizada com sucesso: 1 BRL = ${rate} CLP!`);
+                }
+            }
+        }
+    } catch (error) {
+        console.error("Erro ao obter cotação da API:", error);
+        if (showFeedback) {
+            alert("Não foi possível conectar à API de Câmbio. Verifique sua conexão de internet.");
+        }
+    } finally {
+        if (btnApi) {
+            btnApi.innerHTML = originalHTML;
+            btnApi.disabled = false;
+        }
+    }
+}
+
 /* ==========================================================================
    STORAGE & MIGRATION FUNCTIONS
    ========================================================================== */
@@ -347,14 +392,14 @@ function saveState() {
 
 function loadState() {
     const DB_VERSION_KEY = 'chile_planner_db_version';
-    const CURRENT_VERSION = 'v12_mobile_rest'; // Força migração de BD para incluir novos restaurantes e tipo de comida
+    const CURRENT_VERSION = 'v13_auto_exchange'; // Força migração de BD para incluir novos restaurantes e tipo de comida
 
     if (localStorage.getItem(DB_VERSION_KEY) !== CURRENT_VERSION) {
         localStorage.clear();
         localStorage.setItem(DB_VERSION_KEY, CURRENT_VERSION);
         days = JSON.parse(JSON.stringify(defaultDays));
         restaurants = JSON.parse(JSON.stringify(defaultRestaurants));
-        config = { clpRate: 175, cardTax: 6.38 };
+        config = { clpRate: 175, cardTax: 6.38, autoUpdateRate: true };
         activeDayId = "day-1";
         lastActiveNormalDayId = "day-1";
         saveState();
@@ -368,7 +413,12 @@ function loadState() {
     const storedLastActiveNormal = localStorage.getItem('chile_planner_last_active_normal_day_id');
 
     if (storedConfig) {
-        try { config = JSON.parse(storedConfig); } catch(e) { console.error(e); }
+        try { 
+            config = JSON.parse(storedConfig); 
+            if (config.autoUpdateRate === undefined) {
+                config.autoUpdateRate = true;
+            }
+        } catch(e) { console.error(e); }
     }
     
     if (storedDays) {
@@ -1168,6 +1218,21 @@ window.addEventListener('DOMContentLoaded', () => {
     updateSidebarSummary();
     updateTopNavigationButtonsState();
 
+    // Set auto checkbox check status
+    const autoCheckbox = document.getElementById('auto-rate-checkbox');
+    if (autoCheckbox) {
+        autoCheckbox.checked = !!config.autoUpdateRate;
+        autoCheckbox.addEventListener('change', (e) => {
+            config.autoUpdateRate = e.target.checked;
+            saveState();
+        });
+    }
+
+    // Auto update exchange rate if enabled
+    if (config.autoUpdateRate) {
+        fetchExchangeRate(false);
+    }
+
     // 4. Ouvintes de Eventos da Linha do Tempo e Dias
     document.getElementById('btn-add-activity')?.addEventListener('click', openAddActivityModal);
     document.getElementById('btn-add-day')?.addEventListener('click', openAddDayModal);
@@ -1402,9 +1467,14 @@ window.addEventListener('DOMContentLoaded', () => {
     });
 
     // 7. Botões de Ações Globais e Painel de Configurações
+    document.getElementById('btn-fetch-rate-api')?.addEventListener('click', () => {
+        fetchExchangeRate(true);
+    });
+
     document.getElementById('save-config-btn')?.addEventListener('click', () => {
         const rate = parseFloat(document.getElementById('rate-input').value);
         const tax = parseFloat(document.getElementById('tax-input').value);
+        const autoUpdate = document.getElementById('auto-rate-checkbox')?.checked;
 
         if (isNaN(rate) || rate <= 0) {
             alert("Cotação inválida! Insira um número maior que zero.");
@@ -1418,11 +1488,12 @@ window.addEventListener('DOMContentLoaded', () => {
 
         config.clpRate = rate;
         config.cardTax = tax;
+        config.autoUpdateRate = !!autoUpdate;
 
         saveState();
         updateSidebarSummary();
         renderActiveDay();
-        alert("Taxas e Cotação de Câmbio atualizadas com sucesso!");
+        alert("Configurações de Câmbio salvas com sucesso!");
     });
 
     document.getElementById('btn-export-backup')?.addEventListener('click', () => {

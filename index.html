@@ -38,7 +38,7 @@
                     <div class="input-group">
                         <label for="rate-input">1 BRL (R$) equivale a:</label>
                         <div class="input-with-suffix">
-                            <input type="number" id="rate-input" value="175" step="1" min="1">
+                            <input type="number" id="rate-input" value="175" step="0.01" min="1">
                             <span>CLP</span>
                         </div>
                     </div>
@@ -49,10 +49,23 @@
                             <span>%</span>
                         </div>
                     </div>
+                    <!-- Auto-update Checkbox -->
+                    <div style="margin-top: 4px;">
+                        <label class="checkbox-container" style="font-size: 0.75rem; color: var(--text-muted); padding-left: 22px;">
+                            <input type="checkbox" id="auto-rate-checkbox" checked>
+                            <span class="checkmark"></span>
+                            Atualizar cotação ao abrir o app
+                        </label>
+                    </div>
                 </div>
-                <button class="btn btn-secondary btn-sm btn-block" id="save-config-btn">
-                    <i class="fa-solid fa-arrows-rotate"></i> Atualizar Câmbio
-                </button>
+                <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 6px;">
+                    <button class="btn btn-primary btn-sm btn-block" id="btn-fetch-rate-api" title="Buscar cotação comercial do dia">
+                        <i class="fa-solid fa-cloud-arrow-down"></i> Buscar Cotação Comercial
+                    </button>
+                    <button class="btn btn-secondary btn-sm btn-block" id="save-config-btn" title="Salvar taxa do cartão e cotação personalizada">
+                        <i class="fa-solid fa-floppy-disk"></i> Salvar Manualmente
+                    </button>
+                </div>
             </div>
 
             <!-- Financial Summary -->
@@ -540,6 +553,6 @@
     <div class="sidebar-overlay"></div>
 
     <!-- Custom JS -->
-    <script src="app.js?v=12"></script>
+    <script src="app.js?v=13"></script>
 </body>
 </html>

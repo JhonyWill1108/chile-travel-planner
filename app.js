@@ -17,36 +17,205 @@ const defaultDays = [
     { id: "day-5", dateLabel: "DIA 5 — 20/08/2026 (Quinta-feira)", activities: [] },
     { id: "day-6", dateLabel: "DIA 6 — 21/08/2026 (Sexta-feira)", activities: [] },
     { id: "day-7", dateLabel: "DIA 7 — 22/08/2026 (Sábado)", activities: [] },
-    { id: "day-to-decide", dateLabel: "A Decidir", activities: [] }
+    { 
+        id: "day-to-decide", 
+        dateLabel: "A Decidir", 
+        activities: [
+            {
+                id: "act-decide-1",
+                title: "Deserto do Atacama",
+                city: "Atacama",
+                address: "",
+                startTime: "",
+                endTime: "",
+                agencyCost: 0, agencyInstallments: 1, agencyCardInterest: false, hasGuide: false,
+                ticketCost: 0, ticketInstallments: 1, ticketCardInterest: false,
+                linkMaps: "", linkInstagram: "", link: "", contact: "", paymentStatus: "pending",
+                notes: "Avaliar custos de voo de Santiago para Calama se decidirmos esticar a viagem."
+            },
+            {
+                id: "act-decide-2",
+                title: "Parque Bicentenário",
+                city: "Vitacura",
+                address: "Av. Bicentenario 3236, Vitacura",
+                startTime: "",
+                endTime: "",
+                agencyCost: 0, agencyInstallments: 1, agencyCardInterest: false, hasGuide: false,
+                ticketCost: 0, ticketInstallments: 1, ticketCardInterest: false,
+                linkMaps: "https://maps.google.com/?q=Parque+Bicentenario+Vitacura", linkInstagram: "", link: "", contact: "", paymentStatus: "pending",
+                notes: "Perfeito pra caminhar, fazer piquenique e ver flamingos."
+            },
+            {
+                id: "act-decide-3",
+                title: "Parque Araucano",
+                city: "Las Condes",
+                address: "Av. Presidente Riesco 5698, Las Condes",
+                startTime: "",
+                endTime: "",
+                agencyCost: 0, agencyInstallments: 1, agencyCardInterest: false, hasGuide: false,
+                ticketCost: 0, ticketInstallments: 1, ticketCardInterest: false,
+                linkMaps: "https://maps.google.com/?q=Parque+Araucano", linkInstagram: "", link: "", contact: "", paymentStatus: "pending",
+                notes: "Um dos parques mais bonitos da cidade."
+            },
+            {
+                id: "act-decide-4",
+                title: "Cerro San Cristóbal",
+                city: "Santiago",
+                address: "Pio Nono 450, Recoleta",
+                startTime: "",
+                endTime: "",
+                agencyCost: 0, agencyInstallments: 1, agencyCardInterest: false, hasGuide: false,
+                ticketCost: 0, ticketInstallments: 1, ticketCardInterest: false,
+                linkMaps: "https://maps.google.com/?q=Cerro+San+Cristobal", linkInstagram: "", link: "", contact: "", paymentStatus: "pending",
+                notes: "Vista surreal da cidade (subida a pé é grátis se for pegar funicular e teleférico é pago)."
+            },
+            {
+                id: "act-decide-5",
+                title: "Cerro Santa Lucía",
+                city: "Santiago Centro",
+                address: "Av. Libertador Bernardo O'Higgins, Santiago",
+                startTime: "",
+                endTime: "",
+                agencyCost: 0, agencyInstallments: 1, agencyCardInterest: false, hasGuide: false,
+                ticketCost: 0, ticketInstallments: 1, ticketCardInterest: false,
+                linkMaps: "https://maps.google.com/?q=Cerro+Santa+Lucia", linkInstagram: "", link: "", contact: "", paymentStatus: "pending",
+                notes: "Mirantes incríveis bem no centro."
+            },
+            {
+                id: "act-decide-6",
+                title: "Plaza de Armas de Santiago",
+                city: "Santiago Centro",
+                address: "Plaza de Armas, Santiago",
+                startTime: "",
+                endTime: "",
+                agencyCost: 0, agencyInstallments: 1, agencyCardInterest: false, hasGuide: false,
+                ticketCost: 0, ticketInstallments: 1, ticketCardInterest: false,
+                linkMaps: "https://maps.google.com/?q=Plaza+de+Armas+Santiago", linkInstagram: "", link: "", contact: "", paymentStatus: "pending",
+                notes: "Centro histórico + artistas de rua."
+            },
+            {
+                id: "act-decide-7",
+                title: "Palácio de La Moneda",
+                city: "Santiago Centro",
+                address: "Moneda S/N, Santiago Centro",
+                startTime: "",
+                endTime: "",
+                agencyCost: 0, agencyInstallments: 1, agencyCardInterest: false, hasGuide: false,
+                ticketCost: 0, ticketInstallments: 1, ticketCardInterest: false,
+                linkMaps: "https://maps.google.com/?q=Palacio+de+la+Moneda", linkInstagram: "", link: "", contact: "", paymentStatus: "pending",
+                notes: "Troca da guarda (evento gratuito e diferente)."
+            },
+            {
+                id: "act-decide-8",
+                title: "Museu Nacional de Belas Artes do Chile",
+                city: "Santiago Centro",
+                address: "José Miguel de La Barra 650, Santiago",
+                startTime: "",
+                endTime: "",
+                agencyCost: 0, agencyInstallments: 1, agencyCardInterest: false, hasGuide: false,
+                ticketCost: 0, ticketInstallments: 1, ticketCardInterest: false,
+                linkMaps: "https://maps.google.com/?q=Museo+Nacional+de+Bellas+Artes+Chile", linkInstagram: "", link: "", contact: "", paymentStatus: "pending",
+                notes: "Entrada grátis e arquitetura linda."
+            },
+            {
+                id: "act-decide-9",
+                title: "Parque Forestal",
+                city: "Santiago Centro",
+                address: "Parque Forestal, Santiago",
+                startTime: "",
+                endTime: "",
+                agencyCost: 0, agencyInstallments: 1, agencyCardInterest: false, hasGuide: false,
+                ticketCost: 0, ticketInstallments: 1, ticketCardInterest: false,
+                linkMaps: "https://maps.google.com/?q=Parque+Forestal", linkInstagram: "", link: "", contact: "", paymentStatus: "pending",
+                notes: "Clima europeu, perfeito pra relaxar."
+            },
+            {
+                id: "act-decide-10",
+                title: "Templo Bahá'í da América do Sul",
+                city: "Peñalolén",
+                address: "Diagonal Las Torres 2000, Peñalolén",
+                startTime: "",
+                endTime: "",
+                agencyCost: 0, agencyInstallments: 1, agencyCardInterest: false, hasGuide: false,
+                ticketCost: 0, ticketInstallments: 1, ticketCardInterest: false,
+                linkMaps: "https://maps.google.com/?q=Templo+Bahai+Santiago", linkInstagram: "", link: "", contact: "", paymentStatus: "pending",
+                notes: "Um dos lugares mais diferentes de Santiago, com uma vista surreal da cordilheira."
+            },
+            {
+                id: "act-decide-11",
+                title: "Sky Costanera",
+                city: "Providencia",
+                address: "Av. Andrés Bello 2425, Providencia",
+                startTime: "",
+                endTime: "",
+                agencyCost: 0, agencyInstallments: 1, agencyCardInterest: false, hasGuide: false,
+                ticketCost: 0, ticketInstallments: 1, ticketCardInterest: false,
+                linkMaps: "https://maps.google.com/?q=Sky+Costanera", linkInstagram: "", link: "", contact: "", paymentStatus: "pending",
+                notes: "Mirante mais alto da América Latina com vista 360º de Santiago."
+            }
+        ]
+    }
+];
+
+// Restaurantes sugeridos padrão
+const defaultRestaurants = [
+    {
+        id: "rest-1",
+        name: "Giratorio Restaurant",
+        address: "Av. Nueva Providencia 2250, Providencia",
+        linkMaps: "https://maps.google.com/?q=Giratorio+Restaurant",
+        linkInstagram: "https://instagram.com/giratoriorestaurant",
+        openTime: "12:30",
+        closeTime: "23:00",
+        photo: "",
+        notes: "Vista 360º incrível de Santiago. Recomendado fazer reserva com boa antecedência para o pôr do sol."
+    },
+    {
+        id: "rest-2",
+        name: "Mestizo",
+        address: "Av. Bicentenario 3800, Vitacura",
+        linkMaps: "https://maps.google.com/?q=Mestizo+Vitacura",
+        linkInstagram: "https://instagram.com/mestizochile",
+        openTime: "13:00",
+        closeTime: "00:00",
+        photo: "",
+        notes: "Fica dentro do Parque Bicentenário. Arquitetura linda de pilares de pedra negra. Excelente pisco sour."
+    },
+    {
+        id: "rest-3",
+        name: "Bar Liguria",
+        address: "Av. Providencia 1353, Providencia",
+        linkMaps: "https://maps.google.com/?q=Bar+Liguria+Providencia",
+        linkInstagram: "https://instagram.com/bar_liguria",
+        openTime: "12:00",
+        closeTime: "23:30",
+        photo: "",
+        notes: "Decoração vintage fantástica. Ótimo para experimentar sanduíches chilenos (Lomito) e pratos típicos."
+    }
 ];
 
 let days = [];
+let restaurants = [];
 let activeDayId = "";
-let lastActiveNormalDayId = "day-1"; // Armazena o último dia normal ativo para retornar de "A Decidir"
+let lastActiveNormalDayId = "day-1";
 
 /* ==========================================================================
    FINANCIAL CALCULATIONS
    ========================================================================== */
 
-/**
- * Calcula os custos consolidados de uma atividade
- */
 function getActivityFinancials(activity) {
     const cardMultiplier = 1 + (config.cardTax / 100);
 
-    // 1. Custos de Agência
     const agencyCost = Number(activity.agencyCost) || 0;
     const agencyInstallments = Math.max(1, Number(activity.agencyInstallments) || 1);
     const agencyTotalWithInterest = activity.agencyCardInterest ? (agencyCost * cardMultiplier) : agencyCost;
     const agencyParcelValue = agencyTotalWithInterest / agencyInstallments;
 
-    // 2. Custos de Ingresso
     const ticketCost = Number(activity.ticketCost) || 0;
     const ticketInstallments = Math.max(1, Number(activity.ticketInstallments) || 1);
     const ticketTotalWithInterest = activity.ticketCardInterest ? (ticketCost * cardMultiplier) : ticketCost;
     const ticketParcelValue = ticketTotalWithInterest / ticketInstallments;
 
-    // 3. Totais Acumulados da Atividade em R$
     const totalWithInterest = agencyTotalWithInterest + ticketTotalWithInterest;
     const totalWithoutInterest = agencyCost + ticketCost;
     const totalWithInterestClp = totalWithInterest * config.clpRate;
@@ -83,19 +252,20 @@ function formatCLP(value) {
 function saveState() {
     localStorage.setItem('chile_planner_config', JSON.stringify(config));
     localStorage.setItem('chile_planner_days', JSON.stringify(days));
+    localStorage.setItem('chile_planner_restaurants', JSON.stringify(restaurants));
     localStorage.setItem('chile_planner_active_day_id', activeDayId);
     localStorage.setItem('chile_planner_last_active_normal_day_id', lastActiveNormalDayId);
 }
 
 function loadState() {
-    // Força atualização da base de dados para o novo template limpo de 7 dias com botão superior
     const DB_VERSION_KEY = 'chile_planner_db_version';
-    const CURRENT_VERSION = 'v6_decide_button'; // Nova versão de BD para migração automática
+    const CURRENT_VERSION = 'v7_restaurants'; // Força migração de BD para incluir restaurantes e passeios a decidir padrão
 
     if (localStorage.getItem(DB_VERSION_KEY) !== CURRENT_VERSION) {
         localStorage.clear();
         localStorage.setItem(DB_VERSION_KEY, CURRENT_VERSION);
         days = JSON.parse(JSON.stringify(defaultDays));
+        restaurants = JSON.parse(JSON.stringify(defaultRestaurants));
         config = { clpRate: 175, cardTax: 6.38 };
         activeDayId = "day-1";
         lastActiveNormalDayId = "day-1";
@@ -105,6 +275,7 @@ function loadState() {
 
     const storedConfig = localStorage.getItem('chile_planner_config');
     const storedDays = localStorage.getItem('chile_planner_days');
+    const storedRestaurants = localStorage.getItem('chile_planner_restaurants');
     const storedActiveDay = localStorage.getItem('chile_planner_active_day_id');
     const storedLastActiveNormal = localStorage.getItem('chile_planner_last_active_normal_day_id');
 
@@ -125,7 +296,13 @@ function loadState() {
         days = JSON.parse(JSON.stringify(defaultDays));
     }
 
-    if (storedActiveDay && days.some(d => d.id === storedActiveDay)) {
+    if (storedRestaurants) {
+        restaurants = JSON.parse(storedRestaurants);
+    } else {
+        restaurants = JSON.parse(JSON.stringify(defaultRestaurants));
+    }
+
+    if (storedActiveDay) {
         activeDayId = storedActiveDay;
     } else if (days.length > 0) {
         activeDayId = days[0].id;
@@ -136,7 +313,6 @@ function loadState() {
     if (storedLastActiveNormal && days.some(d => d.id === storedLastActiveNormal && d.id !== 'day-to-decide')) {
         lastActiveNormalDayId = storedLastActiveNormal;
     } else {
-        // Encontra o primeiro dia válido que não seja "A Decidir"
         const firstNormal = days.find(d => d.id !== 'day-to-decide');
         lastActiveNormalDayId = firstNormal ? firstNormal.id : "day-1";
     }
@@ -210,11 +386,11 @@ function renderDaysTabs() {
         
         tabEl.addEventListener('click', () => {
             activeDayId = day.id;
-            lastActiveNormalDayId = day.id; // Salva o último dia normal selecionado
+            lastActiveNormalDayId = day.id;
             saveState();
             renderActiveDay();
             renderDaysTabs();
-            updateDecideButtonState();
+            updateTopNavigationButtonsState();
         });
 
         container.appendChild(tabEl);
@@ -234,20 +410,48 @@ function renderDaysTabs() {
 }
 
 /**
- * Atualiza o visual do botão superior "A Decidir" conforme o estado selecionado
+ * Atualiza os botões superiores ("A Decidir" e "Restaurantes") conforme a seleção
  */
-function updateDecideButtonState() {
+function updateTopNavigationButtonsState() {
     const btnDecide = document.getElementById('btn-view-decide');
+    const btnRest = document.getElementById('btn-view-restaurants');
+
     if (activeDayId === 'day-to-decide') {
         btnDecide.classList.add('btn-primary');
         btnDecide.classList.remove('btn-secondary');
+        btnRest.classList.remove('btn-primary');
+        btnRest.classList.add('btn-secondary');
+    } else if (activeDayId === 'restaurants') {
+        btnRest.classList.add('btn-primary');
+        btnRest.classList.remove('btn-secondary');
+        btnDecide.classList.remove('btn-primary');
+        btnDecide.classList.add('btn-secondary');
     } else {
         btnDecide.classList.remove('btn-primary');
         btnDecide.classList.add('btn-secondary');
+        btnRest.classList.remove('btn-primary');
+        btnRest.classList.add('btn-secondary');
     }
 }
 
 function renderActiveDay() {
+    const daySection = document.querySelector('.day-details-section:not(#restaurants-section)');
+    const restSection = document.getElementById('restaurants-section');
+
+    if (activeDayId === 'restaurants') {
+        // Modo Guia de Restaurantes
+        daySection.style.display = "none";
+        restSection.style.display = "flex";
+        renderRestaurants();
+        updateTopNavigationButtonsState();
+        return;
+    }
+
+    // Modo Roteiro / A Decidir
+    daySection.style.display = "flex";
+    restSection.style.display = "none";
+    updateTopNavigationButtonsState();
+
     const activeDay = days.find(d => d.id === activeDayId);
     const container = document.getElementById('timeline-container');
     const daySummaryBar = document.getElementById('day-summary-bar');
@@ -278,13 +482,13 @@ function renderActiveDay() {
     if (isToDecide) {
         btnDeleteDay.style.display = "none";
         btnEditDay.style.display = "none";
-        btnBack.style.display = "inline-flex"; // Exibe botão "Voltar ao Roteiro"
+        btnBack.style.display = "inline-flex";
         activeDayTitle.innerText = "💡 Passeios a Decidir";
         activeDaySubtitle.innerText = "Ideias de atividades ou opções de backup ainda não confirmadas";
     } else {
         btnDeleteDay.style.display = "inline-flex";
         btnEditDay.style.display = "inline-flex";
-        btnBack.style.display = "none"; // Esconde botão "Voltar ao Roteiro"
+        btnBack.style.display = "none";
         activeDayTitle.innerText = activeDay.dateLabel;
         activeDaySubtitle.innerText = `${activeDay.activities.length} atividade(s) planejada(s)`;
     }
@@ -466,24 +670,238 @@ function renderActiveDay() {
 }
 
 /* ==========================================================================
-   MODAL INTERACTIVE CONTROLS
+   RESTAURANT CONTROLS & RENDERING
    ========================================================================== */
 
-const activityModal = document.getElementById('activity-modal');
-const dayModal = document.getElementById('day-modal');
+const restaurantModal = document.getElementById('restaurant-modal');
 
-document.getElementById('close-activity-modal-btn').addEventListener('click', () => closeDynamicModal(activityModal));
-document.getElementById('btn-cancel-activity').addEventListener('click', () => closeDynamicModal(activityModal));
-document.getElementById('close-day-modal-btn').addEventListener('click', () => closeDynamicModal(dayModal));
-document.getElementById('btn-cancel-day').addEventListener('click', () => closeDynamicModal(dayModal));
+function renderRestaurants() {
+    const container = document.getElementById('restaurants-grid-container');
+    
+    if (restaurants.length === 0) {
+        container.innerHTML = `
+            <div class="empty-state" style="grid-column: 1 / -1;">
+                <i class="fa-solid fa-utensils"></i>
+                <p>Nenhum restaurante cadastrado no seu guia.</p>
+                <button class="btn btn-primary btn-sm" onclick="openAddRestaurantModal()">
+                    <i class="fa-solid fa-plus"></i> Adicionar Restaurante
+                </button>
+            </div>
+        `;
+        return;
+    }
 
-function openDynamicModal(modalEl) {
-    modalEl.classList.add('open');
+    container.innerHTML = "";
+
+    restaurants.forEach(rest => {
+        let mapsLinkHTML = "";
+        if (rest.linkMaps) {
+            mapsLinkHTML = `<a href="${rest.linkMaps}" target="_blank" class="activity-link-icon maps-link" title="Ver no Google Maps"><i class="fa-solid fa-map-location-dot"></i></a>`;
+        } else if (rest.address) {
+            const query = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(rest.name + ' ' + rest.address)}`;
+            mapsLinkHTML = `<a href="${query}" target="_blank" class="activity-link-icon maps-link" title="Buscar no Google Maps"><i class="fa-solid fa-map-location-dot"></i></a>`;
+        }
+
+        let instagramLinkHTML = "";
+        if (rest.linkInstagram) {
+            instagramLinkHTML = `<a href="${rest.linkInstagram}" target="_blank" class="activity-link-icon instagram-link" title="Instagram"><i class="fa-brands fa-instagram"></i></a>`;
+        }
+
+        const addressHTML = rest.address ? `
+            <div class="meta-item">
+                <i class="fa-solid fa-map-pin"></i> ${rest.address}
+            </div>
+        ` : '';
+
+        const hoursText = (rest.openTime || rest.closeTime) ? `
+            <div class="restaurant-hours">
+                <i class="fa-solid fa-clock"></i> ${rest.openTime || '--:--'} às ${rest.closeTime || '--:--'}
+            </div>
+        ` : '';
+
+        const notesHTML = rest.notes ? `
+            <div class="restaurant-notes-box">${rest.notes}</div>
+        ` : '';
+
+        const cardEl = document.createElement('div');
+        cardEl.className = "restaurant-card";
+        cardEl.innerHTML = `
+            <div class="restaurant-image" style="${rest.photo ? `background-image: url(${rest.photo});` : ''}">
+                ${hoursText}
+            </div>
+            <div class="restaurant-card-body">
+                <div class="restaurant-title-row">
+                    <h3>${rest.name}</h3>
+                    <div class="restaurant-links">
+                        ${mapsLinkHTML}
+                        ${instagramLinkHTML}
+                    </div>
+                </div>
+                ${addressHTML}
+                ${notesHTML}
+            </div>
+            <div class="restaurant-card-footer">
+                <button class="btn btn-outline btn-sm" onclick="openEditRestaurantModal('${rest.id}')" title="Editar"><i class="fa-solid fa-pen"></i></button>
+                <button class="btn btn-outline-danger btn-sm" onclick="deleteRestaurant('${rest.id}')" title="Excluir"><i class="fa-solid fa-trash-can"></i></button>
+            </div>
+        `;
+        container.appendChild(cardEl);
+    });
 }
 
-function closeDynamicModal(modalEl) {
-    modalEl.classList.remove('open');
+function openAddRestaurantModal() {
+    document.getElementById('modal-restaurant-title').innerText = "Adicionar Restaurante";
+    document.getElementById('form-rest-id').value = "";
+    document.getElementById('form-rest-photo-base64').value = "";
+    document.getElementById('restaurant-form').reset();
+    
+    const previewImg = document.getElementById('form-rest-photo-preview');
+    previewImg.src = "";
+    previewImg.style.display = "none";
+
+    openDynamicModal(restaurantModal);
 }
+
+function openEditRestaurantModal(id) {
+    const rest = restaurants.find(r => r.id === id);
+    if (!rest) return;
+
+    document.getElementById('modal-restaurant-title').innerText = "Editar Restaurante";
+    document.getElementById('form-rest-id').value = rest.id;
+    document.getElementById('form-rest-name').value = rest.name || "";
+    document.getElementById('form-rest-address').value = rest.address || "";
+    document.getElementById('form-rest-link-maps').value = rest.linkMaps || "";
+    document.getElementById('form-rest-link-instagram').value = rest.linkInstagram || "";
+    document.getElementById('form-rest-open-time').value = rest.openTime || "";
+    document.getElementById('form-rest-close-time').value = rest.closeTime || "";
+    document.getElementById('form-rest-notes').value = rest.notes || "";
+    document.getElementById('form-rest-photo-url').value = (rest.photo && !rest.photo.startsWith('data:')) ? rest.photo : "";
+    document.getElementById('form-rest-photo-base64').value = rest.photo || "";
+
+    const previewImg = document.getElementById('form-rest-photo-preview');
+    if (rest.photo) {
+        previewImg.src = rest.photo;
+        previewImg.style.display = "block";
+    } else {
+        previewImg.src = "";
+        previewImg.style.display = "none";
+    }
+
+    openDynamicModal(restaurantModal);
+}
+
+function deleteRestaurant(id) {
+    if (confirm("Tem certeza que deseja excluir este restaurante do seu guia?")) {
+        restaurants = restaurants.filter(r => r.id !== id);
+        saveState();
+        renderRestaurants();
+        updateSidebarSummary();
+    }
+}
+
+// Handler de Upload de Imagem e Compressão via Canvas
+document.getElementById('form-rest-photo-file').addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Limpa o link de imagem colado para priorizar o arquivo
+    document.getElementById('form-rest-photo-url').value = "";
+
+    const reader = new FileReader();
+    reader.onload = function(event) {
+        const img = new Image();
+        img.onload = function() {
+            // Compressão em canvas
+            const canvas = document.createElement('canvas');
+            const MAX_WIDTH = 320;
+            const MAX_HEIGHT = 200;
+            let width = img.width;
+            let height = img.height;
+
+            if (width > height) {
+                if (width > MAX_WIDTH) {
+                    height *= MAX_WIDTH / width;
+                    width = MAX_WIDTH;
+                }
+            } else {
+                if (height > MAX_HEIGHT) {
+                    width *= MAX_HEIGHT / height;
+                    height = MAX_HEIGHT;
+                }
+            }
+
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
+
+            // Transforma em jpeg comprimido base64
+            const compressedBase64 = canvas.toDataURL('image/jpeg', 0.65);
+            
+            document.getElementById('form-rest-photo-base64').value = compressedBase64;
+            const preview = document.getElementById('form-rest-photo-preview');
+            preview.src = compressedBase64;
+            preview.style.display = "block";
+        };
+        img.src = event.target.result;
+    };
+    reader.readAsDataURL(file);
+});
+
+// Handler de alteração no campo de URL da imagem
+document.getElementById('form-rest-photo-url').addEventListener('input', (e) => {
+    const url = e.target.value.trim();
+    const preview = document.getElementById('form-rest-photo-preview');
+    const base64Input = document.getElementById('form-rest-photo-base64');
+    
+    if (url) {
+        base64Input.value = url;
+        preview.src = url;
+        preview.style.display = "block";
+        // Limpa o upload de arquivo para priorizar a URL
+        document.getElementById('form-rest-photo-file').value = "";
+    } else {
+        base64Input.value = "";
+        preview.src = "";
+        preview.style.display = "none";
+    }
+});
+
+// Submissão do Formulário de Restaurantes
+document.getElementById('restaurant-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    const id = document.getElementById('form-rest-id').value;
+    const restData = {
+        id: id || `rest-${Date.now()}`,
+        name: document.getElementById('form-rest-name').value,
+        address: document.getElementById('form-rest-address').value,
+        linkMaps: document.getElementById('form-rest-link-maps').value,
+        linkInstagram: document.getElementById('form-rest-link-instagram').value,
+        openTime: document.getElementById('form-rest-open-time').value,
+        closeTime: document.getElementById('form-rest-close-time').value,
+        photo: document.getElementById('form-rest-photo-base64').value,
+        notes: document.getElementById('form-rest-notes').value
+    };
+
+    if (id) {
+        const index = restaurants.findIndex(r => r.id === id);
+        if (index !== -1) {
+            restaurants[index] = restData;
+        }
+    } else {
+        restaurants.push(restData);
+    }
+
+    saveState();
+    closeDynamicModal(restaurantModal);
+    renderRestaurants();
+    updateSidebarSummary();
+});
+
+// Fechar modal de restaurantes
+document.getElementById('close-restaurant-modal-btn').addEventListener('click', () => closeDynamicModal(restaurantModal));
+document.getElementById('btn-cancel-restaurant').addEventListener('click', () => closeDynamicModal(restaurantModal));
 
 /* --- FORM CALCULATIONS TRIGGER (REAL-TIME PREVIEW) --- */
 
@@ -783,7 +1201,7 @@ document.getElementById('btn-delete-day').addEventListener('click', () => {
         renderDaysTabs();
         renderActiveDay();
         updateSidebarSummary();
-        updateDecideButtonState();
+        updateTopNavigationButtonsState();
     }
 });
 
@@ -819,7 +1237,7 @@ document.getElementById('save-config-btn').addEventListener('click', () => {
    ========================================================================== */
 
 document.getElementById('btn-export-backup').addEventListener('click', () => {
-    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify({ config, days }));
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify({ config, days, restaurants }));
     const downloadAnchor = document.createElement('a');
     downloadAnchor.setAttribute("href", dataStr);
     downloadAnchor.setAttribute("download", `chile_itinerary_backup_${new Date().toISOString().split('T')[0]}.json`);
@@ -842,6 +1260,7 @@ document.getElementById('import-file').addEventListener('change', (e) => {
             if (importedData.config && importedData.days) {
                 config = importedData.config;
                 days = importedData.days;
+                restaurants = importedData.restaurants || [];
                 
                 if (!days.some(d => d.id === 'day-to-decide')) {
                     days.push({
@@ -860,7 +1279,7 @@ document.getElementById('import-file').addEventListener('change', (e) => {
                 renderDaysTabs();
                 renderActiveDay();
                 updateSidebarSummary();
-                updateDecideButtonState();
+                updateTopNavigationButtonsState();
                 alert("Roteiro importado com sucesso!");
             } else {
                 alert("Arquivo inválido. Formato de backup incorreto.");
@@ -880,7 +1299,7 @@ document.getElementById('btn-reset-data').addEventListener('click', () => {
         renderDaysTabs();
         renderActiveDay();
         updateSidebarSummary();
-        updateDecideButtonState();
+        updateTopNavigationButtonsState();
         alert("Dados limpos e redefinidos com sucesso!");
     }
 });
@@ -927,20 +1346,34 @@ window.addEventListener('DOMContentLoaded', () => {
     renderDaysTabs();
     renderActiveDay();
     updateSidebarSummary();
-    updateDecideButtonState();
+    updateTopNavigationButtonsState();
 
-    // Vincula ouvintes de botões principais do header da página
     document.getElementById('btn-add-activity').addEventListener('click', openAddActivityModal);
     document.getElementById('btn-add-day').addEventListener('click', openAddDayModal);
     document.getElementById('btn-edit-day').addEventListener('click', openEditDayModal);
 
-    // Botões de navegação "A Decidir" e "Voltar"
+    // Ouvinte para adicionar e voltar de restaurantes
+    document.getElementById('btn-add-restaurant').addEventListener('click', openAddRestaurantModal);
+    document.getElementById('btn-back-from-restaurants').addEventListener('click', () => {
+        activeDayId = lastActiveNormalDayId;
+        saveState();
+        renderActiveDay();
+        renderDaysTabs();
+    });
+
+    // Botões de navegação superiores
     document.getElementById('btn-view-decide').addEventListener('click', () => {
         activeDayId = "day-to-decide";
         saveState();
         renderActiveDay();
         renderDaysTabs();
-        updateDecideButtonState();
+    });
+
+    document.getElementById('btn-view-restaurants').addEventListener('click', () => {
+        activeDayId = "restaurants";
+        saveState();
+        renderActiveDay();
+        renderDaysTabs();
     });
 
     document.getElementById('btn-back-to-itinerary').addEventListener('click', () => {
@@ -948,6 +1381,5 @@ window.addEventListener('DOMContentLoaded', () => {
         saveState();
         renderActiveDay();
         renderDaysTabs();
-        updateDecideButtonState();
     });
 });

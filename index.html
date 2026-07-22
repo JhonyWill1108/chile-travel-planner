@@ -124,6 +124,9 @@
                     <button class="btn btn-secondary btn-sm" id="btn-view-decide" title="Passeios a decidir">
                         <i class="fa-solid fa-circle-question" style="color: var(--primary);"></i> <span>A Decidir</span>
                     </button>
+                    <button class="btn btn-secondary btn-sm" id="btn-view-restaurants" title="Guia de restaurantes">
+                        <i class="fa-solid fa-utensils" style="color: var(--success);"></i> <span>Restaurantes</span>
+                    </button>
                     <button class="btn btn-outline btn-sm" id="btn-print" title="Imprimir roteiro">
                         <i class="fa-solid fa-print"></i> <span class="hide-mobile">Imprimir / PDF</span>
                     </button>
@@ -180,6 +183,32 @@
                 <!-- Timeline / Activities List -->
                 <div class="timeline-container" id="timeline-container">
                     <!-- Activities will be rendered here dynamically -->
+                </div>
+            </section>
+
+            <!-- Restaurants Section -->
+            <section class="day-details-section" id="restaurants-section" style="display: none;">
+                <!-- Restaurants Header -->
+                <div class="day-header-card">
+                    <div class="day-title-info">
+                        <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                            <button class="btn btn-secondary btn-sm" id="btn-back-from-restaurants" title="Voltar para os dias e roteiros">
+                                <i class="fa-solid fa-arrow-left"></i> Voltar ao Roteiro
+                            </button>
+                            <h2>🍽️ Guia de Restaurantes</h2>
+                        </div>
+                        <p style="margin-top: 4px;">Explore locais gastronômicos e planeje suas refeições</p>
+                    </div>
+                    <div class="day-actions">
+                        <button class="btn btn-primary" id="btn-add-restaurant">
+                            <i class="fa-solid fa-plus"></i> Adicionar Restaurante
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Restaurants Grid Container -->
+                <div class="restaurants-grid" id="restaurants-grid-container">
+                    <!-- Restaurants will be rendered here dynamically -->
                 </div>
             </section>
         </main>
@@ -417,6 +446,86 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline" id="btn-cancel-day">Cancelar</button>
                     <button type="submit" class="btn btn-primary" id="btn-save-day">Salvar Dia</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: ADD / EDIT RESTAURANT -->
+    <div class="modal-backdrop" id="restaurant-modal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3 id="modal-restaurant-title">Adicionar Restaurante</h3>
+                <button class="close-modal-btn" id="close-restaurant-modal-btn">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <form id="restaurant-form" class="modal-body">
+                <input type="hidden" id="form-rest-id">
+                <input type="hidden" id="form-rest-photo-base64">
+                
+                <!-- Nome -->
+                <div class="form-group">
+                    <label for="form-rest-name" class="required-field">Nome do Restaurante</label>
+                    <input type="text" id="form-rest-name" placeholder="Ex: Giratorio Restaurant" required>
+                </div>
+
+                <!-- Endereço -->
+                <div class="form-row-2">
+                    <div class="form-group">
+                        <label for="form-rest-address">Endereço</label>
+                        <input type="text" id="form-rest-address" placeholder="Ex: Av. Nueva Providencia 2250">
+                    </div>
+                    <div class="form-group">
+                        <label for="form-rest-link-maps">Link do Google Maps</label>
+                        <input type="url" id="form-rest-link-maps" placeholder="https://maps.google.com/...">
+                    </div>
+                </div>
+
+                <!-- Horário e Instagram -->
+                <div class="form-row-3" style="grid-template-columns: 1fr 1fr 1.2fr; gap: 12px;">
+                    <div class="form-group">
+                        <label for="form-rest-open-time">Hora que Abre</label>
+                        <input type="time" id="form-rest-open-time">
+                    </div>
+                    <div class="form-group">
+                        <label for="form-rest-close-time">Hora que Fecha</label>
+                        <input type="time" id="form-rest-close-time">
+                    </div>
+                    <div class="form-group">
+                        <label for="form-rest-link-instagram">Link do Instagram</label>
+                        <input type="url" id="form-rest-link-instagram" placeholder="https://instagram.com/...">
+                    </div>
+                </div>
+
+                <!-- Adicionar Foto (Upload ou URL) -->
+                <div class="cost-section-box">
+                    <h4 class="box-title"><i class="fa-solid fa-image"></i> Foto do Restaurante</h4>
+                    <div class="form-row-2">
+                        <div class="form-group">
+                            <label for="form-rest-photo-file">Enviar Imagem (Upload)</label>
+                            <input type="file" id="form-rest-photo-file" accept="image/*" style="padding: 6px 10px;">
+                        </div>
+                        <div class="form-group">
+                            <label for="form-rest-photo-url">Ou colar Link da Imagem (URL)</label>
+                            <input type="url" id="form-rest-photo-url" placeholder="https://...">
+                        </div>
+                    </div>
+                    <!-- Preview da Foto -->
+                    <div style="display: flex; justify-content: center; margin-top: 8px;">
+                        <img id="form-rest-photo-preview" src="" alt="Prévia da foto" style="max-width: 100%; max-height: 120px; border-radius: var(--border-radius-sm); border: 1px solid var(--border-color); display: none; object-fit: cover;">
+                    </div>
+                </div>
+
+                <!-- Observações -->
+                <div class="form-group">
+                    <label for="form-rest-notes">Observações / Recomendações / Dicas</label>
+                    <textarea id="form-rest-notes" rows="3" placeholder="Ex: Excelente pisco sour. Recomendado fazer reserva para o pôr do sol."></textarea>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline" id="btn-cancel-restaurant">Cancelar</button>
+                    <button type="submit" class="btn btn-primary" id="btn-save-restaurant">Salvar Restaurante</button>
                 </div>
             </form>
         </div>

@@ -10,13 +10,47 @@ let config = {
 
 // Roteiro padrão limpo com exatamente os 7 dias solicitados
 const defaultDays = [
-    { id: "day-1", dateLabel: "DIA 1 — 16/08/2026 (Domingo)", activities: [] },
+    { 
+        id: "day-1", 
+        dateLabel: "DIA 1 — 16/08/2026 (Domingo)", 
+        activities: [
+            {
+                id: "act-flight-departure",
+                title: "Embarque avião",
+                city: "São Paulo",
+                address: "Aeroporto de Guarulhos",
+                startTime: "03:25",
+                endTime: "06:55",
+                agencyCost: 0, agencyInstallments: 1, agencyCardInterest: false, hasGuide: false,
+                ticketCost: 0, ticketInstallments: 1, ticketCardInterest: false,
+                linkMaps: "", linkInstagram: "", link: "", contact: "", paymentStatus: "pending",
+                notes: "Voo de ida rumo a Santiago, Chile."
+            }
+        ] 
+    },
     { id: "day-2", dateLabel: "DIA 2 — 17/08/2026 (Segunda-feira)", activities: [] },
     { id: "day-3", dateLabel: "DIA 3 — 18/08/2026 (Terça-feira)", activities: [] },
     { id: "day-4", dateLabel: "DIA 4 — 19/08/2026 (Quarta-feira)", activities: [] },
     { id: "day-5", dateLabel: "DIA 5 — 20/08/2026 (Quinta-feira)", activities: [] },
     { id: "day-6", dateLabel: "DIA 6 — 21/08/2026 (Sexta-feira)", activities: [] },
-    { id: "day-7", dateLabel: "DIA 7 — 22/08/2026 (Sábado)", activities: [] },
+    { 
+        id: "day-7", 
+        dateLabel: "DIA 7 — 22/08/2026 (Sábado)", 
+        activities: [
+            {
+                id: "act-flight-return",
+                title: "Embarque Chile",
+                city: "Santiago",
+                address: "Aeroporto de Santiago",
+                startTime: "13:21",
+                endTime: "18:20",
+                agencyCost: 0, agencyInstallments: 1, agencyCardInterest: false, hasGuide: false,
+                ticketCost: 0, ticketInstallments: 1, ticketCardInterest: false,
+                linkMaps: "", linkInstagram: "", link: "", contact: "", paymentStatus: "pending",
+                notes: "Voo de retorno para o Brasil."
+            }
+        ] 
+    },
     { 
         id: "day-to-decide", 
         dateLabel: "A Decidir", 
@@ -313,7 +347,7 @@ function saveState() {
 
 function loadState() {
     const DB_VERSION_KEY = 'chile_planner_db_version';
-    const CURRENT_VERSION = 'v10_final_rest'; // Força migração de BD para incluir novos restaurantes e tipo de comida
+    const CURRENT_VERSION = 'v11_flights'; // Força migração de BD para incluir novos restaurantes e tipo de comida
 
     if (localStorage.getItem(DB_VERSION_KEY) !== CURRENT_VERSION) {
         localStorage.clear();

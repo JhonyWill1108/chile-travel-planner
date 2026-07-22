@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chile Travel Planner - Roteiro de Viagem</title>
+    <!-- Meta tags SEO -->
+    <meta name="description" content="Planejador de viagens moderno para organizar o seu roteiro no Chile. Calcule custos, converta moedas de CLP para BRL e planeje seu dia a dia.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Premium Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar: Navigation & Financial Overview -->
+        <aside class="sidebar" id="sidebar-panel">
+            <div class="sidebar-header">
+                <div class="brand">
+                    <i class="fa-solid fa-mountain-sun logo-icon"></i>
+                    <h1>Chile Planner</h1>
+                </div>
+                <button class="close-sidebar-btn" id="close-sidebar-btn" title="Fechar menu">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Exchange Rate Widget -->
+            <div class="exchange-card">
+                <h3><i class="fa-solid fa-coins"></i> Câmbio & Taxas</h3>
+                <div class="exchange-inputs">
+                    <div class="input-group">
+                        <label for="rate-input">1 BRL (R$) equivale a:</label>
+                        <div class="input-with-suffix">
+                            <input type="number" id="rate-input" value="175" step="1" min="1">
+                            <span>CLP</span>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label for="tax-input">Taxa Cartão (IOF/Juros):</label>
+                        <div class="input-with-suffix">
+                            <input type="number" id="tax-input" value="6.38" step="0.01" min="0">
+                            <span>%</span>
+                        </div>
+                    </div>
+                </div>
+                <button class="btn btn-secondary btn-sm btn-block" id="save-config-btn">
+                    <i class="fa-solid fa-arrows-rotate"></i> Atualizar Câmbio
+                </button>
+            </div>
+
+            <!-- Financial Summary -->
+            <div class="summary-card">
+                <h3><i class="fa-solid fa-chart-pie"></i> Resumo da Viagem</h3>
+                <div class="summary-metric">
+                    <span class="metric-label">Total Estimado</span>
+                    <span class="metric-value highlight" id="total-general">R$ 0,00</span>
+                    <span class="metric-sub" id="total-general-clp">0 CLP</span>
+                </div>
+                <div class="summary-grid">
+                    <div class="summary-item">
+                        <span class="item-label">Total Agência</span>
+                        <span class="item-val" id="total-agency">R$ 0,00</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="item-label">Total Ingressos</span>
+                        <span class="item-val" id="total-tickets">R$ 0,00</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="item-label">Pago / Garantido</span>
+                        <span class="item-val success" id="total-paid">R$ 0,00</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="item-label">Pendente</span>
+                        <span class="item-val warning" id="total-pending">R$ 0,00</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Backup & Tools -->
+            <div class="tools-card">
+                <h3><i class="fa-solid fa-sliders"></i> Utilitários</h3>
+                <div class="tools-buttons">
+                    <button class="btn btn-outline btn-sm" id="btn-export-backup" title="Exportar dados do roteiro">
+                        <i class="fa-solid fa-file-export"></i> Exportar
+                    </button>
+                    <button class="btn btn-outline btn-sm" id="btn-import-trigger" title="Importar dados de um roteiro">
+                        <i class="fa-solid fa-file-import"></i> Importar
+                    </button>
+                    <input type="file" id="import-file" accept=".json" style="display: none;">
+                </div>
+                <button class="btn btn-outline-danger btn-sm btn-block" id="btn-reset-data">
+                    <i class="fa-solid fa-trash-can"></i> Limpar Tudo
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Top Navbar (Desktop & Mobile) -->
+            <header class="top-nav">
+                <button class="menu-toggle-btn" id="menu-toggle-btn">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+                <div class="nav-title-area">
+                    <h2 id="trip-title">Roteiro Chile 2026</h2>
+                    <span class="trip-dates" id="trip-dates-label">18 a 22 de Agosto de 2026</span>
+                </div>
+                <div class="nav-actions">
+                    <button class="btn btn-outline btn-sm" id="btn-print" title="Imprimir roteiro">
+                        <i class="fa-solid fa-print"></i> <span class="hide-mobile">Imprimir / PDF</span>
+                    </button>
+                    <button class="btn btn-primary btn-sm" id="btn-add-day">
+                        <i class="fa-solid fa-calendar-plus"></i> <span class="hide-mobile">Novo Dia</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Days Carousel / Tab Bar -->
+            <nav class="days-nav" id="days-tabs-container">
+                <!-- Tabs will be rendered here dynamically -->
+            </nav>
+
+            <!-- Active Day Content Section -->
+            <section class="day-details-section">
+                <!-- Day Header -->
+                <div class="day-header-card">
+                    <div class="day-title-info">
+                        <h2 id="active-day-title">Selecione ou Crie um Dia</h2>
+                        <p id="active-day-subtitle">Preencha suas atividades para este dia</p>
+                    </div>
+                    <div class="day-actions">
+                        <button class="btn btn-outline-danger btn-sm" id="btn-delete-day" title="Excluir este dia">
+                            <i class="fa-solid fa-trash"></i> Excluir Dia
+                        </button>
+                        <button class="btn btn-outline btn-sm" id="btn-edit-day" title="Renomear este dia">
+                            <i class="fa-solid fa-pen-to-square"></i> Renomear Dia
+                        </button>
+                        <button class="btn btn-primary" id="btn-add-activity">
+                            <i class="fa-solid fa-plus"></i> Adicionar Passeio
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Day Summary Metrics -->
+                <div class="day-summary-row" id="day-summary-bar">
+                    <div class="day-summary-metric">
+                        <span class="day-metric-label">Subtotal do Dia:</span>
+                        <strong class="day-metric-value" id="day-total-brl">R$ 0,00</strong>
+                        <span class="day-metric-sub" id="day-total-clp">0 CLP</span>
+                    </div>
+                    <div class="day-summary-breakdown">
+                        <span><i class="fa-solid fa-hotel"></i> Agência: <span id="day-agency-total">R$ 0,00</span></span>
+                        <span><i class="fa-solid fa-ticket"></i> Ingressos: <span id="day-ticket-total">R$ 0,00</span></span>
+                    </div>
+                </div>
+
+                <!-- Timeline / Activities List -->
+                <div class="timeline-container" id="timeline-container">
+                    <!-- Activities will be rendered here dynamically -->
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- MODAL: ADD / EDIT ACTIVITY -->
+    <div class="modal-backdrop" id="activity-modal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3 id="modal-activity-title">Adicionar Passeio</h3>
+                <button class="close-modal-btn" id="close-activity-modal-btn">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <form id="activity-form" class="modal-body">
+                <input type="hidden" id="form-activity-id">
+                
+                <!-- Nome do Passeio -->
+                <div class="form-group">
+                    <label for="form-title" class="required-field">Nome do Passeio</label>
+                    <input type="text" id="form-title" placeholder="Ex: Embalse el Yeso + Termas" required>
+                </div>
+
+                <!-- Local e Endereço -->
+                <div class="form-row-2">
+                    <div class="form-group">
+                        <label for="form-city">Cidade / Região</label>
+                        <input type="text" id="form-city" placeholder="Ex: Cajón del Maipo">
+                    </div>
+                    <div class="form-group">
+                        <label for="form-address">Ponto de Encontro / Endereço</label>
+                        <input type="text" id="form-address" placeholder="Ex: Buscar no Hotel">
+                    </div>
+                </div>
+
+                <!-- Horários -->
+                <div class="form-row-2">
+                    <div class="form-group">
+                        <label for="form-start-time">Horário Início</label>
+                        <input type="time" id="form-start-time">
+                    </div>
+                    <div class="form-group">
+                        <label for="form-end-time">Horário Término</label>
+                        <input type="time" id="form-end-time">
+                    </div>
+                </div>
+
+                <!-- Custos da Agência -->
+                <div class="cost-section-box">
+                    <h4 class="box-title"><i class="fa-solid fa-suitcase-rolling"></i> Custos de Agência</h4>
+                    <div class="form-row-3">
+                        <div class="form-group">
+                            <label for="form-agency-cost">Valor Unitário</label>
+                            <input type="number" id="form-agency-cost" placeholder="0" min="0" step="any">
+                        </div>
+                        <div class="form-group">
+                            <label for="form-agency-currency">Moeda</label>
+                            <select id="form-agency-currency">
+                                <option value="CLP">CLP ($)</option>
+                                <option value="BRL">BRL (R$)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="form-agency-people">Nº de Pessoas</label>
+                            <input type="number" id="form-agency-people" value="2" min="1">
+                        </div>
+                    </div>
+                    <div class="checkbox-row">
+                        <label class="checkbox-container">
+                            <input type="checkbox" id="form-agency-interest" checked>
+                            <span class="checkmark"></span>
+                            Pagar com Cartão (Aplica juros de cartão no cálculo)
+                        </label>
+                        <label class="checkbox-container">
+                            <input type="checkbox" id="form-agency-guide">
+                            <span class="checkmark"></span>
+                            Possui Guia Incluso
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Custos do Ingresso -->
+                <div class="cost-section-box">
+                    <h4 class="box-title"><i class="fa-solid fa-ticket"></i> Custos de Ingressos / Entradas</h4>
+                    <div class="form-row-3">
+                        <div class="form-group">
+                            <label for="form-ticket-cost">Valor Unitário</label>
+                            <input type="number" id="form-ticket-cost" placeholder="0" min="0" step="any">
+                        </div>
+                        <div class="form-group">
+                            <label for="form-ticket-currency">Moeda</label>
+                            <select id="form-ticket-currency">
+                                <option value="CLP">CLP ($)</option>
+                                <option value="BRL">BRL (R$)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="form-ticket-people">Nº de Pessoas</label>
+                            <input type="number" id="form-ticket-people" value="2" min="1">
+                        </div>
+                    </div>
+                    <div class="checkbox-row">
+                        <label class="checkbox-container">
+                            <input type="checkbox" id="form-ticket-interest">
+                            <span class="checkmark"></span>
+                            Pagar com Cartão (Aplica juros de cartão no cálculo)
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Link Útil e Status de Pagamento -->
+                <div class="form-row-2">
+                    <div class="form-group">
+                        <label for="form-link">Link Útil (Maps, Site, Instagram)</label>
+                        <input type="url" id="form-link" placeholder="https://instagram.com/...">
+                    </div>
+                    <div class="form-group">
+                        <label for="form-payment-status">Status do Pagamento</label>
+                        <select id="form-payment-status">
+                            <option value="pending">Pendente</option>
+                            <option value="paid">Pago / Garantido</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Observações -->
+                <div class="form-group">
+                    <label for="form-notes">Observações / Dicas / Checklist</label>
+                    <textarea id="form-notes" rows="3" placeholder="Ex: Levar roupas térmicas, óculos escuros e água. Telefone do guia: +56 9..."></textarea>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline" id="btn-cancel-activity">Cancelar</button>
+                    <button type="submit" class="btn btn-primary" id="btn-save-activity">Salvar Passeio</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: ADD / EDIT DAY -->
+    <div class="modal-backdrop" id="day-modal">
+        <div class="modal-card modal-sm">
+            <div class="modal-header">
+                <h3 id="modal-day-title">Adicionar Novo Dia</h3>
+                <button class="close-modal-btn" id="close-day-modal-btn">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <form id="day-form" class="modal-body">
+                <input type="hidden" id="form-day-id">
+                <div class="form-group">
+                    <label for="form-day-label" class="required-field">Identificação do Dia</label>
+                    <input type="text" id="form-day-label" placeholder="Ex: Dia 1 - 18/08 (Domingo)" required>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline" id="btn-cancel-day">Cancelar</button>
+                    <button type="submit" class="btn btn-primary" id="btn-save-day">Salvar Dia</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Custom JS -->
+    <script src="app.js"></script>
+</body>
+</html>

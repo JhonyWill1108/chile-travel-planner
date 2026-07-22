@@ -313,7 +313,7 @@ function saveState() {
 
 function loadState() {
     const DB_VERSION_KEY = 'chile_planner_db_version';
-    const CURRENT_VERSION = 'v9_rest_list_photo'; // Força migração de BD para incluir novos restaurantes e tipo de comida
+    const CURRENT_VERSION = 'v10_final_rest'; // Força migração de BD para incluir novos restaurantes e tipo de comida
 
     if (localStorage.getItem(DB_VERSION_KEY) !== CURRENT_VERSION) {
         localStorage.clear();

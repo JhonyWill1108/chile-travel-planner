@@ -22,6 +22,7 @@ const defaultDays = [
 
 let days = [];
 let activeDayId = "";
+let lastActiveNormalDayId = "day-1"; // Armazena o último dia normal ativo para retornar de "A Decidir"
 
 /* ==========================================================================
    FINANCIAL CALCULATIONS
@@ -83,12 +84,13 @@ function saveState() {
     localStorage.setItem('chile_planner_config', JSON.stringify(config));
     localStorage.setItem('chile_planner_days', JSON.stringify(days));
     localStorage.setItem('chile_planner_active_day_id', activeDayId);
+    localStorage.setItem('chile_planner_last_active_normal_day_id', lastActiveNormalDayId);
 }
 
 function loadState() {
-    // Força atualização da base de dados para o novo template limpo de 7 dias
+    // Força atualização da base de dados para o novo template limpo de 7 dias com botão superior
     const DB_VERSION_KEY = 'chile_planner_db_version';
-    const CURRENT_VERSION = 'v5_clean'; // Incrementado para forçar migração imediata
+    const CURRENT_VERSION = 'v6_decide_button'; // Nova versão de BD para migração automática
 
     if (localStorage.getItem(DB_VERSION_KEY) !== CURRENT_VERSION) {
         localStorage.clear();
@@ -96,6 +98,7 @@ function loadState() {
         days = JSON.parse(JSON.stringify(defaultDays));
         config = { clpRate: 175, cardTax: 6.38 };
         activeDayId = "day-1";
+        lastActiveNormalDayId = "day-1";
         saveState();
         return;
     }
@@ -103,6 +106,7 @@ function loadState() {
     const storedConfig = localStorage.getItem('chile_planner_config');
     const storedDays = localStorage.getItem('chile_planner_days');
     const storedActiveDay = localStorage.getItem('chile_planner_active_day_id');
+    const storedLastActiveNormal = localStorage.getItem('chile_planner_last_active_normal_day_id');
 
     if (storedConfig) {
         config = JSON.parse(storedConfig);
@@ -127,6 +131,14 @@ function loadState() {
         activeDayId = days[0].id;
     } else {
         activeDayId = "";
+    }
+
+    if (storedLastActiveNormal && days.some(d => d.id === storedLastActiveNormal && d.id !== 'day-to-decide')) {
+        lastActiveNormalDayId = storedLastActiveNormal;
+    } else {
+        // Encontra o primeiro dia válido que não seja "A Decidir"
+        const firstNormal = days.find(d => d.id !== 'day-to-decide');
+        lastActiveNormalDayId = firstNormal ? firstNormal.id : "day-1";
     }
 }
 
@@ -183,35 +195,32 @@ function renderDaysTabs() {
     container.innerHTML = "";
 
     const normalDays = days.filter(d => d.id !== 'day-to-decide');
-    const decideDay = days.find(d => d.id === 'day-to-decide');
 
-    const renderTab = (day, isSpecial = false) => {
+    const renderTab = (day) => {
         const actCount = day.activities.length;
         const tabEl = document.createElement('div');
-        tabEl.className = `day-tab ${day.id === activeDayId ? 'active' : ''} ${isSpecial ? 'decide-tab' : ''}`;
+        tabEl.className = `day-tab ${day.id === activeDayId ? 'active' : ''}`;
         tabEl.setAttribute('data-id', day.id);
         
         tabEl.innerHTML = `
-            <i class="fa-solid ${isSpecial ? 'fa-circle-question' : 'fa-calendar-day'} day-tab-icon"></i>
+            <i class="fa-solid fa-calendar-day day-tab-icon"></i>
             <span class="day-tab-label">${day.dateLabel}</span>
             ${actCount > 0 ? `<span class="day-tab-count">${actCount}</span>` : ''}
         `;
         
         tabEl.addEventListener('click', () => {
             activeDayId = day.id;
+            lastActiveNormalDayId = day.id; // Salva o último dia normal selecionado
             saveState();
             renderActiveDay();
             renderDaysTabs();
+            updateDecideButtonState();
         });
 
         container.appendChild(tabEl);
     };
 
-    normalDays.forEach(day => renderTab(day, false));
-
-    if (decideDay) {
-        renderTab(decideDay, true);
-    }
+    normalDays.forEach(day => renderTab(day));
 
     const addTabEl = document.createElement('div');
     addTabEl.className = "day-tab add-day-tab";
@@ -224,6 +233,20 @@ function renderDaysTabs() {
     container.appendChild(addTabEl);
 }
 
+/**
+ * Atualiza o visual do botão superior "A Decidir" conforme o estado selecionado
+ */
+function updateDecideButtonState() {
+    const btnDecide = document.getElementById('btn-view-decide');
+    if (activeDayId === 'day-to-decide') {
+        btnDecide.classList.add('btn-primary');
+        btnDecide.classList.remove('btn-secondary');
+    } else {
+        btnDecide.classList.remove('btn-primary');
+        btnDecide.classList.add('btn-secondary');
+    }
+}
+
 function renderActiveDay() {
     const activeDay = days.find(d => d.id === activeDayId);
     const container = document.getElementById('timeline-container');
@@ -233,6 +256,7 @@ function renderActiveDay() {
     const activeDaySubtitle = document.getElementById('active-day-subtitle');
     const btnDeleteDay = document.getElementById('btn-delete-day');
     const btnEditDay = document.getElementById('btn-edit-day');
+    const btnBack = document.getElementById('btn-back-to-itinerary');
 
     if (!activeDay) {
         activeDayTitle.innerText = "Selecione ou Crie um Dia";
@@ -254,11 +278,13 @@ function renderActiveDay() {
     if (isToDecide) {
         btnDeleteDay.style.display = "none";
         btnEditDay.style.display = "none";
+        btnBack.style.display = "inline-flex"; // Exibe botão "Voltar ao Roteiro"
         activeDayTitle.innerText = "💡 Passeios a Decidir";
         activeDaySubtitle.innerText = "Ideias de atividades ou opções de backup ainda não confirmadas";
     } else {
         btnDeleteDay.style.display = "inline-flex";
         btnEditDay.style.display = "inline-flex";
+        btnBack.style.display = "none"; // Esconde botão "Voltar ao Roteiro"
         activeDayTitle.innerText = activeDay.dateLabel;
         activeDaySubtitle.innerText = `${activeDay.activities.length} atividade(s) planejada(s)`;
     }
@@ -350,7 +376,6 @@ function renderActiveDay() {
             `;
         }
 
-        // --- LINKS DE ATALHOS RÁPIDOS NO HEADER DO CARD ---
         let mapsLinkHTML = "";
         if (act.linkMaps) {
             mapsLinkHTML = `<a href="${act.linkMaps}" target="_blank" class="activity-link-icon maps-link" title="Ver no Google Maps"><i class="fa-solid fa-map-location-dot"></i></a>`;
@@ -735,6 +760,7 @@ document.getElementById('day-form').addEventListener('submit', (e) => {
         }
         
         activeDayId = newId;
+        lastActiveNormalDayId = newId;
     }
 
     saveState();
@@ -748,11 +774,16 @@ document.getElementById('btn-delete-day').addEventListener('click', () => {
 
     if (confirm("ATENÇÃO: Isso excluirá permanentemente este dia de viagem e TODOS os passeios cadastrados nele. Deseja prosseguir?")) {
         days = days.filter(d => d.id !== activeDayId);
-        activeDayId = days.length > 0 ? days[0].id : "";
+        const normalDays = days.filter(d => d.id !== 'day-to-decide');
+        activeDayId = normalDays.length > 0 ? normalDays[0].id : "day-to-decide";
+        if (activeDayId !== "day-to-decide") {
+            lastActiveNormalDayId = activeDayId;
+        }
         saveState();
         renderDaysTabs();
         renderActiveDay();
         updateSidebarSummary();
+        updateDecideButtonState();
     }
 });
 
@@ -820,12 +851,16 @@ document.getElementById('import-file').addEventListener('change', (e) => {
                     });
                 }
 
-                activeDayId = days.length > 0 ? days[0].id : "";
+                activeDayId = days.length > 0 ? days[0].id : "day-to-decide";
+                if (activeDayId !== "day-to-decide") {
+                    lastActiveNormalDayId = activeDayId;
+                }
                 
                 saveState();
                 renderDaysTabs();
                 renderActiveDay();
                 updateSidebarSummary();
+                updateDecideButtonState();
                 alert("Roteiro importado com sucesso!");
             } else {
                 alert("Arquivo inválido. Formato de backup incorreto.");
@@ -845,6 +880,7 @@ document.getElementById('btn-reset-data').addEventListener('click', () => {
         renderDaysTabs();
         renderActiveDay();
         updateSidebarSummary();
+        updateDecideButtonState();
         alert("Dados limpos e redefinidos com sucesso!");
     }
 });
@@ -891,8 +927,27 @@ window.addEventListener('DOMContentLoaded', () => {
     renderDaysTabs();
     renderActiveDay();
     updateSidebarSummary();
+    updateDecideButtonState();
 
+    // Vincula ouvintes de botões principais do header da página
     document.getElementById('btn-add-activity').addEventListener('click', openAddActivityModal);
     document.getElementById('btn-add-day').addEventListener('click', openAddDayModal);
     document.getElementById('btn-edit-day').addEventListener('click', openEditDayModal);
+
+    // Botões de navegação "A Decidir" e "Voltar"
+    document.getElementById('btn-view-decide').addEventListener('click', () => {
+        activeDayId = "day-to-decide";
+        saveState();
+        renderActiveDay();
+        renderDaysTabs();
+        updateDecideButtonState();
+    });
+
+    document.getElementById('btn-back-to-itinerary').addEventListener('click', () => {
+        activeDayId = lastActiveNormalDayId;
+        saveState();
+        renderActiveDay();
+        renderDaysTabs();
+        updateDecideButtonState();
+    });
 });

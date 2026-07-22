@@ -118,9 +118,12 @@
                 </button>
                 <div class="nav-title-area">
                     <h2 id="trip-title">Roteiro Chile 2026</h2>
-                    <span class="trip-dates" id="trip-dates-label">18 a 22 de Agosto de 2026</span>
+                    <span class="trip-dates" id="trip-dates-label">16 a 22 de Agosto de 2026</span>
                 </div>
                 <div class="nav-actions">
+                    <button class="btn btn-secondary btn-sm" id="btn-view-decide" title="Passeios a decidir">
+                        <i class="fa-solid fa-circle-question" style="color: var(--primary);"></i> <span>A Decidir</span>
+                    </button>
                     <button class="btn btn-outline btn-sm" id="btn-print" title="Imprimir roteiro">
                         <i class="fa-solid fa-print"></i> <span class="hide-mobile">Imprimir / PDF</span>
                     </button>
@@ -140,8 +143,13 @@
                 <!-- Day Header -->
                 <div class="day-header-card">
                     <div class="day-title-info">
-                        <h2 id="active-day-title">Selecione ou Crie um Dia</h2>
-                        <p id="active-day-subtitle">Preencha suas atividades para este dia</p>
+                        <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                            <button class="btn btn-secondary btn-sm" id="btn-back-to-itinerary" style="display: none;" title="Voltar para os dias e roteiros">
+                                <i class="fa-solid fa-arrow-left"></i> Voltar ao Roteiro
+                            </button>
+                            <h2 id="active-day-title">Selecione ou Crie um Dia</h2>
+                        </div>
+                        <p id="active-day-subtitle" style="margin-top: 4px;">Preencha suas atividades para este dia</p>
                     </div>
                     <div class="day-actions">
                         <button class="btn btn-outline-danger btn-sm" id="btn-delete-day" title="Excluir este dia">

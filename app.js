@@ -7,8 +7,8 @@ let config = {
     clpRate: 175, // 1 BRL = 175 CLP
     cardTax: 6.38, // IOF + Taxas operacionais
     autoUpdateRate: true, // Atualizar cotação ao iniciar o app
-    supabaseUrl: "", // URL do projeto Supabase
-    supabaseKey: "", // Public anon key do Supabase
+    supabaseUrl: "https://wyabiudjqocwwcgrtsex.supabase.co", // URL do projeto Supabase
+    supabaseKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind5YWJpdWRqcW9jd3djZ3J0c2V4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY5NjA5NjUsImV4cCI6MjA3MjUzNjk2NX0.m1xc9qrArNyFIgRHEevuF1VU6kyuHTVogjDq3E4K26A", // Public anon key do Supabase
     supabaseTripId: "chile-viagem-2026" // ID único da viagem para sincronizar
 };
 
@@ -530,14 +530,21 @@ function saveState() {
 
 function loadState() {
     const DB_VERSION_KEY = 'chile_planner_db_version';
-    const CURRENT_VERSION = 'v15_supabase_sync'; // Força migração de BD para incluir novos restaurantes e tipo de comida
+    const CURRENT_VERSION = 'v16_supabase_keys'; // Força migração de BD para incluir novos restaurantes e tipo de comida
 
     if (localStorage.getItem(DB_VERSION_KEY) !== CURRENT_VERSION) {
         localStorage.clear();
         localStorage.setItem(DB_VERSION_KEY, CURRENT_VERSION);
         days = JSON.parse(JSON.stringify(defaultDays));
         restaurants = JSON.parse(JSON.stringify(defaultRestaurants));
-        config = { clpRate: 175, cardTax: 6.38, autoUpdateRate: true, supabaseUrl: "", supabaseKey: "", supabaseTripId: "chile-viagem-2026" };
+        config = { 
+            clpRate: 175, 
+            cardTax: 6.38, 
+            autoUpdateRate: true, 
+            supabaseUrl: "https://wyabiudjqocwwcgrtsex.supabase.co", 
+            supabaseKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind5YWJpdWRqcW9jd3djZ3J0c2V4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY5NjA5NjUsImV4cCI6MjA3MjUzNjk2NX0.m1xc9qrArNyFIgRHEevuF1VU6kyuHTVogjDq3E4K26A", 
+            supabaseTripId: "chile-viagem-2026" 
+        };
         activeDayId = "day-1";
         lastActiveNormalDayId = "day-1";
         saveState();
@@ -556,9 +563,15 @@ function loadState() {
             if (config.autoUpdateRate === undefined) {
                 config.autoUpdateRate = true;
             }
-            if (config.supabaseUrl === undefined) config.supabaseUrl = "";
-            if (config.supabaseKey === undefined) config.supabaseKey = "";
-            if (config.supabaseTripId === undefined) config.supabaseTripId = "chile-viagem-2026";
+            if (!config.supabaseUrl) {
+                config.supabaseUrl = "https://wyabiudjqocwwcgrtsex.supabase.co";
+            }
+            if (!config.supabaseKey) {
+                config.supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind5YWJpdWRqcW9jd3djZ3J0c2V4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY5NjA5NjUsImV4cCI6MjA3MjUzNjk2NX0.m1xc9qrArNyFIgRHEevuF1VU6kyuHTVogjDq3E4K26A";
+            }
+            if (!config.supabaseTripId) {
+                config.supabaseTripId = "chile-viagem-2026";
+            }
         } catch(e) { console.error(e); }
     }
     

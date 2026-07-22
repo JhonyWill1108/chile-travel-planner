@@ -269,36 +269,118 @@
                             <button class="btn btn-secondary btn-sm" id="btn-back-from-packing" title="Voltar para os dias e roteiros">
                                 <i class="fa-solid fa-arrow-left"></i> Voltar ao Roteiro
                             </button>
-                            <h2>💼 O que levar (Checklist de Viagem)</h2>
+                            <h2>💼 O que levar (Mala & Checklist)</h2>
                         </div>
-                        <p style="margin-top: 4px;">Gerencie os itens da mala para cada pessoa que vai na viagem</p>
-                    </div>
-                    <div class="day-actions" style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap;">
-                        <div style="display: flex; align-items: center; gap: 8px;">
-                            <label for="packing-travellers-count" style="font-size: 0.85rem; color: var(--text-muted); font-weight: 500;">Viajantes:</label>
-                            <input type="number" id="packing-travellers-count" value="2" min="1" max="10" style="width: 55px; background: var(--bg-input); border: 1px solid var(--border-color); border-radius: var(--border-radius-sm); padding: 5px 8px; color: var(--text-main); font-size: 0.85rem; text-align: center; outline: none; transition: var(--transition-fast);">
-                        </div>
+                        <p style="margin-top: 4px;">Gerencie e acompanhe a arrumação das malas para a viagem</p>
                     </div>
                 </div>
 
-                <!-- Add packing item inline form -->
-                <div class="summary-card" id="add-packing-item-row" style="padding: 14px; margin-bottom: 12px; display: flex; flex-wrap: wrap; gap: 12px; align-items: center; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--border-radius-md);">
-                    <input type="text" id="new-pack-item-name" placeholder="Nome do item (ex: Corta vento / Blusa térmica)" style="flex: 2; min-width: 200px; background: var(--bg-input); border: 1px solid var(--border-color); border-radius: var(--border-radius-sm); padding: 8px 12px; color: var(--text-main); font-size: 0.9rem; outline: none;">
-                    <select id="new-pack-item-category" style="flex: 1; min-width: 130px; background: var(--bg-input); border: 1px solid var(--border-color); border-radius: var(--border-radius-sm); padding: 8px 12px; color: var(--text-main); font-size: 0.9rem; outline: none; cursor: pointer;">
-                        <option value="Documentos">📄 Documentos</option>
-                        <option value="Vestuário">👕 Vestuário</option>
-                        <option value="Higiene / Saúde">🧼 Higiene / Saúde</option>
-                        <option value="Eletrônicos">🔌 Eletrônicos</option>
-                        <option value="Outros">🎒 Outros</option>
-                    </select>
-                    <button class="btn btn-primary btn-sm" id="btn-submit-new-pack-item" style="padding: 9px 16px;">
-                        <i class="fa-solid fa-plus"></i> Adicionar Item
+                <!-- Packing Sub-tabs Navigation -->
+                <div class="packing-sub-tabs" style="display: flex; gap: 8px; margin-bottom: 16px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; flex-wrap: wrap;">
+                    <button class="btn btn-primary btn-sm" id="btn-packing-tab-general">
+                        <i class="fa-solid fa-list-check"></i> Mala Geral
+                    </button>
+                    <button class="btn btn-secondary btn-sm" id="btn-packing-tab-individual">
+                        <i class="fa-solid fa-person-suitcase"></i> Checklist Individual
+                    </button>
+                    <button class="btn btn-secondary btn-sm" id="btn-packing-tab-settings">
+                        <i class="fa-solid fa-gear"></i> Configurar Mala
                     </button>
                 </div>
 
-                <!-- Packing Lists Dynamic Container -->
-                <div id="packing-container" style="display: flex; flex-direction: column; gap: 20px;">
-                    <!-- Categories will be rendered here dynamically -->
+                <!-- PANEL 1: MALA GERAL -->
+                <div class="packing-panel" id="panel-packing-general" style="display: flex; flex-direction: column; gap: 16px;">
+                    <!-- Add packing item inline form -->
+                    <div class="summary-card" style="padding: 18px; display: flex; flex-direction: column; gap: 14px; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--border-radius-md);">
+                        <h4 style="font-size: 0.95rem; font-family: 'Outfit', sans-serif; display: flex; align-items: center; gap: 6px; margin: 0; color: var(--primary);">
+                            <i class="fa-solid fa-plus-circle"></i> Cadastrar Novo Item para Levar
+                        </h4>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; flex-wrap: wrap;">
+                            <div class="form-group" style="gap: 4px;">
+                                <label for="new-pack-item-name" style="font-size: 0.75rem;">Nome do Item:</label>
+                                <input type="text" id="new-pack-item-name" placeholder="Ex: Casaco Corta-vento / Adaptador tomada">
+                            </div>
+                            <div class="form-group" style="gap: 4px;">
+                                <label for="new-pack-item-category" style="font-size: 0.75rem;">Categoria:</label>
+                                <select id="new-pack-item-category" style="cursor: pointer; padding: 10px 14px;">
+                                    <!-- Will be populated dynamically -->
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group" style="gap: 4px;">
+                            <label for="new-pack-item-description" style="font-size: 0.75rem;">Descrição / Observação do Item (Opcional):</label>
+                            <input type="text" id="new-pack-item-description" placeholder="Ex: De preferência impermeável / Padrão de 3 pinos redondos chilenos">
+                        </div>
+                        <div class="form-group" style="gap: 4px;">
+                            <label style="font-size: 0.75rem;">Quem deve levar? (Atribuir item):</label>
+                            <div id="new-pack-item-assignments" style="display: flex; gap: 14px; flex-wrap: wrap; margin-top: 4px; font-size: 0.85rem; color: var(--text-main);">
+                                <!-- Will be populated dynamically with checkboxes for travelers -->
+                            </div>
+                        </div>
+                        <button class="btn btn-primary" id="btn-submit-new-pack-item" style="align-self: flex-end; padding: 10px 24px; font-weight: 600;">
+                            <i class="fa-solid fa-plus"></i> Adicionar Item
+                        </button>
+                    </div>
+
+                    <!-- General Packing List Dynamic Container -->
+                    <div id="packing-general-container" style="display: flex; flex-direction: column; gap: 20px;">
+                        <!-- Rendered in JS -->
+                    </div>
+                </div>
+
+                <!-- PANEL 2: CHECKLIST INDIVIDUAL -->
+                <div class="packing-panel" id="panel-packing-individual" style="display: none; flex-direction: column; gap: 16px;">
+                    <div class="summary-card" style="padding: 16px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--border-radius-md);">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <label for="packing-individual-user-select" style="font-size: 0.9rem; font-weight: 600; color: var(--text-muted);">Visualizar checklist de:</label>
+                            <select id="packing-individual-user-select" style="background: var(--bg-input); border: 1px solid var(--border-color); border-radius: var(--border-radius-sm); padding: 8px 12px; color: var(--text-main); font-size: 0.9rem; outline: none; cursor: pointer;">
+                                <!-- Will be populated dynamically -->
+                            </select>
+                        </div>
+                        <div id="packing-individual-progress-bar-container" style="flex: 1; min-width: 200px; display: flex; flex-direction: column; gap: 6px;">
+                            <!-- Progress stats and bar rendered dynamically -->
+                        </div>
+                    </div>
+
+                    <!-- Individual Packing List Dynamic Container -->
+                    <div id="packing-individual-container" style="display: flex; flex-direction: column; gap: 20px;">
+                        <!-- Rendered in JS -->
+                    </div>
+                </div>
+
+                <!-- PANEL 3: CONFIGURAÇÕES -->
+                <div class="packing-panel" id="panel-packing-settings" style="display: none; grid-template-columns: 1fr 1fr; gap: 20px; flex-wrap: wrap;">
+                    <!-- Gerenciar Viajantes -->
+                    <div class="summary-card" style="padding: 20px; display: flex; flex-direction: column; gap: 16px;">
+                        <h3 style="font-size: 1.1rem; color: var(--text-main); border-bottom: 1px solid var(--border-color); padding-bottom: 10px; margin: 0; display: flex; align-items: center; gap: 8px;">
+                            <i class="fa-solid fa-users" style="color: var(--primary);"></i> Gerenciar Viajantes
+                        </h3>
+                        <div style="display: flex; gap: 8px;">
+                            <input type="text" id="new-traveler-name" placeholder="Nome do viajante (ex: Jhony)" style="flex: 1; background: var(--bg-input); border: 1px solid var(--border-color); border-radius: var(--border-radius-sm); padding: 8px 12px; color: var(--text-main); font-size: 0.9rem; outline: none;">
+                            <button class="btn btn-primary btn-sm" id="btn-add-traveler" style="padding: 9px 16px;">
+                                <i class="fa-solid fa-plus"></i> Adicionar
+                            </button>
+                        </div>
+                        <div id="travelers-settings-list" style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px;">
+                            <!-- Travelers list with rename inputs and delete buttons rendered dynamically -->
+                        </div>
+                    </div>
+
+                    <!-- Gerenciar Categorias -->
+                    <div class="summary-card" style="padding: 20px; display: flex; flex-direction: column; gap: 16px;">
+                        <h3 style="font-size: 1.1rem; color: var(--text-main); border-bottom: 1px solid var(--border-color); padding-bottom: 10px; margin: 0; display: flex; align-items: center; gap: 8px;">
+                            <i class="fa-solid fa-tags" style="color: var(--primary);"></i> Gerenciar Categorias
+                        </h3>
+                        <div style="display: flex; gap: 8px;">
+                            <input type="text" id="new-category-name" placeholder="Nova Categoria (ex: Calçados)" style="flex: 1; background: var(--bg-input); border: 1px solid var(--border-color); border-radius: var(--border-radius-sm); padding: 8px 12px; color: var(--text-main); font-size: 0.9rem; outline: none;">
+                            <button class="btn btn-primary btn-sm" id="btn-add-category" style="padding: 9px 16px;">
+                                <i class="fa-solid fa-plus"></i> Adicionar
+                            </button>
+                        </div>
+                        <div id="categories-settings-list" style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px;">
+                            <!-- Categories list with delete buttons rendered dynamically -->
+                        </div>
+                    </div>
                 </div>
             </section>
         </main>

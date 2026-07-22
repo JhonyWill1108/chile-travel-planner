@@ -308,25 +308,25 @@ const defaultRestaurants = [
 ];
 
 const defaultPackingItems = [
-    { id: "pack-1", name: "Passaporte ou RG (menos de 10 anos de emissão)", category: "Documentos", packedBy: [] },
-    { id: "pack-2", name: "Seguro Viagem impresso/digital", category: "Documentos", packedBy: [] },
-    { id: "pack-3", name: "Cartão de Débito Internacional (Nomad/Wise)", category: "Documentos", packedBy: [] },
-    { id: "pack-4", name: "Dinheiro em Espécie (Pesos / Real para emergências)", category: "Documentos", packedBy: [] },
+    { id: "pack-1", name: "Passaporte ou RG", description: "Verifique se a data de emissão tem menos de 10 anos", category: "Documentos", packedBy: [], assignedTo: ["t-1", "t-2"] },
+    { id: "pack-2", name: "Seguro Viagem", description: "Impresso ou em PDF no celular para emergências", category: "Documentos", packedBy: [], assignedTo: ["t-1", "t-2"] },
+    { id: "pack-3", name: "Cartão de Débito Internacional", description: "Nomad, Wise ou similar com saldo carregado", category: "Documentos", packedBy: [], assignedTo: ["t-1", "t-2"] },
+    { id: "pack-4", name: "Dinheiro em Espécie", description: "Pesos chilenos ou Reais para táxi e emergências rápidas", category: "Documentos", packedBy: [], assignedTo: ["t-1", "t-2"] },
     
-    { id: "pack-5", name: "Casaco Corta-vento (Windbreaker)", category: "Vestuário", packedBy: [] },
-    { id: "pack-6", name: "Segunda pele térmica (calça e blusa)", category: "Vestuário", packedBy: [] },
-    { id: "pack-7", name: "Casaco pesado de frio (plumas/neve)", category: "Vestuário", packedBy: [] },
-    { id: "pack-8", name: "Óculos de sol com proteção UV", category: "Vestuário", packedBy: [] },
-    { id: "pack-9", name: "Luvas, cachecol e touca quentes", category: "Vestuário", packedBy: [] },
-    { id: "pack-10", name: "Tênis confortável para caminhadas", category: "Vestuário", packedBy: [] },
+    { id: "pack-5", name: "Casaco Corta-vento (Windbreaker)", description: "Essencial para passeios na Cordilheira devido ao vento forte", category: "Vestuário", packedBy: [], assignedTo: ["t-1", "t-2"] },
+    { id: "pack-6", name: "Segunda pele térmica", description: "Blusa e calça térmicas para usar por baixo da roupa de frio", category: "Vestuário", packedBy: [], assignedTo: ["t-1", "t-2"] },
+    { id: "pack-7", name: "Casaco pesado de frio", description: "Casaco grosso de plumas ou apropriado para neve na Cordilheira", category: "Vestuário", packedBy: [], assignedTo: ["t-1", "t-2"] },
+    { id: "pack-8", name: "Óculos de sol", description: "Com proteção UV, o reflexo do sol na neve é muito forte", category: "Vestuário", packedBy: [], assignedTo: ["t-1", "t-2"] },
+    { id: "pack-9", name: "Luvas, cachecol e touca", description: "Itens básicos para os passeios de altitude", category: "Vestuário", packedBy: [], assignedTo: ["t-1", "t-2"] },
+    { id: "pack-10", name: "Tênis confortável", description: "Ideal para longas caminhadas nos parques e mirantes", category: "Vestuário", packedBy: [], assignedTo: ["t-1", "t-2"] },
 
-    { id: "pack-11", name: "Protetor Labial com hidratante (Chile é muito seco)", category: "Higiene / Saúde", packedBy: [] },
-    { id: "pack-12", name: "Protetor Solar FPS 50+", category: "Higiene / Saúde", packedBy: [] },
-    { id: "pack-13", name: "Sorine / Hidratante nasal", category: "Higiene / Saúde", packedBy: [] },
-    { id: "pack-14", name: "Medicamentos de uso contínuo / dor de cabeça", category: "Higiene / Saúde", packedBy: [] },
+    { id: "pack-11", name: "Protetor Labial", description: "O clima no Chile é extremamente seco, os lábios racham rápido", category: "Higiene / Saúde", packedBy: [], assignedTo: ["t-1", "t-2"] },
+    { id: "pack-12", name: "Protetor Solar", description: "Filtro solar de rosto e corpo para os passeios de dia", category: "Higiene / Saúde", packedBy: [], assignedTo: ["t-1", "t-2"] },
+    { id: "pack-13", name: "Sorine / Hidratante nasal", description: "Ajuda a respirar melhor devido ao ar seco de Santiago e montanha", category: "Higiene / Saúde", packedBy: [], assignedTo: ["t-1", "t-2"] },
+    { id: "pack-14", name: "Medicamentos pessoais", description: "Remédios de uso contínuo, dor de cabeça, enjoo ou estômago", category: "Higiene / Saúde", packedBy: [], assignedTo: ["t-1", "t-2"] },
     
-    { id: "pack-15", name: "Adaptador de tomada de 3 pinos redondos chilenos", category: "Eletrônicos", packedBy: [] },
-    { id: "pack-16", name: "Carregador Portátil (Powerbank)", category: "Eletrônicos", packedBy: [] }
+    { id: "pack-15", name: "Adaptador de tomada chileno", description: "Padrão de 3 pinos redondos em linha reta (padrão L chileno)", category: "Eletrônicos", packedBy: [], assignedTo: ["t-1", "t-2"] },
+    { id: "pack-16", name: "Carregador Portátil (Powerbank)", description: "Garante bateria extra durante os passeios de dia inteiro", category: "Eletrônicos", packedBy: [], assignedTo: ["t-1", "t-2"] }
 ];
 
 let days = [];
@@ -568,7 +568,19 @@ function loadState() {
             autoUpdateRate: true, 
             supabaseUrl: "https://wyabiudjqocwwcgrtsex.supabase.co", 
             supabaseKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind5YWJpdWRqcW9jd3djZ3J0c2V4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY5NjA5NjUsImV4cCI6MjA3MjUzNjk2NX0.m1xc9qrArNyFIgRHEevuF1VU6kyuHTVogjDq3E4K26A", 
-            supabaseTripId: "chile-viagem-2026" 
+            supabaseTripId: "chile-viagem-2026",
+            travelers: [
+                { id: "t-1", name: "Jhony" },
+                { id: "t-2", name: "Larissa" }
+            ],
+            packingCategories: [
+                "Documentos",
+                "Vestuário",
+                "Higiene / Saúde",
+                "Eletrônicos",
+                "Outros"
+            ],
+            packingItems: JSON.parse(JSON.stringify(defaultPackingItems))
         };
         activeDayId = "day-1";
         lastActiveNormalDayId = "day-1";
@@ -600,6 +612,24 @@ function loadState() {
             }
             if (!config.supabaseTripId) {
                 config.supabaseTripId = "chile-viagem-2026";
+            }
+            if (!config.travelers) {
+                config.travelers = [
+                    { id: "t-1", name: "Jhony" },
+                    { id: "t-2", name: "Larissa" }
+                ];
+            }
+            if (!config.packingCategories) {
+                config.packingCategories = [
+                    "Documentos",
+                    "Vestuário",
+                    "Higiene / Saúde",
+                    "Eletrônicos",
+                    "Outros"
+                ];
+            }
+            if (!config.packingItems) {
+                config.packingItems = JSON.parse(JSON.stringify(defaultPackingItems));
             }
         } catch(e) { console.error(e); }
     }
@@ -1935,41 +1965,115 @@ window.addEventListener('DOMContentLoaded', () => {
         renderDaysTabs();
     });
 
-    // Ouvinte para quantidade de viajantes
-    const travInput = document.getElementById('packing-travellers-count');
-    if (travInput) {
-        travInput.addEventListener('change', (e) => {
-            const val = Math.max(1, parseInt(e.target.value) || 2);
-            config.travellersCount = val;
-            saveState();
-            renderPackingList();
-        });
-    }
+    // 8.1 Mala de Viagem Sub-abas de Navegação
+    let activePackingTab = "general";
 
-    // Ouvinte para adicionar item na mala
+    const switchPackingTab = (tabName) => {
+        activePackingTab = tabName;
+        const btnGen = document.getElementById('btn-packing-tab-general');
+        const btnInd = document.getElementById('btn-packing-tab-individual');
+        const btnSet = document.getElementById('btn-packing-tab-settings');
+
+        const panGen = document.getElementById('panel-packing-general');
+        const panInd = document.getElementById('panel-packing-individual');
+        const panSet = document.getElementById('panel-packing-settings');
+
+        if (btnGen) btnGen.className = `btn btn-sm ${tabName === 'general' ? 'btn-primary' : 'btn-secondary'}`;
+        if (btnInd) btnInd.className = `btn btn-sm ${tabName === 'individual' ? 'btn-primary' : 'btn-secondary'}`;
+        if (btnSet) btnSet.className = `btn btn-sm ${tabName === 'settings' ? 'btn-primary' : 'btn-secondary'}`;
+
+        if (panGen) panGen.style.display = tabName === 'general' ? 'flex' : 'none';
+        if (panInd) panInd.style.display = tabName === 'individual' ? 'flex' : 'none';
+        if (panSet) panSet.style.display = tabName === 'settings' ? 'grid' : 'none';
+
+        renderPackingList();
+    };
+
+    document.getElementById('btn-packing-tab-general')?.addEventListener('click', () => switchPackingTab('general'));
+    document.getElementById('btn-packing-tab-individual')?.addEventListener('click', () => switchPackingTab('individual'));
+    document.getElementById('btn-packing-tab-settings')?.addEventListener('click', () => switchPackingTab('settings'));
+
+    document.getElementById('packing-individual-user-select')?.addEventListener('change', () => {
+        renderPackingList();
+    });
+
     document.getElementById('btn-submit-new-pack-item')?.addEventListener('click', () => {
         const nameInput = document.getElementById('new-pack-item-name');
         const catSelect = document.getElementById('new-pack-item-category');
-        if (!nameInput || !catSelect) return;
-        
+        const descInput = document.getElementById('new-pack-item-description');
+        if (!nameInput || !catSelect || !descInput) return;
+
         const name = nameInput.value.trim();
         const category = catSelect.value;
+        const description = descInput.value.trim();
+
         if (!name) {
-            alert("Por favor, digite o nome do item!");
+            alert("Por favor, informe o nome do item!");
             return;
         }
-        
-        if (!config.packingItems) {
-            config.packingItems = JSON.parse(JSON.stringify(defaultPackingItems));
-        }
-        
+
+        const assignedTo = [];
+        document.querySelectorAll('.new-item-assign-cb').forEach(cb => {
+            if (cb.checked) {
+                assignedTo.push(cb.value);
+            }
+        });
+
+        if (!config.packingItems) config.packingItems = [];
+
         config.packingItems.push({
             id: `pack-${Date.now()}`,
             name,
+            description,
             category,
-            packedBy: []
+            packedBy: [],
+            assignedTo: assignedTo.length > 0 ? assignedTo : config.travelers.map(t => t.id)
         });
-        
+
+        saveState();
+        nameInput.value = "";
+        descInput.value = "";
+        renderPackingList();
+    });
+
+    document.getElementById('btn-add-traveler')?.addEventListener('click', () => {
+        const nameInput = document.getElementById('new-traveler-name');
+        if (!nameInput) return;
+
+        const name = nameInput.value.trim();
+        if (!name) return alert("Por favor, digite o nome do viajante!");
+
+        if (!config.travelers) config.travelers = [];
+        const newId = `t-${Date.now()}`;
+        config.travelers.push({
+            id: newId,
+            name
+        });
+
+        if (config.packingItems) {
+            config.packingItems.forEach(item => {
+                if (item.assignedTo && !item.assignedTo.includes(newId)) {
+                    item.assignedTo.push(newId);
+                }
+            });
+        }
+
+        saveState();
+        nameInput.value = "";
+        renderPackingList();
+    });
+
+    document.getElementById('btn-add-category')?.addEventListener('click', () => {
+        const nameInput = document.getElementById('new-category-name');
+        if (!nameInput) return;
+
+        const name = nameInput.value.trim();
+        if (!name) return alert("Por favor, digite o nome da categoria!");
+
+        if (!config.packingCategories) config.packingCategories = [];
+        if (config.packingCategories.includes(name)) return alert("Esta categoria já existe!");
+
+        config.packingCategories.push(name);
         saveState();
         nameInput.value = "";
         renderPackingList();
@@ -1997,125 +2101,396 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 function renderPackingList() {
-    const container = document.getElementById('packing-container');
-    if (!container) return;
-
+    // Inicialização segura de propriedades nas configurações locais
+    if (!config.travelers) {
+        config.travelers = [
+            { id: "t-1", name: "Jhony" },
+            { id: "t-2", name: "Larissa" }
+        ];
+    }
+    if (!config.packingCategories) {
+        config.packingCategories = ["Documentos", "Vestuário", "Higiene / Saúde", "Eletrônicos", "Outros"];
+    }
     if (!config.packingItems) {
         config.packingItems = JSON.parse(JSON.stringify(defaultPackingItems));
     }
-    const numTravellers = config.travellersCount || 2;
 
-    const categories = ["Documentos", "Vestuário", "Higiene / Saúde", "Eletrônicos", "Outros"];
-    const grouped = {};
-    categories.forEach(c => grouped[c] = []);
-    
-    config.packingItems.forEach(item => {
-        const cat = item.category || "Outros";
-        if (!grouped[cat]) {
-            grouped[cat] = [];
+    // A. Detecta a aba ativa baseando-se na visibilidade dos painéis
+    const panGen = document.getElementById('panel-packing-general');
+    const panInd = document.getElementById('panel-packing-individual');
+    const panSet = document.getElementById('panel-packing-settings');
+
+    let activeTab = "general";
+    if (panInd && panInd.style.display === "flex") {
+        activeTab = "individual";
+    } else if (panSet && panSet.style.display === "grid") {
+        activeTab = "settings";
+    }
+
+    // B. RENDERIZAÇÃO DA ABA 1: MALA GERAL
+    if (activeTab === "general") {
+        // 1. Popular Categoria Select no formulário de inclusão
+        const catSelect = document.getElementById('new-pack-item-category');
+        if (catSelect) {
+            catSelect.innerHTML = config.packingCategories.map(cat => `
+                <option value="${cat}">${cat}</option>
+            `).join('');
         }
-        grouped[cat].push(item);
-    });
 
-    let html = "";
+        // 2. Popular atribuições checkboxes
+        const assignBox = document.getElementById('new-pack-item-assignments');
+        if (assignBox) {
+            assignBox.innerHTML = config.travelers.map(t => `
+                <label style="display: inline-flex; align-items: center; gap: 6px; cursor: pointer; margin-right: 12px;">
+                    <input type="checkbox" class="new-item-assign-cb" value="${t.id}" checked style="cursor: pointer; width: 15px; height: 15px;">
+                    ${t.name}
+                </label>
+            `).join('');
+        }
 
-    categories.forEach(cat => {
-        const items = grouped[cat] || [];
-        if (items.length === 0 && cat === "Outros") return;
+        // 3. Renderizar listagem geral agrupada por categoria
+        const listContainer = document.getElementById('packing-general-container');
+        if (listContainer) {
+            let html = "";
+            config.packingCategories.forEach(cat => {
+                const items = config.packingItems.filter(item => (item.category || "Outros") === cat);
+                if (items.length === 0 && cat === "Outros") return; // Ocultar outros se vazio
 
-        html += `
-            <div class="summary-card" style="padding: 20px;">
-                <h3 style="font-size: 1.1rem; color: var(--text-main); border-bottom: 1px solid var(--border-color); padding-bottom: 10px; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
-                    <i class="fa-solid ${getCategoryIcon(cat)}" style="color: var(--primary);"></i> ${cat}
-                </h3>
-                <div style="overflow-x: auto;">
-                    <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem;">
-                        <thead>
-                            <tr style="border-bottom: 1px solid var(--border-color); color: var(--text-muted); font-size: 0.78rem; text-transform: uppercase;">
-                                <th style="padding: 8px 10px; width: 60%;">Item</th>
-                                ${Array.from({ length: numTravellers }).map((_, i) => `
-                                    <th style="padding: 8px 10px; text-align: center; width: 10%;">Viajante ${i + 1}</th>
-                                `).join('')}
-                                <th style="padding: 8px 10px; text-align: right; width: 10%;">Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-        `;
-
-        if (items.length === 0) {
-            html += `
-                <tr>
-                    <td colspan="${numTravellers + 2}" style="padding: 15px 10px; text-align: center; color: var(--text-muted); font-style: italic;">
-                        Nenhum item cadastrado nesta categoria.
-                    </td>
-                </tr>
-            `;
-        } else {
-            items.forEach(item => {
                 html += `
-                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.03); hover: background-color: rgba(255,255,255,0.01);">
-                        <td style="padding: 10px; color: var(--text-main); font-weight: 500;">${item.name}</td>
-                        ${Array.from({ length: numTravellers }).map((_, i) => {
-                            const isPacked = item.packedBy && item.packedBy.includes(i);
-                            return `
-                                <td style="padding: 10px; text-align: center;">
-                                    <label class="checkbox-container" style="display: inline-block; padding-left: 0; margin-bottom: 18px; width: 18px; height: 18px;">
-                                        <input type="checkbox" class="pack-checkbox" data-item-id="${item.id}" data-traveller-idx="${i}" ${isPacked ? 'checked' : ''}>
+                    <div class="summary-card" style="padding: 20px;">
+                        <h3 style="font-size: 1.1rem; color: var(--text-main); border-bottom: 1px solid var(--border-color); padding-bottom: 10px; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
+                            <i class="fa-solid ${getCategoryIcon(cat)}" style="color: var(--primary);"></i> ${cat}
+                        </h3>
+                        <div style="overflow-x: auto;">
+                            <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem;">
+                                <thead>
+                                    <tr style="border-bottom: 1px solid var(--border-color); color: var(--text-muted); font-size: 0.78rem; text-transform: uppercase;">
+                                        <th style="padding: 8px 10px; width: 50%;">Item</th>
+                                        <th style="padding: 8px 10px; width: 30%;">Atribuído A</th>
+                                        <th style="padding: 8px 10px; text-align: right; width: 20%;">Ordenação / Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                `;
+
+                if (items.length === 0) {
+                    html += `
+                        <tr>
+                            <td colspan="3" style="padding: 15px 10px; text-align: center; color: var(--text-muted); font-style: italic;">
+                                Nenhum item cadastrado nesta categoria.
+                            </td>
+                        </tr>
+                    `;
+                } else {
+                    items.forEach((item, itemIdx) => {
+                        // Resgata nomes das pessoas atribuídas
+                        const assignedNames = (item.assignedTo || [])
+                            .map(id => config.travelers.find(t => t.id === id)?.name)
+                            .filter(Boolean);
+
+                        const isFirst = config.packingItems.indexOf(item) === 0;
+                        const isLast = config.packingItems.indexOf(item) === config.packingItems.length - 1;
+
+                        html += `
+                            <tr style="border-bottom: 1px solid rgba(255,255,255,0.03);">
+                                <td style="padding: 12px 10px;">
+                                    <strong style="color: var(--text-main); display: block; font-size: 0.92rem;">${item.name}</strong>
+                                    ${item.description ? `<span style="font-size: 0.78rem; color: var(--text-muted); display: block; margin-top: 2px;">${item.description}</span>` : ''}
+                                </td>
+                                <td style="padding: 12px 10px;">
+                                    <div style="display: flex; gap: 4px; flex-wrap: wrap;">
+                                        ${assignedNames.length === config.travelers.length ? `
+                                            <span class="badge" style="background: rgba(249, 115, 22, 0.15); color: #fb923c; border: 1px solid rgba(249, 115, 22, 0.3);">Todos</span>
+                                        ` : assignedNames.map(name => `
+                                            <span class="badge" style="background: rgba(255,255,255,0.05); color: var(--text-main); border: 1px solid var(--border-color);">${name}</span>
+                                        `).join('')}
+                                    </div>
+                                </td>
+                                <td style="padding: 12px 10px; text-align: right;">
+                                    <div style="display: inline-flex; gap: 4px;">
+                                        <button class="btn btn-outline btn-sm btn-move-item" data-item-id="${item.id}" data-dir="-1" ${isFirst ? 'disabled' : ''} style="padding: 4px 6px; font-size: 0.75rem;" title="Mover para Cima">
+                                            <i class="fa-solid fa-arrow-up"></i>
+                                        </button>
+                                        <button class="btn btn-outline btn-sm btn-move-item" data-item-id="${item.id}" data-dir="1" ${isLast ? 'disabled' : ''} style="padding: 4px 6px; font-size: 0.75rem;" title="Mover para Baixo">
+                                            <i class="fa-solid fa-arrow-down"></i>
+                                        </button>
+                                        <button class="btn btn-outline-danger btn-sm btn-delete-item" data-item-id="${item.id}" style="padding: 4px 8px; font-size: 0.75rem; margin-left: 6px;" title="Excluir Item">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        `;
+                    });
+                }
+
+                html += `
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+            });
+            listContainer.innerHTML = html;
+
+            // Vincular ações da listagem geral
+            listContainer.querySelectorAll('.btn-move-item').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const itemId = e.currentTarget.getAttribute('data-item-id');
+                    const dir = parseInt(e.currentTarget.getAttribute('data-dir'));
+                    movePackingItem(itemId, dir);
+                });
+            });
+
+            listContainer.querySelectorAll('.btn-delete-item').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const itemId = e.currentTarget.getAttribute('data-item-id');
+                    if (confirm("Deseja realmente remover este item de sua mala?")) {
+                        config.packingItems = config.packingItems.filter(i => i.id !== itemId);
+                        saveState();
+                        renderPackingList();
+                    }
+                });
+            });
+        }
+    }
+
+    // C. RENDERIZAÇÃO DA ABA 2: CHECKLIST INDIVIDUAL
+    if (activeTab === "individual") {
+        const userSelect = document.getElementById('packing-individual-user-select');
+        if (userSelect) {
+            // 1. Popular select de viajante se estiver vazio
+            const selectedUserId = userSelect.value || (config.travelers[0] ? config.travelers[0].id : "");
+            userSelect.innerHTML = config.travelers.map(t => `
+                <option value="${t.id}" ${t.id === selectedUserId ? 'selected' : ''}>${t.name}</option>
+            `).join('');
+
+            const currentTravelerId = userSelect.value;
+            const currentTraveler = config.travelers.find(t => t.id === currentTravelerId);
+
+            if (currentTraveler) {
+                // 2. Filtrar itens pertencentes ao viajante
+                const personalItems = config.packingItems.filter(item => 
+                    (item.assignedTo || []).includes(currentTravelerId)
+                );
+
+                const packedItemsCount = personalItems.filter(item => 
+                    (item.packedBy || []).includes(currentTravelerId)
+                ).length;
+
+                const totalItemsCount = personalItems.length;
+                const percent = totalItemsCount > 0 ? Math.round((packedItemsCount / totalItemsCount) * 100) : 0;
+
+                // 3. Renderizar barra de progresso
+                const progressBox = document.getElementById('packing-individual-progress-bar-container');
+                if (progressBox) {
+                    progressBox.innerHTML = `
+                        <div style="display: flex; justify-content: space-between; font-size: 0.8rem; font-weight: 600; color: var(--text-main);">
+                            <span>Mala de ${currentTraveler.name}: ${packedItemsCount} de ${totalItemsCount} itens na mala</span>
+                            <span>${percent}%</span>
+                        </div>
+                        <div style="width: 100%; height: 8px; background: rgba(255,255,255,0.05); border-radius: 4px; overflow: hidden; border: 1px solid var(--border-color);">
+                            <div style="width: ${percent}%; height: 100%; background: linear-gradient(90deg, var(--primary), var(--secondary)); border-radius: 4px; transition: width 0.3s ease;"></div>
+                        </div>
+                    `;
+                }
+
+                // 4. Renderizar listagem checklist individual
+                const checklistContainer = document.getElementById('packing-individual-container');
+                if (checklistContainer) {
+                    let html = "";
+                    config.packingCategories.forEach(cat => {
+                        const items = personalItems.filter(item => (item.category || "Outros") === cat);
+                        if (items.length === 0) return; // Ocultar categorias vazias no checklist
+
+                        html += `
+                            <div class="summary-card" style="padding: 20px;">
+                                <h3 style="font-size: 1.1rem; color: var(--text-main); border-bottom: 1px solid var(--border-color); padding-bottom: 10px; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
+                                    <i class="fa-solid ${getCategoryIcon(cat)}" style="color: var(--primary);"></i> ${cat}
+                                </h3>
+                                <div style="display: flex; flex-direction: column; gap: 12px;">
+                        `;
+
+                        items.forEach(item => {
+                            const isPacked = (item.packedBy || []).includes(currentTravelerId);
+
+                            html += `
+                                <div style="display: flex; align-items: flex-start; gap: 12px; padding: 10px; border-radius: 6px; background: rgba(255,255,255,0.01); border: 1px solid rgba(255,255,255,0.02); transition: var(--transition-fast);">
+                                    <label class="checkbox-container" style="display: inline-block; padding-left: 0; margin-bottom: 18px; width: 18px; height: 18px; flex-shrink: 0; margin-top: 2px;">
+                                        <input type="checkbox" class="ind-pack-checkbox" data-item-id="${item.id}" data-traveler-id="${currentTravelerId}" ${isPacked ? 'checked' : ''}>
                                         <span class="checkmark" style="position: relative; display: block; margin: 0 auto;"></span>
                                     </label>
-                                </td>
+                                    <div style="flex: 1;">
+                                        <span style="font-size: 0.95rem; font-weight: 500; display: block; color: ${isPacked ? 'var(--text-muted)' : 'var(--text-main)'}; text-decoration: ${isPacked ? 'line-through' : 'none'}; transition: var(--transition-fast);">${item.name}</span>
+                                        ${item.description ? `<span style="font-size: 0.78rem; color: var(--text-muted); display: block; margin-top: 2px;">${item.description}</span>` : ''}
+                                    </div>
+                                </div>
                             `;
-                        }).join('')}
-                        <td style="padding: 10px; text-align: right;">
-                            <button class="btn btn-outline-danger btn-sm btn-delete-pack-item" data-item-id="${item.id}" title="Excluir item" style="padding: 4px 8px; font-size: 0.75rem;">
-                                <i class="fa-solid fa-trash"></i>
-                            </button>
-                        </td>
-                    </tr>
-                `;
+                        });
+
+                        html += `
+                                </div>
+                            </div>
+                        `;
+                    });
+
+                    if (personalItems.length === 0) {
+                        html = `
+                            <div class="summary-card" style="padding: 30px; text-align: center; color: var(--text-muted);">
+                                <i class="fa-solid fa-suitcase" style="font-size: 2.5rem; color: var(--border-color); margin-bottom: 12px; display: block;"></i>
+                                <p>Nenhum item atribuído a você nesta mala. Acesse a aba <strong>Mala Geral</strong> para criar ou atribuir itens!</p>
+                            </div>
+                        `;
+                    }
+                    checklistContainer.innerHTML = html;
+
+                    // Ouvinte para checkbox marcar mala pronta (individual)
+                    checklistContainer.querySelectorAll('.ind-pack-checkbox').forEach(cb => {
+                        cb.addEventListener('change', (e) => {
+                            const itemId = e.target.getAttribute('data-item-id');
+                            const travelerId = e.target.getAttribute('data-traveler-id');
+                            
+                            const item = config.packingItems.find(i => i.id === itemId);
+                            if (item) {
+                                if (!item.packedBy) item.packedBy = [];
+                                if (e.target.checked) {
+                                    if (!item.packedBy.includes(travelerId)) {
+                                        item.packedBy.push(travelerId);
+                                    }
+                                } else {
+                                    item.packedBy = item.packedBy.filter(id => id !== travelerId);
+                                }
+                                saveState();
+                                renderPackingList(); // Recarrega barra de progresso e estilos taxados
+                            }
+                        });
+                    });
+                }
+            }
+        }
+    }
+
+    // D. RENDERIZAÇÃO DA ABA 3: CONFIGURAÇÕES E GERENCIAMENTO
+    if (activeTab === "settings") {
+        // 1. Renderizar lista de Viajantes
+        const travContainer = document.getElementById('travelers-settings-list');
+        if (travContainer) {
+            travContainer.innerHTML = config.travelers.map(t => `
+                <div style="display: flex; gap: 8px; align-items: center; background: rgba(255,255,255,0.01); border: 1px solid var(--border-color); border-radius: var(--border-radius-sm); padding: 8px 12px;">
+                    <i class="fa-solid fa-user" style="color: var(--text-muted); font-size: 0.85rem;"></i>
+                    <input type="text" class="traveler-rename-input" data-id="${t.id}" value="${t.name}" style="flex: 1; background: none; border: none; outline: none; color: var(--text-main); font-size: 0.9rem; padding: 0;">
+                    <button class="btn btn-outline-danger btn-sm btn-delete-traveler" data-id="${t.id}" style="padding: 4px 8px; font-size: 0.75rem;" title="Excluir Viajante">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </div>
+            `).join('');
+
+            // Vincular renames
+            travContainer.querySelectorAll('.traveler-rename-input').forEach(inp => {
+                inp.addEventListener('change', (e) => {
+                    const travelerId = e.target.getAttribute('data-id');
+                    renameTraveler(travelerId, e.target.value);
+                });
+            });
+
+            // Vincular deletes
+            travContainer.querySelectorAll('.btn-delete-traveler').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const id = e.currentTarget.getAttribute('data-id');
+                    deleteTraveler(id);
+                });
             });
         }
 
-        html += `
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        `;
-    });
+        // 2. Renderizar lista de Categorias
+        const catContainer = document.getElementById('categories-settings-list');
+        if (catContainer) {
+            catContainer.innerHTML = config.packingCategories.map(cat => {
+                const isOutros = cat === "Outros";
+                return `
+                    <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.01); border: 1px solid var(--border-color); border-radius: var(--border-radius-sm); padding: 8px 12px;">
+                        <span style="font-size: 0.9rem; font-weight: 500; color: var(--text-main);"><i class="fa-solid ${getCategoryIcon(cat)}" style="color: var(--text-muted); margin-right: 6px;"></i> ${cat}</span>
+                        ${!isOutros ? `
+                            <button class="btn btn-outline-danger btn-sm btn-delete-category" data-cat="${cat}" style="padding: 4px 8px; font-size: 0.75rem;" title="Excluir Categoria">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        ` : '<span style="font-size: 0.75rem; color: var(--text-muted); font-style: italic;">Padrão</span>'}
+                    </div>
+                `;
+            }).join('');
 
-    container.innerHTML = html;
+            // Vincular deletes de categorias
+            catContainer.querySelectorAll('.btn-delete-category').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const catName = e.currentTarget.getAttribute('data-cat');
+                    deleteCategory(catName);
+                });
+            });
+        }
+    }
+}
 
-    // Ouvinte para checkbox marcar mala pronta
-    container.querySelectorAll('.pack-checkbox').forEach(cb => {
-        cb.addEventListener('change', (e) => {
-            const itemId = e.target.getAttribute('data-item-id');
-            const travellerIdx = parseInt(e.target.getAttribute('data-traveller-idx'));
-            
-            const item = config.packingItems.find(i => i.id === itemId);
-            if (item) {
-                if (!item.packedBy) item.packedBy = [];
-                if (e.target.checked) {
-                    if (!item.packedBy.includes(travellerIdx)) {
-                        item.packedBy.push(travellerIdx);
-                    }
-                } else {
-                    item.packedBy = item.packedBy.filter(idx => idx !== travellerIdx);
+function movePackingItem(itemId, direction) {
+    const idx = config.packingItems.findIndex(i => i.id === itemId);
+    if (idx === -1) return;
+    const newIdx = idx + direction;
+    if (newIdx < 0 || newIdx >= config.packingItems.length) return;
+    
+    // Troca os elementos de posição
+    const temp = config.packingItems[idx];
+    config.packingItems[idx] = config.packingItems[newIdx];
+    config.packingItems[newIdx] = temp;
+    
+    saveState();
+    renderPackingList();
+}
+
+function renameTraveler(travelerId, newName) {
+    newName = newName.trim();
+    if (!newName) return;
+    const traveler = config.travelers.find(t => t.id === travelerId);
+    if (traveler) {
+        traveler.name = newName;
+        saveState();
+        renderPackingList();
+    }
+}
+
+function deleteTraveler(travelerId) {
+    if (config.travelers.length <= 1) {
+        alert("A viagem precisa ter pelo menos 1 viajante!");
+        return;
+    }
+    if (confirm("Deseja realmente remover este viajante? Suas marcações individuais serão perdidas.")) {
+        config.travelers = config.travelers.filter(t => t.id !== travelerId);
+        if (config.packingItems) {
+            config.packingItems.forEach(item => {
+                if (item.assignedTo) {
+                    item.assignedTo = item.assignedTo.filter(id => id !== travelerId);
                 }
-                saveState();
-            }
-        });
-    });
+                if (item.packedBy) {
+                    item.packedBy = item.packedBy.filter(id => id !== travelerId);
+                }
+            });
+        }
+        saveState();
+        renderPackingList();
+    }
+}
 
-    // Ouvinte para deletar item
-    container.querySelectorAll('.btn-delete-pack-item').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            const itemId = e.currentTarget.getAttribute('data-item-id');
-            config.packingItems = config.packingItems.filter(i => i.id !== itemId);
-            saveState();
-            renderPackingList();
-        });
-    });
+function deleteCategory(catName) {
+    if (confirm(`Deseja realmente excluir a categoria "${catName}"? Todos os itens dela serão movidos para "Outros".`)) {
+        config.packingCategories = config.packingCategories.filter(c => c !== catName);
+        if (config.packingItems) {
+            config.packingItems.forEach(item => {
+                if (item.category === catName) {
+                    item.category = "Outros";
+                }
+            });
+        }
+        saveState();
+        renderPackingList();
+    }
 }
 
 function getCategoryIcon(cat) {

@@ -161,8 +161,13 @@
                 <button class="menu-toggle-btn" id="menu-toggle-btn">
                     <i class="fa-solid fa-bars"></i>
                 </button>
-                <div class="nav-title-area">
-                    <h2 id="trip-title">Roteiro Chile 2026</h2>
+                <div class="nav-title-area" style="display: flex; flex-direction: column; gap: 2px;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <h2 id="trip-title" style="margin: 0;">Roteiro Chile 2026</h2>
+                        <span id="cloud-sync-header-indicator" style="font-size: 0.72rem; display: inline-flex; align-items: center; gap: 4px; padding: 2px 6px; border-radius: 12px; background: rgba(34, 197, 94, 0.12); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.25); font-weight: 600;">
+                            <i class="fa-solid fa-cloud"></i> Online
+                        </span>
+                    </div>
                     <span class="trip-dates" id="trip-dates-label">16 a 22 de Agosto de 2026</span>
                 </div>
                 <div class="nav-actions">
@@ -722,6 +727,6 @@
     <!-- Supabase JS Client -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <!-- Custom JS -->
-    <script src="app.js?v=18"></script>
+    <script src="app.js?v=19"></script>
 </body>
 </html>

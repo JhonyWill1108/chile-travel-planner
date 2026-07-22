@@ -431,6 +431,40 @@ async function fetchExchangeRate(showFeedback = false) {
    SUPABASE CLOUD SYNC FUNCTIONS
    ========================================================================== */
 
+function updateSyncIndicator(status, message) {
+    const indicator = document.getElementById('cloud-sync-header-indicator');
+    const dbStatusEl = document.getElementById('db-sync-status');
+    
+    if (indicator) {
+        if (status === 'saving') {
+            indicator.style.background = 'rgba(249, 115, 22, 0.12)';
+            indicator.style.color = '#f97316';
+            indicator.style.borderColor = 'rgba(249, 115, 22, 0.25)';
+            indicator.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> ${message}`;
+        } else if (status === 'success') {
+            indicator.style.background = 'rgba(34, 197, 94, 0.12)';
+            indicator.style.color = '#4ade80';
+            indicator.style.borderColor = 'rgba(34, 197, 94, 0.25)';
+            indicator.innerHTML = `<i class="fa-solid fa-cloud"></i> ${message}`;
+        } else if (status === 'error') {
+            indicator.style.background = 'rgba(239, 68, 68, 0.12)';
+            indicator.style.color = '#f87171';
+            indicator.style.borderColor = 'rgba(239, 68, 68, 0.25)';
+            indicator.innerHTML = `<i class="fa-solid fa-cloud-bolt"></i> ${message}`;
+        }
+    }
+    
+    if (dbStatusEl) {
+        if (status === 'saving') {
+            dbStatusEl.innerHTML = `<i class="fa-solid fa-arrows-rotate fa-spin" style="color: var(--warning);"></i> <span>${message}...</span>`;
+        } else if (status === 'success') {
+            dbStatusEl.innerHTML = `<i class="fa-solid fa-cloud" style="color: var(--success);"></i> <span>${message}</span>`;
+        } else if (status === 'error') {
+            dbStatusEl.innerHTML = `<i class="fa-solid fa-cloud-bolt" style="color: var(--danger);"></i> <span>${message}</span>`;
+        }
+    }
+}
+
 async function pushStateToSupabase() {
     if (!config.supabaseUrl || !config.supabaseKey || !config.supabaseTripId) return;
     if (!window.supabase) {
@@ -438,14 +472,11 @@ async function pushStateToSupabase() {
         return;
     }
     
-    const dbStatusEl = document.getElementById('db-sync-status');
     try {
         const { createClient } = window.supabase;
         const supabase = createClient(config.supabaseUrl, config.supabaseKey);
         
-        if (dbStatusEl) {
-            dbStatusEl.innerHTML = '<i class="fa-solid fa-arrows-rotate fa-spin" style="color: var(--warning);"></i> <span>Salvando na nuvem...</span>';
-        }
+        updateSyncIndicator('saving', 'Salvando');
 
         const payload = {
             config,
@@ -463,14 +494,10 @@ async function pushStateToSupabase() {
 
         if (error) throw error;
 
-        if (dbStatusEl) {
-            dbStatusEl.innerHTML = '<i class="fa-solid fa-cloud" style="color: var(--success);"></i> <span>Nuvem sincronizada</span>';
-        }
+        updateSyncIndicator('success', 'Sincronizado');
     } catch (err) {
         console.error("Erro ao sincronizar com Supabase:", err);
-        if (dbStatusEl) {
-            dbStatusEl.innerHTML = '<i class="fa-solid fa-cloud-bolt" style="color: var(--danger);"></i> <span>Erro ao sincronizar</span>';
-        }
+        updateSyncIndicator('error', 'Erro de Conexão');
     }
 }
 
@@ -481,14 +508,11 @@ async function fetchStateFromSupabase(autoLoad = false) {
         return;
     }
 
-    const dbStatusEl = document.getElementById('db-sync-status');
     try {
         const { createClient } = window.supabase;
         const supabase = createClient(config.supabaseUrl, config.supabaseKey);
 
-        if (dbStatusEl) {
-            dbStatusEl.innerHTML = '<i class="fa-solid fa-arrows-rotate fa-spin" style="color: var(--warning);"></i> <span>Verificando nuvem...</span>';
-        }
+        updateSyncIndicator('saving', 'Buscando');
 
         const { data, error } = await supabase
             .from('trip_planners')
@@ -513,9 +537,6 @@ async function fetchStateFromSupabase(autoLoad = false) {
                             supabaseTripId: config.supabaseTripId
                         };
                     }
-                    localStorage.setItem('chile_planner_config', JSON.stringify(config));
-                    localStorage.setItem('chile_planner_days', JSON.stringify(days));
-                    localStorage.setItem('chile_planner_restaurants', JSON.stringify(restaurants));
                     
                     renderDaysTabs();
                     renderActiveDay();
@@ -527,14 +548,11 @@ async function fetchStateFromSupabase(autoLoad = false) {
             await pushStateToSupabase();
         }
 
-        if (dbStatusEl) {
-            dbStatusEl.innerHTML = '<i class="fa-solid fa-cloud" style="color: var(--success);"></i> <span>Nuvem sincronizada</span>';
-        }
+        updateSyncIndicator('success', 'Sincronizado');
     } catch (err) {
         console.error("Erro ao carregar dados do Supabase:", err);
-        if (dbStatusEl) {
-            dbStatusEl.innerHTML = '<i class="fa-solid fa-cloud-bolt" style="color: var(--danger);"></i> <span>Modo Offline</span>';
-        }
+        updateSyncIndicator('error', 'Erro de Conexão');
+        throw err; // Propaga o erro para o inicializador
     }
 }
 
@@ -543,134 +561,36 @@ async function fetchStateFromSupabase(autoLoad = false) {
    ========================================================================== */
 
 function saveState() {
-    localStorage.setItem('chile_planner_config', JSON.stringify(config));
-    localStorage.setItem('chile_planner_days', JSON.stringify(days));
-    localStorage.setItem('chile_planner_restaurants', JSON.stringify(restaurants));
-    localStorage.setItem('chile_planner_active_day_id', activeDayId);
-    localStorage.setItem('chile_planner_last_active_normal_day_id', lastActiveNormalDayId);
-    
-    // Background sync
+    // Sincronização exclusiva na nuvem (Supabase)
     pushStateToSupabase();
 }
 
 function loadState() {
-    const DB_VERSION_KEY = 'chile_planner_db_version';
-    const CURRENT_VERSION = 'v18_packing_checklist'; // Força migração de BD para incluir novos restaurantes e tipo de comida
-
-    if (localStorage.getItem(DB_VERSION_KEY) !== CURRENT_VERSION) {
-        localStorage.clear();
-        localStorage.setItem(DB_VERSION_KEY, CURRENT_VERSION);
-        days = JSON.parse(JSON.stringify(defaultDays));
-        restaurants = JSON.parse(JSON.stringify(defaultRestaurants));
-        config = { 
-            clpRate: 175, 
-            cardTax: 6.38, 
-            autoUpdateRate: true, 
-            supabaseUrl: "https://wyabiudjqocwwcgrtsex.supabase.co", 
-            supabaseKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind5YWJpdWRqcW9jd3djZ3J0c2V4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY5NjA5NjUsImV4cCI6MjA3MjUzNjk2NX0.m1xc9qrArNyFIgRHEevuF1VU6kyuHTVogjDq3E4K26A", 
-            supabaseTripId: "chile-viagem-2026",
-            travelers: [
-                { id: "t-1", name: "Jhony" },
-                { id: "t-2", name: "Larissa" }
-            ],
-            packingCategories: [
-                "Documentos",
-                "Vestuário",
-                "Higiene / Saúde",
-                "Eletrônicos",
-                "Outros"
-            ],
-            packingItems: JSON.parse(JSON.stringify(defaultPackingItems))
-        };
-        activeDayId = "day-1";
-        lastActiveNormalDayId = "day-1";
-        localStorage.setItem('chile_planner_config', JSON.stringify(config));
-        localStorage.setItem('chile_planner_days', JSON.stringify(days));
-        localStorage.setItem('chile_planner_restaurants', JSON.stringify(restaurants));
-        localStorage.setItem('chile_planner_active_day_id', activeDayId);
-        localStorage.setItem('chile_planner_last_active_normal_day_id', lastActiveNormalDayId);
-        return;
-    }
-
-    const storedConfig = localStorage.getItem('chile_planner_config');
-    const storedDays = localStorage.getItem('chile_planner_days');
-    const storedRestaurants = localStorage.getItem('chile_planner_restaurants');
-    const storedActiveDay = localStorage.getItem('chile_planner_active_day_id');
-    const storedLastActiveNormal = localStorage.getItem('chile_planner_last_active_normal_day_id');
-
-    if (storedConfig) {
-        try { 
-            config = JSON.parse(storedConfig); 
-            if (config.autoUpdateRate === undefined) {
-                config.autoUpdateRate = true;
-            }
-            if (!config.supabaseUrl) {
-                config.supabaseUrl = "https://wyabiudjqocwwcgrtsex.supabase.co";
-            }
-            if (!config.supabaseKey) {
-                config.supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind5YWJpdWRqcW9jd3djZ3J0c2V4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY5NjA5NjUsImV4cCI6MjA3MjUzNjk2NX0.m1xc9qrArNyFIgRHEevuF1VU6kyuHTVogjDq3E4K26A";
-            }
-            if (!config.supabaseTripId) {
-                config.supabaseTripId = "chile-viagem-2026";
-            }
-            if (!config.travelers) {
-                config.travelers = [
-                    { id: "t-1", name: "Jhony" },
-                    { id: "t-2", name: "Larissa" }
-                ];
-            }
-            if (!config.packingCategories) {
-                config.packingCategories = [
-                    "Documentos",
-                    "Vestuário",
-                    "Higiene / Saúde",
-                    "Eletrônicos",
-                    "Outros"
-                ];
-            }
-            if (!config.packingItems) {
-                config.packingItems = JSON.parse(JSON.stringify(defaultPackingItems));
-            }
-        } catch(e) { console.error(e); }
-    }
-    
-    if (storedDays) {
-        try {
-            days = JSON.parse(storedDays);
-            if (!days.some(d => d.id === 'day-to-decide')) {
-                days.push({
-                    id: "day-to-decide",
-                    dateLabel: "A Decidir",
-                    activities: []
-                });
-            }
-        } catch(e) {
-            days = JSON.parse(JSON.stringify(defaultDays));
-        }
-    } else {
-        days = JSON.parse(JSON.stringify(defaultDays));
-    }
-
-    if (storedRestaurants) {
-        try { restaurants = JSON.parse(storedRestaurants); } catch(e) { console.error(e); }
-    } else {
-        restaurants = JSON.parse(JSON.stringify(defaultRestaurants));
-    }
-
-    if (storedActiveDay) {
-        activeDayId = storedActiveDay;
-    } else if (days.length > 0) {
-        activeDayId = days[0].id;
-    } else {
-        activeDayId = "";
-    }
-
-    if (storedLastActiveNormal && days.some(d => d.id === storedLastActiveNormal && d.id !== 'day-to-decide')) {
-        lastActiveNormalDayId = storedLastActiveNormal;
-    } else {
-        const firstNormal = days.find(d => d.id !== 'day-to-decide');
-        lastActiveNormalDayId = firstNormal ? firstNormal.id : "day-1";
-    }
+    // Inicialização padrão em memória (será substituída pelos dados carregados do Supabase)
+    days = JSON.parse(JSON.stringify(defaultDays));
+    restaurants = JSON.parse(JSON.stringify(defaultRestaurants));
+    config = { 
+        clpRate: 175, 
+        cardTax: 6.38, 
+        autoUpdateRate: true, 
+        supabaseUrl: "https://wyabiudjqocwwcgrtsex.supabase.co", 
+        supabaseKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind5YWJpdWRqcW9jd3djZ3J0c2V4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY5NjA5NjUsImV4cCI6MjA3MjUzNjk2NX0.m1xc9qrArNyFIgRHEevuF1VU6kyuHTVogjDq3E4K26A", 
+        supabaseTripId: "chile-viagem-2026",
+        travelers: [
+            { id: "t-1", name: "Jhony" },
+            { id: "t-2", name: "Larissa" }
+        ],
+        packingCategories: [
+            "Documentos",
+            "Vestuário",
+            "Higiene / Saúde",
+            "Eletrônicos",
+            "Outros"
+        ],
+        packingItems: JSON.parse(JSON.stringify(defaultPackingItems))
+    };
+    activeDayId = "day-1";
+    lastActiveNormalDayId = "day-1";
 }
 
 /* ==========================================================================
@@ -1476,12 +1396,6 @@ window.addEventListener('DOMContentLoaded', () => {
     closeSidebarBtn = document.getElementById('close-sidebar-btn');
     overlay = document.querySelector('.sidebar-overlay');
 
-    // 3. Renderiza UI Inicial
-    renderDaysTabs();
-    renderActiveDay();
-    updateSidebarSummary();
-    updateTopNavigationButtonsState();
-
     // Set auto checkbox check status
     const autoCheckbox = document.getElementById('auto-rate-checkbox');
     if (autoCheckbox) {
@@ -1492,14 +1406,36 @@ window.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Auto update exchange rate if enabled
-    if (config.autoUpdateRate) {
-        fetchExchangeRate(false);
-    }
-
-    // Supabase auto-fetch on load
+    // 3. Busca Dados da Nuvem antes de carregar o app (Supabase Online-First)
     if (config.supabaseUrl && config.supabaseKey && config.supabaseTripId) {
-        fetchStateFromSupabase(true);
+        showLoadingOverlay("Carregando roteiro da nuvem...");
+        fetchStateFromSupabase(true).then(() => {
+            hideLoadingOverlay();
+            renderDaysTabs();
+            renderActiveDay();
+            updateSidebarSummary();
+            updateTopNavigationButtonsState();
+
+            // Atualiza taxa de câmbio após carregar config da nuvem
+            if (config.autoUpdateRate) {
+                fetchExchangeRate(false);
+            }
+        }).catch(err => {
+            hideLoadingOverlay();
+            console.error("Erro na carga inicial do Supabase:", err);
+            renderDaysTabs();
+            renderActiveDay();
+            updateSidebarSummary();
+            updateTopNavigationButtonsState();
+        });
+    } else {
+        renderDaysTabs();
+        renderActiveDay();
+        updateSidebarSummary();
+        updateTopNavigationButtonsState();
+        if (config.autoUpdateRate) {
+            fetchExchangeRate(false);
+        }
     }
 
     // 4. Ouvintes de Eventos da Linha do Tempo e Dias
@@ -1829,14 +1765,18 @@ window.addEventListener('DOMContentLoaded', () => {
     });
 
     document.getElementById('btn-reset-data')?.addEventListener('click', () => {
-        if (confirm("ATENÇÃO: Esta ação apagará TODOS os dados cadastrados e redefinirá o roteiro para o exemplo inicial. Tem certeza?")) {
-            localStorage.clear();
+        if (confirm("ATENÇÃO: Esta ação apagará TODOS os dados cadastrados e redefinirá o roteiro online para o exemplo inicial. Tem certeza?")) {
+            showLoadingOverlay("Limpando e redefinindo roteiro...");
             loadState();
-            renderDaysTabs();
-            renderActiveDay();
-            updateSidebarSummary();
-            updateTopNavigationButtonsState();
-            alert("Dados limpos e redefinidos com sucesso!");
+            saveState();
+            setTimeout(() => {
+                hideLoadingOverlay();
+                renderDaysTabs();
+                renderActiveDay();
+                updateSidebarSummary();
+                updateTopNavigationButtonsState();
+                alert("Dados limpos e redefinidos com sucesso!");
+            }, 800);
         }
     });
 
@@ -2376,21 +2316,26 @@ function renderPackingList() {
         const travContainer = document.getElementById('travelers-settings-list');
         if (travContainer) {
             travContainer.innerHTML = config.travelers.map(t => `
-                <div style="display: flex; gap: 8px; align-items: center; background: rgba(255,255,255,0.01); border: 1px solid var(--border-color); border-radius: var(--border-radius-sm); padding: 8px 12px;">
-                    <i class="fa-solid fa-user" style="color: var(--text-muted); font-size: 0.85rem;"></i>
-                    <input type="text" class="traveler-rename-input" data-id="${t.id}" value="${t.name}" style="flex: 1; background: none; border: none; outline: none; color: var(--text-main); font-size: 0.9rem; padding: 0;">
+                <div style="display: flex; gap: 8px; align-items: center; background: rgba(255,255,255,0.01); border: 1px solid var(--border-color); border-radius: var(--border-radius-sm); padding: 8px 12px; width: 100%;">
+                    <i class="fa-solid fa-user-pen" style="color: var(--primary); font-size: 0.95rem;" title="Editar nome"></i>
+                    <input type="text" class="traveler-rename-input" data-id="${t.id}" value="${t.name}" style="flex: 1; background: var(--bg-input); border: 1px solid var(--border-color); border-radius: var(--border-radius-sm); padding: 6px 10px; color: var(--text-main); font-size: 0.9rem; outline: none; transition: var(--transition-fast);">
                     <button class="btn btn-outline-danger btn-sm btn-delete-traveler" data-id="${t.id}" style="padding: 4px 8px; font-size: 0.75rem;" title="Excluir Viajante">
                         <i class="fa-solid fa-trash"></i>
                     </button>
                 </div>
             `).join('');
 
-            // Vincular renames
+            // Vincular renames (ao mudar de foco ou pressionar enter)
             travContainer.querySelectorAll('.traveler-rename-input').forEach(inp => {
-                inp.addEventListener('change', (e) => {
+                const saveRename = (e) => {
                     const travelerId = e.target.getAttribute('data-id');
-                    renameTraveler(travelerId, e.target.value);
-                });
+                    const newName = e.target.value.trim();
+                    if (newName) {
+                        renameTraveler(travelerId, newName);
+                    }
+                };
+                inp.addEventListener('change', saveRename);
+                inp.addEventListener('blur', saveRename);
             });
 
             // Vincular deletes
@@ -2500,5 +2445,50 @@ function getCategoryIcon(cat) {
         case "Higiene / Saúde": return "fa-soap";
         case "Eletrônicos": return "fa-plug";
         default: return "fa-suitcase";
+    }
+}
+
+function showLoadingOverlay(message) {
+    let overlay = document.getElementById('app-loading-overlay');
+    if (!overlay) {
+        overlay = document.createElement('div');
+        overlay.id = 'app-loading-overlay';
+        overlay.style = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(15, 23, 42, 0.95);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 99999;
+            color: #fff;
+            font-family: 'Outfit', sans-serif;
+            gap: 16px;
+        `;
+        overlay.innerHTML = `
+            <div class="loading-spinner" style="width: 50px; height: 50px; border: 4px solid rgba(255,255,255,0.1); border-top-color: var(--primary, #f97316); border-radius: 50%; animation: spin 1s linear infinite;"></div>
+            <div id="loading-overlay-message" style="font-size: 1.1rem; font-weight: 500; letter-spacing: 0.5px;">${message}</div>
+            <style>
+                @keyframes spin {
+                    0% { transform: rotate(0deg); }
+                    100% { transform: rotate(360deg); }
+                }
+            </style>
+        `;
+        document.body.appendChild(overlay);
+    } else {
+        document.getElementById('loading-overlay-message').innerText = message;
+        overlay.style.display = 'flex';
+    }
+}
+
+function hideLoadingOverlay() {
+    const overlay = document.getElementById('app-loading-overlay');
+    if (overlay) {
+        overlay.style.display = 'none';
     }
 }

@@ -500,6 +500,9 @@ async function fetchStateFromSupabase(autoLoad = false) {
                     updateSidebarSummary();
                 }
             }
+        } else {
+            // Se a nuvem estiver vazia, inicializa ela com os dados locais atuais automaticamente
+            await pushStateToSupabase();
         }
 
         if (dbStatusEl) {
@@ -530,7 +533,7 @@ function saveState() {
 
 function loadState() {
     const DB_VERSION_KEY = 'chile_planner_db_version';
-    const CURRENT_VERSION = 'v16_supabase_keys'; // Força migração de BD para incluir novos restaurantes e tipo de comida
+    const CURRENT_VERSION = 'v17_print_all'; // Força migração de BD para incluir novos restaurantes e tipo de comida
 
     if (localStorage.getItem(DB_VERSION_KEY) !== CURRENT_VERSION) {
         localStorage.clear();
@@ -1387,20 +1390,8 @@ window.addEventListener('DOMContentLoaded', () => {
         fetchExchangeRate(false);
     }
 
-    // Supabase inputs population
-    const sbUrlInput = document.getElementById('db-supabase-url');
-    const sbKeyInput = document.getElementById('db-supabase-key');
-    const sbTripInput = document.getElementById('db-supabase-trip-id');
-    const sbConnectBtn = document.getElementById('btn-supabase-connect');
-    const sbDisconnectBtn = document.getElementById('btn-supabase-disconnect');
-
-    if (sbUrlInput) sbUrlInput.value = config.supabaseUrl || "";
-    if (sbKeyInput) sbKeyInput.value = config.supabaseKey || "";
-    if (sbTripInput) sbTripInput.value = config.supabaseTripId || "chile-viagem-2026";
-
+    // Supabase auto-fetch on load
     if (config.supabaseUrl && config.supabaseKey && config.supabaseTripId) {
-        if (sbDisconnectBtn) sbDisconnectBtn.style.display = "block";
-        if (sbConnectBtn) sbConnectBtn.innerHTML = '<i class="fa-solid fa-arrows-rotate"></i> Sincronizar Agora';
         fetchStateFromSupabase(true);
     }
 
@@ -1736,6 +1727,91 @@ window.addEventListener('DOMContentLoaded', () => {
     });
 
     document.getElementById('btn-print')?.addEventListener('click', () => {
+        let printContainer = document.getElementById('print-all-itinerary-container');
+        if (!printContainer) {
+            printContainer = document.createElement('div');
+            printContainer.id = 'print-all-itinerary-container';
+            document.body.appendChild(printContainer);
+        }
+        
+        let html = `
+            <div class="print-header">
+                <h1>Chile Travel Planner</h1>
+                <p class="print-subtitle">Roteiro Completo de Viagem (16 a 22 de Agosto de 2026)</p>
+            </div>
+        `;
+        
+        days.forEach(day => {
+            if (day.id === 'day-to-decide') return;
+            
+            html += `
+                <div class="print-day-block">
+                    <div class="print-day-header">${day.dateLabel}</div>
+            `;
+            
+            if (day.activities.length === 0) {
+                html += `<p class="print-no-activities">Nenhuma atividade cadastrada para este dia.</p>`;
+            } else {
+                day.activities.forEach(act => {
+                    const fin = getActivityFinancials(act);
+                    let timeStr = act.startTime || "--:--";
+                    if (act.endTime) timeStr += ` - ${act.endTime}`;
+                    
+                    let details = [];
+                    if (act.address) details.push(`<strong>Endereço:</strong> ${act.address}`);
+                    if (act.contact) details.push(`<strong>Contato:</strong> ${act.contact}`);
+                    
+                    let financeStr = "";
+                    if (fin.totalWithoutInterest > 0) {
+                        financeStr = `
+                            <div class="print-act-fin">
+                                <span>Total Agência: ${formatBRL(fin.agencyTotalWithInterest)} | </span>
+                                <span>Total Ingresso: ${formatBRL(fin.ticketTotalWithInterest)} | </span>
+                                <span>Total Geral: ${formatBRL(fin.totalWithInterest)}</span>
+                            </div>
+                        `;
+                    }
+
+                    html += `
+                        <div class="print-activity-card">
+                            <div class="print-act-time">${timeStr}</div>
+                            <div class="print-act-main">
+                                <div class="print-act-title">${act.title}</div>
+                                ${details.length > 0 ? `<p class="print-act-meta">${details.join(' | ')}</p>` : ''}
+                                ${act.notes ? `<p class="print-act-notes">${act.notes}</p>` : ''}
+                                ${financeStr}
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+            
+            html += `</div>`;
+        });
+        
+        if (restaurants.length > 0) {
+            html += `
+                <div class="print-day-block">
+                    <div class="print-day-header">Guia de Restaurantes</div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 10px;">
+            `;
+            restaurants.forEach(rest => {
+                html += `
+                    <div class="print-rest-card" style="border: 1px solid #e2e8f0; padding: 10px; border-radius: 6px; page-break-inside: avoid; background: #fff;">
+                        <strong style="font-size: 1rem; color: #0f172a; display: block; margin-bottom: 2px;">${rest.name}</strong>
+                        ${rest.cuisine ? `<div style="font-size: 0.8rem; color: #475569; margin-bottom: 4px;"><strong>Tipo:</strong> ${rest.cuisine}</div>` : ''}
+                        ${rest.address ? `<div style="font-size: 0.8rem; color: #334155; margin-bottom: 4px;"><strong>Endereço:</strong> ${rest.address}</div>` : ''}
+                        ${rest.notes ? `<div style="font-size: 0.78rem; color: #64748b; font-style: italic;"><strong>Obs:</strong> ${rest.notes}</div>` : ''}
+                    </div>
+                `;
+            });
+            html += `
+                    </div>
+                </div>
+            `;
+        }
+        
+        printContainer.innerHTML = html;
         window.print();
     });
 
@@ -1778,130 +1854,6 @@ window.addEventListener('DOMContentLoaded', () => {
         overlay.addEventListener('click', closeSidebar);
     }
 
-    // 10. Sincronização Supabase (Conectar / Desconectar / Conflito Modais)
-    const syncModal = document.getElementById('sync-conflict-modal');
-    let pendingCloudState = null;
-
-    const closeSyncModal = () => {
-        if (syncModal) syncModal.classList.remove('active');
-    };
-
-    document.getElementById('btn-cancel-sync-modal')?.addEventListener('click', closeSyncModal);
-    document.getElementById('sync-conflict-backdrop')?.addEventListener('click', closeSyncModal);
-
-    document.getElementById('btn-supabase-disconnect')?.addEventListener('click', () => {
-        if (confirm("Deseja realmente desconectar a sincronização em nuvem deste dispositivo? Os dados locais NÃO serão apagados.")) {
-            config.supabaseUrl = "";
-            config.supabaseKey = "";
-            config.supabaseTripId = "chile-viagem-2026";
-            saveState();
-
-            if (sbUrlInput) sbUrlInput.value = "";
-            if (sbKeyInput) sbKeyInput.value = "";
-            if (sbTripInput) sbTripInput.value = "chile-viagem-2026";
-
-            if (sbDisconnectBtn) sbDisconnectBtn.style.display = "none";
-            if (sbConnectBtn) sbConnectBtn.innerHTML = '<i class="fa-solid fa-link"></i> Conectar & Sincronizar';
-
-            const dbStatusEl = document.getElementById('db-sync-status');
-            if (dbStatusEl) {
-                dbStatusEl.innerHTML = '<i class="fa-solid fa-cloud-slash" style="color: var(--danger);"></i> <span>Status: Desconectado</span>';
-            }
-            alert("Desconectado da nuvem com sucesso!");
-        }
-    });
-
-    document.getElementById('btn-supabase-connect')?.addEventListener('click', async () => {
-        const url = sbUrlInput.value.trim();
-        const key = sbKeyInput.value.trim();
-        const tripId = sbTripInput.value.trim();
-
-        if (!url || !key || !tripId) {
-            alert("Por favor, preencha todos os campos do Supabase (URL, Anon Key e ID da Viagem).");
-            return;
-        }
-
-        if (!window.supabase) {
-            alert("O SDK do Supabase não pôde ser carregado. Verifique sua conexão ou bloqueadores de scripts.");
-            return;
-        }
-
-        const originalBtnText = sbConnectBtn.innerHTML;
-        sbConnectBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Conectando...';
-        sbConnectBtn.disabled = true;
-
-        try {
-            const { createClient } = window.supabase;
-            const supabase = createClient(url, key);
-
-            const { data, error } = await supabase
-                .from('trip_planners')
-                .select('state')
-                .eq('id', tripId)
-                .maybeSingle();
-
-            if (error) {
-                if (error.code === '42P01') {
-                    throw new Error("TABELA_NAO_EXISTE");
-                }
-                throw error;
-            }
-
-            config.supabaseUrl = url;
-            config.supabaseKey = key;
-            config.supabaseTripId = tripId;
-            saveState();
-
-            if (sbDisconnectBtn) sbDisconnectBtn.style.display = "block";
-            sbConnectBtn.innerHTML = '<i class="fa-solid fa-arrows-rotate"></i> Sincronizar Agora';
-
-            if (data && data.state) {
-                pendingCloudState = data.state;
-                if (syncModal) syncModal.classList.add('active');
-            } else {
-                await pushStateToSupabase();
-                alert("Conectado com sucesso! Seus dados foram salvos na nuvem do Supabase.");
-            }
-        } catch (err) {
-            console.error("Erro de conexão com o Supabase:", err);
-            if (err.message === "TABELA_NAO_EXISTE") {
-                alert("Erro de conexão:\nA tabela 'trip_planners' não existe no seu projeto Supabase.\n\nPor favor, crie uma tabela pública com RLS liberado executando o seguinte código SQL no painel (SQL Editor) do seu Supabase:\n\ncreate table trip_planners (\n  id text primary key,\n  state jsonb not null,\n  updated_at timestamp with time zone default now()\n);\n\nalter table trip_planners enable row level security;\ncreate policy \"Acesso publico\" on trip_planners for all using (true) with check (true);");
-            } else {
-                alert("Não foi possível conectar ao Supabase. Verifique a URL e a Anon Key fornecidas.");
-            }
-        } finally {
-            sbConnectBtn.disabled = false;
-            sbConnectBtn.innerHTML = (config.supabaseUrl) ? '<i class="fa-solid fa-arrows-rotate"></i> Sincronizar Agora' : '<i class="fa-solid fa-link"></i> Conectar & Sincronizar';
-        }
-    });
-
-    document.getElementById('btn-sync-download')?.addEventListener('click', () => {
-        if (pendingCloudState) {
-            const cloud = pendingCloudState;
-            if (cloud.days && cloud.restaurants) {
-                days = cloud.days;
-                restaurants = cloud.restaurants;
-                if (cloud.config) {
-                    config.clpRate = cloud.config.clpRate ?? config.clpRate;
-                    config.cardTax = cloud.config.cardTax ?? config.cardTax;
-                    config.autoUpdateRate = cloud.config.autoUpdateRate ?? config.autoUpdateRate;
-                }
-                localStorage.setItem('chile_planner_config', JSON.stringify(config));
-                localStorage.setItem('chile_planner_days', JSON.stringify(days));
-                localStorage.setItem('chile_planner_restaurants', JSON.stringify(restaurants));
-
-                renderDaysTabs();
-                renderActiveDay();
-                updateSidebarSummary();
-                closeSyncModal();
-                alert("Dados baixados da nuvem e sincronizados com sucesso!");
-            }
-        }
-    });
-
-    document.getElementById('btn-sync-upload')?.addEventListener('click', async () => {
-        closeSyncModal();
-        await pushStateToSupabase();
-        alert("Dados locais enviados para a nuvem com sucesso! O celular e o computador agora estão sincronizados.");
-    });
+    // 10. Sincronização Supabase
+    // O painel está oculto por segurança para evitar modificações, mas a sincronização em segundo plano continua funcionando ativamente.
 });

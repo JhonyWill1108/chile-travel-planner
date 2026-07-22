@@ -172,6 +172,9 @@
                     <button class="btn btn-secondary btn-sm" id="btn-view-restaurants" title="Guia de restaurantes">
                         <i class="fa-solid fa-utensils" style="color: var(--success);"></i> <span class="hide-mobile">Restaurantes</span>
                     </button>
+                    <button class="btn btn-secondary btn-sm" id="btn-view-packing" title="O que levar / Mala de Viagem">
+                        <i class="fa-solid fa-suitcase" style="color: var(--warning);"></i> <span class="hide-mobile">O que levar</span>
+                    </button>
                     <button class="btn btn-outline btn-sm" id="btn-print" title="Imprimir roteiro">
                         <i class="fa-solid fa-print"></i> <span class="hide-mobile">Imprimir / PDF</span>
                     </button>
@@ -256,6 +259,48 @@
                     <!-- Restaurants will be rendered here dynamically -->
                 </div>
             </section>
+
+            <!-- Packing Section -->
+            <section class="day-details-section" id="packing-section" style="display: none; flex-direction: column;">
+                <!-- Packing Header -->
+                <div class="day-header-card">
+                    <div class="day-title-info">
+                        <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                            <button class="btn btn-secondary btn-sm" id="btn-back-from-packing" title="Voltar para os dias e roteiros">
+                                <i class="fa-solid fa-arrow-left"></i> Voltar ao Roteiro
+                            </button>
+                            <h2>💼 O que levar (Checklist de Viagem)</h2>
+                        </div>
+                        <p style="margin-top: 4px;">Gerencie os itens da mala para cada pessoa que vai na viagem</p>
+                    </div>
+                    <div class="day-actions" style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap;">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <label for="packing-travellers-count" style="font-size: 0.85rem; color: var(--text-muted); font-weight: 500;">Viajantes:</label>
+                            <input type="number" id="packing-travellers-count" value="2" min="1" max="10" style="width: 55px; background: var(--bg-input); border: 1px solid var(--border-color); border-radius: var(--border-radius-sm); padding: 5px 8px; color: var(--text-main); font-size: 0.85rem; text-align: center; outline: none; transition: var(--transition-fast);">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Add packing item inline form -->
+                <div class="summary-card" id="add-packing-item-row" style="padding: 14px; margin-bottom: 12px; display: flex; flex-wrap: wrap; gap: 12px; align-items: center; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--border-radius-md);">
+                    <input type="text" id="new-pack-item-name" placeholder="Nome do item (ex: Corta vento / Blusa térmica)" style="flex: 2; min-width: 200px; background: var(--bg-input); border: 1px solid var(--border-color); border-radius: var(--border-radius-sm); padding: 8px 12px; color: var(--text-main); font-size: 0.9rem; outline: none;">
+                    <select id="new-pack-item-category" style="flex: 1; min-width: 130px; background: var(--bg-input); border: 1px solid var(--border-color); border-radius: var(--border-radius-sm); padding: 8px 12px; color: var(--text-main); font-size: 0.9rem; outline: none; cursor: pointer;">
+                        <option value="Documentos">📄 Documentos</option>
+                        <option value="Vestuário">👕 Vestuário</option>
+                        <option value="Higiene / Saúde">🧼 Higiene / Saúde</option>
+                        <option value="Eletrônicos">🔌 Eletrônicos</option>
+                        <option value="Outros">🎒 Outros</option>
+                    </select>
+                    <button class="btn btn-primary btn-sm" id="btn-submit-new-pack-item" style="padding: 9px 16px;">
+                        <i class="fa-solid fa-plus"></i> Adicionar Item
+                    </button>
+                </div>
+
+                <!-- Packing Lists Dynamic Container -->
+                <div id="packing-container" style="display: flex; flex-direction: column; gap: 20px;">
+                    <!-- Categories will be rendered here dynamically -->
+                </div>
+            </section>
         </main>
     </div>
 
@@ -275,6 +320,14 @@
                 <div class="form-group">
                     <label for="form-title" class="required-field">Nome do Passeio</label>
                     <input type="text" id="form-title" placeholder="Ex: Embalse el Yeso + Termas" required>
+                </div>
+
+                <!-- Dia do Roteiro / Alocação -->
+                <div class="form-group">
+                    <label for="form-activity-day" class="required-field">Dia do Roteiro</label>
+                    <select id="form-activity-day" required style="width: 100%; background: var(--bg-input); border: 1px solid var(--border-color); border-radius: var(--border-radius-sm); padding: 8px 12px; color: var(--text-main); font-size: 0.9rem; outline: none; transition: var(--transition-fast);">
+                        <!-- Will be dynamically populated -->
+                    </select>
                 </div>
 
                 <!-- Local e Endereço -->
@@ -587,6 +640,6 @@
     <!-- Supabase JS Client -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <!-- Custom JS -->
-    <script src="app.js?v=17"></script>
+    <script src="app.js?v=18"></script>
 </body>
 </html>

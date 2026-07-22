@@ -307,6 +307,28 @@ const defaultRestaurants = [
     }
 ];
 
+const defaultPackingItems = [
+    { id: "pack-1", name: "Passaporte ou RG (menos de 10 anos de emissão)", category: "Documentos", packedBy: [] },
+    { id: "pack-2", name: "Seguro Viagem impresso/digital", category: "Documentos", packedBy: [] },
+    { id: "pack-3", name: "Cartão de Débito Internacional (Nomad/Wise)", category: "Documentos", packedBy: [] },
+    { id: "pack-4", name: "Dinheiro em Espécie (Pesos / Real para emergências)", category: "Documentos", packedBy: [] },
+    
+    { id: "pack-5", name: "Casaco Corta-vento (Windbreaker)", category: "Vestuário", packedBy: [] },
+    { id: "pack-6", name: "Segunda pele térmica (calça e blusa)", category: "Vestuário", packedBy: [] },
+    { id: "pack-7", name: "Casaco pesado de frio (plumas/neve)", category: "Vestuário", packedBy: [] },
+    { id: "pack-8", name: "Óculos de sol com proteção UV", category: "Vestuário", packedBy: [] },
+    { id: "pack-9", name: "Luvas, cachecol e touca quentes", category: "Vestuário", packedBy: [] },
+    { id: "pack-10", name: "Tênis confortável para caminhadas", category: "Vestuário", packedBy: [] },
+
+    { id: "pack-11", name: "Protetor Labial com hidratante (Chile é muito seco)", category: "Higiene / Saúde", packedBy: [] },
+    { id: "pack-12", name: "Protetor Solar FPS 50+", category: "Higiene / Saúde", packedBy: [] },
+    { id: "pack-13", name: "Sorine / Hidratante nasal", category: "Higiene / Saúde", packedBy: [] },
+    { id: "pack-14", name: "Medicamentos de uso contínuo / dor de cabeça", category: "Higiene / Saúde", packedBy: [] },
+    
+    { id: "pack-15", name: "Adaptador de tomada de 3 pinos redondos chilenos", category: "Eletrônicos", packedBy: [] },
+    { id: "pack-16", name: "Carregador Portátil (Powerbank)", category: "Eletrônicos", packedBy: [] }
+];
+
 let days = [];
 let restaurants = [];
 let activeDayId = "";
@@ -426,11 +448,7 @@ async function pushStateToSupabase() {
         }
 
         const payload = {
-            config: {
-                clpRate: config.clpRate,
-                cardTax: config.cardTax,
-                autoUpdateRate: config.autoUpdateRate
-            },
+            config,
             days,
             restaurants
         };
@@ -487,9 +505,13 @@ async function fetchStateFromSupabase(autoLoad = false) {
                     days = cloud.days;
                     restaurants = cloud.restaurants;
                     if (cloud.config) {
-                        config.clpRate = cloud.config.clpRate ?? config.clpRate;
-                        config.cardTax = cloud.config.cardTax ?? config.cardTax;
-                        config.autoUpdateRate = cloud.config.autoUpdateRate ?? config.autoUpdateRate;
+                        config = {
+                            ...config,
+                            ...cloud.config,
+                            supabaseUrl: config.supabaseUrl,
+                            supabaseKey: config.supabaseKey,
+                            supabaseTripId: config.supabaseTripId
+                        };
                     }
                     localStorage.setItem('chile_planner_config', JSON.stringify(config));
                     localStorage.setItem('chile_planner_days', JSON.stringify(days));
@@ -533,7 +555,7 @@ function saveState() {
 
 function loadState() {
     const DB_VERSION_KEY = 'chile_planner_db_version';
-    const CURRENT_VERSION = 'v17_print_all'; // Força migração de BD para incluir novos restaurantes e tipo de comida
+    const CURRENT_VERSION = 'v18_packing_checklist'; // Força migração de BD para incluir novos restaurantes e tipo de comida
 
     if (localStorage.getItem(DB_VERSION_KEY) !== CURRENT_VERSION) {
         localStorage.clear();
@@ -550,7 +572,11 @@ function loadState() {
         };
         activeDayId = "day-1";
         lastActiveNormalDayId = "day-1";
-        saveState();
+        localStorage.setItem('chile_planner_config', JSON.stringify(config));
+        localStorage.setItem('chile_planner_days', JSON.stringify(days));
+        localStorage.setItem('chile_planner_restaurants', JSON.stringify(restaurants));
+        localStorage.setItem('chile_planner_active_day_id', activeDayId);
+        localStorage.setItem('chile_planner_last_active_normal_day_id', lastActiveNormalDayId);
         return;
     }
 
@@ -688,9 +714,11 @@ function renderDaysTabs() {
         tabEl.className = `day-tab ${day.id === activeDayId ? 'active' : ''}`;
         tabEl.setAttribute('data-id', day.id);
         
+        const compactLabel = day.dateLabel.replace(/^DIA \d+ — /, '').replace(/\/2026/, '');
+        
         tabEl.innerHTML = `
             <i class="fa-solid fa-calendar-day day-tab-icon"></i>
-            <span class="day-tab-label">${day.dateLabel}</span>
+            <span class="day-tab-label">${compactLabel}</span>
             ${actCount > 0 ? `<span class="day-tab-count">${actCount}</span>` : ''}
         `;
         
@@ -722,43 +750,67 @@ function renderDaysTabs() {
 function updateTopNavigationButtonsState() {
     const btnDecide = document.getElementById('btn-view-decide');
     const btnRest = document.getElementById('btn-view-restaurants');
+    const btnPack = document.getElementById('btn-view-packing');
 
-    if (btnDecide && btnRest) {
+    if (btnDecide) {
         if (activeDayId === 'day-to-decide') {
             btnDecide.classList.add('btn-primary');
             btnDecide.classList.remove('btn-secondary');
-            btnRest.classList.remove('btn-primary');
-            btnRest.classList.add('btn-secondary');
-        } else if (activeDayId === 'restaurants') {
-            btnRest.classList.add('btn-primary');
-            btnRest.classList.remove('btn-secondary');
-            btnDecide.classList.remove('btn-primary');
-            btnDecide.classList.add('btn-secondary');
         } else {
             btnDecide.classList.remove('btn-primary');
             btnDecide.classList.add('btn-secondary');
+        }
+    }
+
+    if (btnRest) {
+        if (activeDayId === 'restaurants') {
+            btnRest.classList.add('btn-primary');
+            btnRest.classList.remove('btn-secondary');
+        } else {
             btnRest.classList.remove('btn-primary');
             btnRest.classList.add('btn-secondary');
+        }
+    }
+
+    if (btnPack) {
+        if (activeDayId === 'packing') {
+            btnPack.classList.add('btn-primary');
+            btnPack.classList.remove('btn-secondary');
+        } else {
+            btnPack.classList.remove('btn-primary');
+            btnPack.classList.add('btn-secondary');
         }
     }
 }
 
 function renderActiveDay() {
-    const daySection = document.querySelector('.day-details-section:not(#restaurants-section)');
+    const daySection = document.querySelector('.day-details-section:not(#restaurants-section):not(#packing-section)');
     const restSection = document.getElementById('restaurants-section');
+    const packingSection = document.getElementById('packing-section');
 
-    if (!daySection || !restSection) return;
+    if (!daySection || !restSection || !packingSection) return;
 
     if (activeDayId === 'restaurants') {
         daySection.style.display = "none";
         restSection.style.display = "flex";
+        packingSection.style.display = "none";
         renderRestaurants();
+        updateTopNavigationButtonsState();
+        return;
+    }
+
+    if (activeDayId === 'packing') {
+        daySection.style.display = "none";
+        restSection.style.display = "none";
+        packingSection.style.display = "flex";
+        renderPackingList();
         updateTopNavigationButtonsState();
         return;
     }
 
     daySection.style.display = "flex";
     restSection.style.display = "none";
+    packingSection.style.display = "none";
     updateTopNavigationButtonsState();
 
     const activeDay = days.find(d => d.id === activeDayId);
@@ -1234,6 +1286,22 @@ function updateFormCalculations() {
 
 /* --- ACTIVITY FORM ACTIONS --- */
 
+function populateFormActivityDaySelector(selectedDayId) {
+    const select = document.getElementById('form-activity-day');
+    if (!select) return;
+    
+    let options = "";
+    days.forEach(day => {
+        const isToDecide = day.id === 'day-to-decide';
+        const displayLabel = isToDecide 
+            ? "A Decidir (Passeio Pendente)" 
+            : day.dateLabel.replace(/^DIA \d+ — /, '').replace(/\/2026/, '');
+        options += `<option value="${day.id}" ${day.id === selectedDayId ? 'selected' : ''}>${displayLabel}</option>`;
+    });
+    
+    select.innerHTML = options;
+}
+
 function openAddActivityModal() {
     const activeDay = days.find(d => d.id === activeDayId);
     if (!activeDay) return alert("Por favor, crie um dia de viagem primeiro!");
@@ -1244,6 +1312,8 @@ function openAddActivityModal() {
     const form = document.getElementById('activity-form');
     if (form) form.reset();
     
+    populateFormActivityDaySelector(activeDayId);
+
     document.getElementById('form-agency-people').value = 2;
     document.getElementById('form-ticket-people').value = 2;
     document.getElementById('form-agency-currency').value = "CLP";
@@ -1260,14 +1330,21 @@ function openAddActivityModal() {
 }
 
 function openEditActivityModal(activityId) {
-    const activeDay = days.find(d => d.id === activeDayId);
-    if (!activeDay) return;
-
-    const act = activeDay.activities.find(a => a.id === activityId);
-    if (!act) return;
+    // Procura o passeio em todos os dias, pois a pessoa pode estar reallocando
+    let activeDay = null;
+    let act = null;
+    for (const d of days) {
+        act = d.activities.find(a => a.id === activityId);
+        if (act) {
+            activeDay = d;
+            break;
+        }
+    }
+    if (!activeDay || !act) return;
 
     document.getElementById('modal-activity-title').innerText = "Editar Passeio";
     document.getElementById('form-activity-id').value = act.id;
+    populateFormActivityDaySelector(activeDay.id);
     document.getElementById('form-title').value = act.title || "";
     document.getElementById('form-city').value = act.city || "";
     document.getElementById('form-address').value = act.address || "";
@@ -1410,8 +1487,9 @@ window.addEventListener('DOMContentLoaded', () => {
     document.getElementById('activity-form')?.addEventListener('submit', (e) => {
         e.preventDefault();
         
-        const activeDay = days.find(d => d.id === activeDayId);
-        if (!activeDay) return;
+        const targetDayId = document.getElementById('form-activity-day').value;
+        const targetDay = days.find(d => d.id === targetDayId);
+        if (!targetDay) return;
 
         const activityId = document.getElementById('form-activity-id').value;
         
@@ -1447,12 +1525,18 @@ window.addEventListener('DOMContentLoaded', () => {
         };
 
         if (activityId) {
-            const index = activeDay.activities.findIndex(a => a.id === activityId);
-            if (index !== -1) {
-                activeDay.activities[index] = activityData;
-            }
+            // Encontra e remove de qualquer dia antigo
+            days.forEach(d => {
+                d.activities = d.activities.filter(a => a.id !== activityId);
+            });
+            targetDay.activities.push(activityData);
         } else {
-            activeDay.activities.push(activityData);
+            targetDay.activities.push(activityData);
+        }
+
+        activeDayId = targetDayId; // Redireciona o usuário para o dia onde o passeio foi alocado
+        if (activeDayId !== "day-to-decide") {
+            lastActiveNormalDayId = activeDayId;
         }
 
         saveState();
@@ -1830,11 +1914,65 @@ window.addEventListener('DOMContentLoaded', () => {
         renderDaysTabs();
     });
 
+    document.getElementById('btn-view-packing')?.addEventListener('click', () => {
+        activeDayId = "packing";
+        saveState();
+        renderActiveDay();
+        renderDaysTabs();
+    });
+
     document.getElementById('btn-back-to-itinerary')?.addEventListener('click', () => {
         activeDayId = lastActiveNormalDayId;
         saveState();
         renderActiveDay();
         renderDaysTabs();
+    });
+
+    document.getElementById('btn-back-from-packing')?.addEventListener('click', () => {
+        activeDayId = lastActiveNormalDayId;
+        saveState();
+        renderActiveDay();
+        renderDaysTabs();
+    });
+
+    // Ouvinte para quantidade de viajantes
+    const travInput = document.getElementById('packing-travellers-count');
+    if (travInput) {
+        travInput.addEventListener('change', (e) => {
+            const val = Math.max(1, parseInt(e.target.value) || 2);
+            config.travellersCount = val;
+            saveState();
+            renderPackingList();
+        });
+    }
+
+    // Ouvinte para adicionar item na mala
+    document.getElementById('btn-submit-new-pack-item')?.addEventListener('click', () => {
+        const nameInput = document.getElementById('new-pack-item-name');
+        const catSelect = document.getElementById('new-pack-item-category');
+        if (!nameInput || !catSelect) return;
+        
+        const name = nameInput.value.trim();
+        const category = catSelect.value;
+        if (!name) {
+            alert("Por favor, digite o nome do item!");
+            return;
+        }
+        
+        if (!config.packingItems) {
+            config.packingItems = JSON.parse(JSON.stringify(defaultPackingItems));
+        }
+        
+        config.packingItems.push({
+            id: `pack-${Date.now()}`,
+            name,
+            category,
+            packedBy: []
+        });
+        
+        saveState();
+        nameInput.value = "";
+        renderPackingList();
     });
 
     // 9. Gaveta de Menu Lateral (Mobile Sidebar)
@@ -1857,3 +1995,135 @@ window.addEventListener('DOMContentLoaded', () => {
     // 10. Sincronização Supabase
     // O painel está oculto por segurança para evitar modificações, mas a sincronização em segundo plano continua funcionando ativamente.
 });
+
+function renderPackingList() {
+    const container = document.getElementById('packing-container');
+    if (!container) return;
+
+    if (!config.packingItems) {
+        config.packingItems = JSON.parse(JSON.stringify(defaultPackingItems));
+    }
+    const numTravellers = config.travellersCount || 2;
+
+    const categories = ["Documentos", "Vestuário", "Higiene / Saúde", "Eletrônicos", "Outros"];
+    const grouped = {};
+    categories.forEach(c => grouped[c] = []);
+    
+    config.packingItems.forEach(item => {
+        const cat = item.category || "Outros";
+        if (!grouped[cat]) {
+            grouped[cat] = [];
+        }
+        grouped[cat].push(item);
+    });
+
+    let html = "";
+
+    categories.forEach(cat => {
+        const items = grouped[cat] || [];
+        if (items.length === 0 && cat === "Outros") return;
+
+        html += `
+            <div class="summary-card" style="padding: 20px;">
+                <h3 style="font-size: 1.1rem; color: var(--text-main); border-bottom: 1px solid var(--border-color); padding-bottom: 10px; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
+                    <i class="fa-solid ${getCategoryIcon(cat)}" style="color: var(--primary);"></i> ${cat}
+                </h3>
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem;">
+                        <thead>
+                            <tr style="border-bottom: 1px solid var(--border-color); color: var(--text-muted); font-size: 0.78rem; text-transform: uppercase;">
+                                <th style="padding: 8px 10px; width: 60%;">Item</th>
+                                ${Array.from({ length: numTravellers }).map((_, i) => `
+                                    <th style="padding: 8px 10px; text-align: center; width: 10%;">Viajante ${i + 1}</th>
+                                `).join('')}
+                                <th style="padding: 8px 10px; text-align: right; width: 10%;">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+        `;
+
+        if (items.length === 0) {
+            html += `
+                <tr>
+                    <td colspan="${numTravellers + 2}" style="padding: 15px 10px; text-align: center; color: var(--text-muted); font-style: italic;">
+                        Nenhum item cadastrado nesta categoria.
+                    </td>
+                </tr>
+            `;
+        } else {
+            items.forEach(item => {
+                html += `
+                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.03); hover: background-color: rgba(255,255,255,0.01);">
+                        <td style="padding: 10px; color: var(--text-main); font-weight: 500;">${item.name}</td>
+                        ${Array.from({ length: numTravellers }).map((_, i) => {
+                            const isPacked = item.packedBy && item.packedBy.includes(i);
+                            return `
+                                <td style="padding: 10px; text-align: center;">
+                                    <label class="checkbox-container" style="display: inline-block; padding-left: 0; margin-bottom: 18px; width: 18px; height: 18px;">
+                                        <input type="checkbox" class="pack-checkbox" data-item-id="${item.id}" data-traveller-idx="${i}" ${isPacked ? 'checked' : ''}>
+                                        <span class="checkmark" style="position: relative; display: block; margin: 0 auto;"></span>
+                                    </label>
+                                </td>
+                            `;
+                        }).join('')}
+                        <td style="padding: 10px; text-align: right;">
+                            <button class="btn btn-outline-danger btn-sm btn-delete-pack-item" data-item-id="${item.id}" title="Excluir item" style="padding: 4px 8px; font-size: 0.75rem;">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        html += `
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        `;
+    });
+
+    container.innerHTML = html;
+
+    // Ouvinte para checkbox marcar mala pronta
+    container.querySelectorAll('.pack-checkbox').forEach(cb => {
+        cb.addEventListener('change', (e) => {
+            const itemId = e.target.getAttribute('data-item-id');
+            const travellerIdx = parseInt(e.target.getAttribute('data-traveller-idx'));
+            
+            const item = config.packingItems.find(i => i.id === itemId);
+            if (item) {
+                if (!item.packedBy) item.packedBy = [];
+                if (e.target.checked) {
+                    if (!item.packedBy.includes(travellerIdx)) {
+                        item.packedBy.push(travellerIdx);
+                    }
+                } else {
+                    item.packedBy = item.packedBy.filter(idx => idx !== travellerIdx);
+                }
+                saveState();
+            }
+        });
+    });
+
+    // Ouvinte para deletar item
+    container.querySelectorAll('.btn-delete-pack-item').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const itemId = e.currentTarget.getAttribute('data-item-id');
+            config.packingItems = config.packingItems.filter(i => i.id !== itemId);
+            saveState();
+            renderPackingList();
+        });
+    });
+}
+
+function getCategoryIcon(cat) {
+    switch (cat) {
+        case "Documentos": return "fa-file-invoice";
+        case "Vestuário": return "fa-shirt";
+        case "Higiene / Saúde": return "fa-soap";
+        case "Eletrônicos": return "fa-plug";
+        default: return "fa-suitcase";
+    }
+}
